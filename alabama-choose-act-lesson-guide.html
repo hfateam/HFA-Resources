@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alabama CHOOSE Act – ESP Application Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #5f8f8a;
+    --teal-light: #8fbfba;
+    --teal-faint: #e8f0ef;
+    --teal-mid: #c5dbd9;
+    --cream: #f7f5f1;
+    --warm-white: #fdfcfa;
+    --stone: #9c9790;
+    --charcoal: #3a3835;
+    --ink: #2a2826;
+    --divider: #e2ddd7;
+    --warn-bg: #fdf6ec;
+    --warn-border: #c4a882;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  .header {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    padding: 36px 60px 32px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  .header-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    background: var(--teal-faint);
+    border: 1px solid var(--teal-mid);
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 4px;
+    display: inline-block;
+  }
+
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--charcoal);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--stone);
+    font-weight: 300;
+    margin-left: auto;
+    padding-bottom: 2px;
+    white-space: nowrap;
+  }
+
+  .progress-bar {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 14px 60px;
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    flex-wrap: wrap;
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--divider);
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .dot.active  { background: var(--teal); transform: scale(1.3); }
+  .dot.visited { background: var(--teal-light); }
+
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 40px;
+  }
+
+  .qa-card {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s forwards;
+  }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  .qa-card:nth-child(1)  { animation-delay: 0.05s; }
+  .qa-card:nth-child(2)  { animation-delay: 0.10s; }
+  .qa-card:nth-child(3)  { animation-delay: 0.15s; }
+  .qa-card:nth-child(4)  { animation-delay: 0.20s; }
+  .qa-card:nth-child(5)  { animation-delay: 0.25s; }
+  .qa-card:nth-child(6)  { animation-delay: 0.30s; }
+  .qa-card:nth-child(7)  { animation-delay: 0.35s; }
+  .qa-card:nth-child(8)  { animation-delay: 0.40s; }
+  .qa-card:nth-child(9)  { animation-delay: 0.45s; }
+  .qa-card:nth-child(10) { animation-delay: 0.50s; }
+
+  .card-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--stone);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 28px 0;
+    opacity: 0.7;
+  }
+
+  .question-block {
+    padding: 24px 28px 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .section-marker {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--teal);
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 20px;
+  }
+
+  .question-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--charcoal);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .toggle-icon {
+    color: var(--teal-light);
+    font-size: 20px;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+    font-weight: 300;
+    line-height: 1.3;
+  }
+  .qa-card.open .toggle-icon { transform: rotate(45deg); }
+
+  .answer-block {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .qa-card.open .answer-block { max-height: 4000px; }
+
+  .answer-inner {
+    padding: 20px 28px 26px 64px;
+    border-top: 1px solid var(--teal-faint);
+  }
+
+  .answer-inner p {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--charcoal);
+    line-height: 1.75;
+    margin-bottom: 12px;
+  }
+  .answer-inner p:last-child { margin-bottom: 0; }
+
+  .callout {
+    background: var(--teal-faint);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 3px 3px 0;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 13.5px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--charcoal);
+  }
+
+  .note-callout {
+    background: var(--warn-bg);
+    border-left: 3px solid var(--warn-border);
+    border-radius: 0 3px 3px 0;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 13px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.65;
+    color: var(--charcoal);
+  }
+
+  .field-list {
+    margin: 14px 0;
+    border: 1px solid var(--divider);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    border-bottom: 1px solid var(--divider);
+  }
+  .field-row:last-child { border-bottom: none; }
+
+  .field-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--teal);
+    background: var(--teal-faint);
+    padding: 10px 14px;
+    display: flex;
+    align-items: flex-start;
+    letter-spacing: 0.02em;
+  }
+
+  .field-value {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--charcoal);
+    padding: 10px 14px;
+    line-height: 1.6;
+    background: var(--warm-white);
+  }
+
+  .step-list {
+    margin: 14px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    font-size: 13.5px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--charcoal);
+  }
+
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--warm-white);
+    background: var(--teal);
+    width: 22px; height: 22px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .badge-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 2px;
+    background: var(--teal-faint);
+    color: var(--teal);
+    border: 1px solid var(--teal-mid);
+  }
+
+  .badge.warn {
+    background: var(--warn-bg);
+    color: #a07840;
+    border-color: var(--warn-border);
+  }
+
+  .checklist-section {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    padding: 32px 36px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s 0.60s forwards;
+  }
+
+  .checklist-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+
+  .checklist-rule {
+    height: 1px;
+    background: var(--teal-mid);
+    margin-bottom: 20px;
+  }
+
+  .checklist-items { display: flex; flex-direction: column; gap: 10px; }
+
+  .checklist-item { display: flex; gap: 14px; align-items: center; }
+
+  .check-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--warm-white);
+    background: var(--teal);
+    width: 26px; height: 26px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .check-text {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--charcoal);
+    line-height: 1.5;
+  }
+
+  .resource-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--teal);
+    text-decoration: none;
+    border-bottom: 1px solid var(--teal-mid);
+    padding-bottom: 1px;
+    letter-spacing: 0.03em;
+  }
+  .resource-link:hover { color: var(--teal-light); }
+
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--stone);
+    margin-top: 48px;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 640px) {
+    .header { padding: 24px 20px 20px; flex-wrap: wrap; }
+    .header-sub { margin-left: 0; }
+    .progress-bar { padding: 12px 20px; }
+    .content { padding: 32px 16px; }
+    .answer-inner { padding: 16px 18px 20px 18px; }
+    .field-row { grid-template-columns: 1fr; }
+    .card-num, .question-block { padding-left: 18px; padding-right: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-tag">Funding &amp; ESA Applications</div>
+    <div class="header-title">Alabama CHOOSE Act</div>
+  </div>
+  <div class="header-sub">ESP Application Guide</div>
+</div>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- Card 1: What is this -->
+  <div class="qa-card open" data-index="0">
+    <div class="card-num">01 — About This Program</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What is the Alabama CHOOSE Act, and why should I apply?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>The <strong>CHOOSE Act</strong> (Creating Hope and Opportunity for Our Students' Education Act) is Alabama's ESA program, administered by the <strong>Alabama Department of Revenue (ALDOR)</strong>. It provides refundable income tax credits — called education savings accounts — that eligible K5–12 families can use to pay for approved educational expenses at approved providers. You won't see the word "ESA" on the site itself, but that's what it is.</p>
+        <p>All payments flow through <strong>ClassWallet</strong>, ALDOR's platform partner. As an approved Education Service Provider (ESP), families can find you in ClassWallet and pay for your classes directly from their account.</p>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">Application</div>
+            <div class="field-value">Open year-round — apply anytime at chooseact.alabama.gov</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Decision Timeline</div>
+            <div class="field-value">ALDOR notifies you within 14 days of submission</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Support</div>
+            <div class="field-value">help@classwallet.com · 877-969-5536 · Mon–Fri 7am–7pm CT, Sat 9am–3pm CT</div>
+          </div>
+        </div>
+        <a class="resource-link" href="https://classwallet.com/alchoose/" target="_blank">↗ CHOOSE Act Alabama ESP Page</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Before you start -->
+  <div class="qa-card" data-index="1">
+    <div class="card-num">02 — Before You Start</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What do I need to have ready before applying?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Have these on hand before you open the application — it'll save you from stopping midway.</p>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div>Your <strong>legal business name</strong> (e.g. Megapixels, LLC) and your preferred <strong>display name</strong> (e.g. Megapixels School of the Arts)</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div>Your <strong>business address, phone, and website</strong></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div>Your <strong>"Is Your Student Creative?" vendor blurb</strong> from the Organize Now lesson — this goes in the description field</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div>If applying as a <strong>tutor</strong>: proof of a bachelor's degree, state certification, or accreditation — must be uploaded at time of application</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">5</div>
+            <div>Your <strong>ClassWallet account</strong> — if you've done another ESA that uses ClassWallet, you already have one</div>
+          </div>
+        </div>
+        <div class="note-callout">⚠ This application assumes you've already set up ClassWallet. If you haven't, watch the ClassWallet setup video first — it's covered in the earlier ESA lessons.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Service provider categories -->
+  <div class="qa-card" data-index="2">
+    <div class="card-num">03 — Provider Type &amp; Categories</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Which service provider categories should I select?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>You can — and should — select <strong>more than one category</strong> if they apply. The more categories you're listed under, the more often families will find you when browsing or filtering the directory. Here's how to think through each one:</p>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">Online Education Classes / Courses</div>
+            <div class="field-value">✓ Select this. This is the core category for online class providers.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Private Tutoring</div>
+            <div class="field-value">✓ Select this if you offer any one-on-one instruction, including online. <strong>Important:</strong> selecting this requires uploading proof of a bachelor's degree, state certification, or accreditation at the time of application. Art is explicitly listed as an approved tutoring subject.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Curriculum</div>
+            <div class="field-value">Consider this if you offer pre-recorded classes. Technically this category is for providers who <em>only</em> sell curriculum/supplemental materials, but it's worth selecting if you have pre-recorded content. It may get flagged — but it's worth trying for the added visibility.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Private School</div>
+            <div class="field-value">Do not select unless you are registered as an accredited K–12 private school in Alabama.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Educational Therapies</div>
+            <div class="field-value">Only select if you hold a valid license in the therapy you provide. Not applicable for most art educators.</div>
+          </div>
+        </div>
+        <div class="callout">
+          The directory is searchable and filterable by category. Showing up under both <strong>Online Education Classes</strong> and <strong>Private Tutoring</strong> means more families will find you. Don't leave categories on the table if they genuinely apply.
+        </div>
+        <div class="note-callout">⚠ If a category gets kicked back during review, ALDOR will let you know. It's better to try and get corrected than to under-select and miss families.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: Tutor credential requirement -->
+  <div class="qa-card" data-index="3">
+    <div class="card-num">04 — Tutor Credential Requirement</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What do I need to prove if I'm applying as a tutor?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>This is one of the most important fields in the Alabama application. If you select <strong>Private Tutoring</strong> as a category, you are required by state rules to submit documentation proving one of the following — you only need one, not all:</p>
+        <div class="callout">
+          — A <strong>bachelor's degree</strong> (any field)<br>
+          — <strong>State certification</strong> (e.g. a teaching license)<br>
+          — Proof of <strong>accreditation</strong>
+        </div>
+        <p>This documentation must be uploaded directly in the application at the time you submit. If you're uploading a bachelor's degree, the expiration date field can be filled in as <strong>five years from today's date</strong> — that's the convention for credentials that don't technically expire.</p>
+        <div class="note-callout">⚠ A background check is also required for tutors. Both the credential documentation and background check must be submitted at the time of application — not after the fact.</div>
+        <div class="badge-row">
+          <span class="badge">Bachelor's degree</span>
+          <span class="badge">State certification</span>
+          <span class="badge">Accreditation</span>
+          <span class="badge warn">Only one required</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Business type and names -->
+  <div class="qa-card" data-index="4">
+    <div class="card-num">05 — Business Type &amp; Names</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What do I enter for business type, company name, and display name?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">Business Type</div>
+            <div class="field-value">Select <strong>LLC</strong> if that's your structure. If you're an S Corp, your tax advisor may confirm you're still an LLC at the entity level — select whatever matches your actual registration.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Business / Company Name</div>
+            <div class="field-value">Your <strong>legal LLC name</strong> exactly as registered (e.g. Megapixels, LLC). This is the name that will appear on tax documents and payments.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Display Name</div>
+            <div class="field-value">The name families will see in the ClassWallet directory. This is where you can use your DBA or branded name (e.g. Megapixels School of the Arts).</div>
+          </div>
+        </div>
+        <div class="callout">
+          Unlike some other ESAs, Alabama's application has a <strong>separate display name field</strong> — so you don't have to fight to use your brand name. Put your legal LLC in the company name field and your recognizable name in the display name field.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: ClassWallet Marketplace -->
+  <div class="qa-card" data-index="5">
+    <div class="card-num">06 — ClassWallet Marketplace</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What is the ClassWallet Marketplace, and do I need it?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>The application asks whether you're a <strong>Marketplace Vendor</strong>. Here's what that means and how to answer it.</p>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">Direct Pay Vendor</div>
+            <div class="field-value">Families find you in ClassWallet and pay you directly from their ESA. This is the default, requires no e-commerce platform, and is how most providers operate. <strong>Select No</strong> for Marketplace Vendor if this is you.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Marketplace Vendor</div>
+            <div class="field-value">You have your own e-commerce storefront that integrates with ClassWallet, giving you additional visibility in the Marketplace. Requires an e-commerce platform — the most affordable option we've found is around $24/month. <strong>Optional</strong> for Alabama; <strong>required</strong> for Indiana.</div>
+          </div>
+        </div>
+        <div class="callout">
+          If you're just getting started with this ESA, <strong>select No</strong> for Marketplace Vendor. You can always add it later, especially if you join Indiana — at which point it makes sense to set it up across all your ESAs at once.
+        </div>
+        <div class="note-callout">⚠ The Marketplace increases your visibility but costs money to maintain. Get accepted first, evaluate your student volume, then decide if the monthly cost makes sense for your profit margins.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 7: Product eligibility -->
+  <div class="qa-card" data-index="6">
+    <div class="card-num">07 — Product Eligibility</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Do any of my products fall outside permitted categories?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>This field asks whether any of your products or services fall outside the CHOOSE Act's approved expense categories. For most art educators, the answer is <strong>No</strong> — art is explicitly listed across multiple approved categories.</p>
+        <div class="callout">
+          Approved categories that apply to online art instruction include:<br><br>
+          — <strong>Tuition and fees for an approved nonpublic K–12 online learning program</strong> (Art is listed)<br>
+          — <strong>Private Tutoring</strong> (Art is listed)<br>
+          — <strong>Educational software and applications</strong> (Art is listed)<br>
+          — <strong>Instructional Materials</strong> (paintbrushes, paints, sketch pads, clay, colored pencils, etc. are all explicitly approved)
+        </div>
+        <p>If you're unsure whether a specific offering qualifies, check the current ESP Guide's approved expenses list before answering. When in doubt, review the Parent Guide — it lists what families are and aren't allowed to spend funds on.</p>
+        <div class="note-callout">⚠ ALDOR reviews all transactions and reserves the right to reject invoices that don't fall within approved categories. When you invoice, select the expense category that most accurately matches the service rendered.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 8: Grades and subjects -->
+  <div class="qa-card" data-index="7">
+    <div class="card-num">08 — Grades &amp; Subjects</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Which grades and subjects should I select?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Select all grade levels you actually teach. The CHOOSE Act covers <strong>K5–12</strong> — if you teach across that range, select all of them. Narrowing unnecessarily limits the families who can find and use you.</p>
+        <p>For subjects, select everything that genuinely applies to your classes. For art educators:</p>
+        <div class="callout">
+          <strong>Art</strong> is explicitly listed as an approved subject under both Private Tutoring and Online Learning Programs. You can also select <strong>English Language Arts</strong> if your classes include written components, or <strong>other elective subjects</strong> where applicable.
+        </div>
+        <div class="note-callout">⚠ Only select subjects you can actually deliver on — ALDOR reviews invoices for compliance with what you've listed in your application.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 9: After submitting -->
+  <div class="qa-card" data-index="8">
+    <div class="card-num">09 — After You Submit</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What happens after I submit, and how do I get paid?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Here's exactly what to expect after you hit submit:</p>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div>ALDOR will notify you of their decision <strong>within 14 days</strong>. It may be faster.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div>You'll receive a <strong>ClassWallet Welcome Email</strong> with instructions to complete your integration — connect your bank account and set up your profile.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div>You'll also receive an email that your <strong>directory listing is live</strong>. When that email arrives, watch the profile activation video before doing anything — most providers don't complete this step correctly, and it directly affects whether families find you.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div>Once set up, families pay you using the <strong>"Pay Vendor"</strong> feature in ClassWallet. They submit payment, and funds settle to your bank account within <strong>2–10 business days</strong> after approval.</div>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>Invoicing is required for every payment.</strong> Each invoice must include: your provider name and address, the student's name, the parent's name, date of invoice, date(s) of service, type of service, and total amount due. Handwritten invoices will not be approved.
+        </div>
+        <div class="note-callout">⚠ Send yourself a copy of your responses when you submit — there's an option to do this at the end of the form. Do it. You'll want a record of exactly what you submitted.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 10: Directory & profile -->
+  <div class="qa-card" data-index="9">
+    <div class="card-num">10 — Your Directory Profile</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">How does the ClassWallet directory work, and why does my profile matter?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Once approved, your listing appears in the ClassWallet provider directory — which is how families find and choose you. The directory is searchable and filterable by category, which is exactly why selecting multiple relevant categories in your application matters.</p>
+        <div class="callout">
+          Most approved providers never complete their profile. That means a filled-out profile with a real description and accurate categories instantly makes you stand out. Families can see your company name, website, and description — give them something worth reading.
+        </div>
+        <p>Through your ClassWallet account, you can update your profile at any time. Your description should be clear about what you offer, who it's for, and why it works — the vendor blurb from the Organize Now lesson is written exactly for this.</p>
+        <div class="note-callout">⚠ When you receive the "your listing is live" email, watch the profile activation video in this course before touching your profile. There are specific steps that, if skipped, will leave your listing incomplete or invisible in certain searches.</div>
+        <a class="resource-link" href="https://classwallet.com/alchoose/" target="_blank">↗ CHOOSE Act Alabama ESP Resources</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="checklist-section">
+    <div class="checklist-title">Application Checklist</div>
+    <div class="checklist-rule"></div>
+    <div class="checklist-items">
+      <div class="checklist-item">
+        <div class="check-num">1</div>
+        <div class="check-text">Have your <strong>legal LLC name</strong> and <strong>display name</strong> ready before you start</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">2</div>
+        <div class="check-text">Pull your <strong>"Is Your Student Creative?" vendor blurb</strong> from the Organize Now lesson for the description field</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">3</div>
+        <div class="check-text">If selecting <strong>Private Tutoring</strong>, have your credential document ready to upload (bachelor's degree, certification, or accreditation proof)</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">4</div>
+        <div class="check-text">Select <strong>all relevant categories</strong> — at minimum Online Education Classes; add Private Tutoring if applicable</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">5</div>
+        <div class="check-text">Select <strong>No</strong> for ClassWallet Marketplace Vendor (unless you already have an e-commerce platform set up)</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">6</div>
+        <div class="check-text">Answer <strong>No</strong> to "do any products fall outside permitted categories" — art is explicitly approved</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">7</div>
+        <div class="check-text"><strong>Send yourself a copy</strong> of your responses before submitting — there's an option at the end of the form</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">8</div>
+        <div class="check-text">Watch for your <strong>ClassWallet Welcome Email</strong> (within 14 days) and complete the bank account connection immediately</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">9</div>
+        <div class="check-text">When you get the <strong>"listing is live" email</strong>, watch the profile activation video before touching your profile</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Alabama CHOOSE Act · Funding &amp; ESA Applications<br>
+    © Megapixels, LLC · For enrolled clients only
+  </div>
+
+</div>
+
+<script>
+  const TOTAL = 10;
+
+  function buildDots() {
+    const bar = document.getElementById('progressBar');
+    for (let i = 0; i < TOTAL; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.dataset.index = i;
+      d.addEventListener('click', () => scrollToCard(i));
+      bar.appendChild(d);
+    }
+  }
+
+  function scrollToCard(i) {
+    const cards = document.querySelectorAll('.qa-card[data-index]');
+    if (cards[i]) cards[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function updateDots() {
+    const cards = document.querySelectorAll('.qa-card[data-index]');
+    const dots  = document.querySelectorAll('.dot');
+    let active  = 0;
+    cards.forEach((card, i) => {
+      const rect = card.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.5) active = i;
+    });
+    dots.forEach((d, i) => {
+      d.classList.toggle('active',  i === active);
+      d.classList.toggle('visited', i < active);
+    });
+  }
+
+  function toggle(el) {
+    el.closest('.qa-card').classList.toggle('open');
+  }
+
+  buildDots();
+  window.addEventListener('scroll', updateDots, { passive: true });
+</script>
+</body>
+</html>

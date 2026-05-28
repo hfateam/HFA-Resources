@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WV Hope Scholarship – Provider Application Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #5f8f8a;
+    --teal-light: #8fbfba;
+    --teal-faint: #e8f0ef;
+    --teal-mid: #c5dbd9;
+    --cream: #f7f5f1;
+    --warm-white: #fdfcfa;
+    --stone: #9c9790;
+    --charcoal: #3a3835;
+    --ink: #2a2826;
+    --divider: #e2ddd7;
+    --warn-bg: #fdf6ec;
+    --warn-border: #c4a882;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  .header {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    padding: 36px 60px 32px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  .header-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    background: var(--teal-faint);
+    border: 1px solid var(--teal-mid);
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 4px;
+    display: inline-block;
+  }
+
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--charcoal);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--stone);
+    font-weight: 300;
+    margin-left: auto;
+    padding-bottom: 2px;
+    white-space: nowrap;
+  }
+
+  .progress-bar {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 14px 60px;
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    flex-wrap: wrap;
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--divider);
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .dot.active  { background: var(--teal); transform: scale(1.3); }
+  .dot.visited { background: var(--teal-light); }
+
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 40px;
+  }
+
+  .qa-card {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s forwards;
+  }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  .qa-card:nth-child(1)  { animation-delay: 0.05s; }
+  .qa-card:nth-child(2)  { animation-delay: 0.10s; }
+  .qa-card:nth-child(3)  { animation-delay: 0.15s; }
+  .qa-card:nth-child(4)  { animation-delay: 0.20s; }
+  .qa-card:nth-child(5)  { animation-delay: 0.25s; }
+  .qa-card:nth-child(6)  { animation-delay: 0.30s; }
+  .qa-card:nth-child(7)  { animation-delay: 0.35s; }
+  .qa-card:nth-child(8)  { animation-delay: 0.40s; }
+  .qa-card:nth-child(9)  { animation-delay: 0.45s; }
+
+  .card-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--stone);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 28px 0;
+    opacity: 0.7;
+  }
+
+  .question-block {
+    padding: 24px 28px 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .section-marker {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--teal);
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 20px;
+  }
+
+  .question-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--charcoal);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .toggle-icon {
+    color: var(--teal-light);
+    font-size: 20px;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+    font-weight: 300;
+    line-height: 1.3;
+  }
+  .qa-card.open .toggle-icon { transform: rotate(45deg); }
+
+  .answer-block {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .qa-card.open .answer-block { max-height: 3000px; }
+
+  .answer-inner {
+    padding: 20px 28px 26px 64px;
+    border-top: 1px solid var(--teal-faint);
+  }
+
+  .answer-inner p {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--charcoal);
+    line-height: 1.75;
+    margin-bottom: 12px;
+  }
+  .answer-inner p:last-child { margin-bottom: 0; }
+
+  .callout {
+    background: var(--teal-faint);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 3px 3px 0;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 13.5px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--charcoal);
+  }
+
+  .note-callout {
+    background: var(--warn-bg);
+    border-left: 3px solid var(--warn-border);
+    border-radius: 0 3px 3px 0;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 13px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.65;
+    color: var(--charcoal);
+  }
+
+  .field-list {
+    margin: 14px 0;
+    border: 1px solid var(--divider);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    border-bottom: 1px solid var(--divider);
+  }
+  .field-row:last-child { border-bottom: none; }
+
+  .field-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--teal);
+    background: var(--teal-faint);
+    padding: 10px 14px;
+    display: flex;
+    align-items: flex-start;
+    letter-spacing: 0.02em;
+  }
+
+  .field-value {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--charcoal);
+    padding: 10px 14px;
+    line-height: 1.6;
+    background: var(--warm-white);
+  }
+
+  .step-list {
+    margin: 14px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    font-size: 13.5px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--charcoal);
+  }
+
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--warm-white);
+    background: var(--teal);
+    width: 22px; height: 22px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .badge-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 2px;
+    background: var(--teal-faint);
+    color: var(--teal);
+    border: 1px solid var(--teal-mid);
+  }
+
+  .badge.warn {
+    background: var(--warn-bg);
+    color: #a07840;
+    border-color: var(--warn-border);
+  }
+
+  .checklist-section {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    padding: 32px 36px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s 0.55s forwards;
+  }
+
+  .checklist-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+
+  .checklist-rule {
+    height: 1px;
+    background: var(--teal-mid);
+    margin-bottom: 20px;
+  }
+
+  .checklist-items { display: flex; flex-direction: column; gap: 10px; }
+
+  .checklist-item { display: flex; gap: 14px; align-items: center; }
+
+  .check-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--warm-white);
+    background: var(--teal);
+    width: 26px; height: 26px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .check-text {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--charcoal);
+    line-height: 1.5;
+  }
+
+  .resource-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--teal);
+    text-decoration: none;
+    border-bottom: 1px solid var(--teal-mid);
+    padding-bottom: 1px;
+    letter-spacing: 0.03em;
+  }
+  .resource-link:hover { color: var(--teal-light); }
+
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--stone);
+    margin-top: 48px;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 640px) {
+    .header { padding: 24px 20px 20px; flex-wrap: wrap; }
+    .header-sub { margin-left: 0; }
+    .progress-bar { padding: 12px 20px; }
+    .content { padding: 32px 16px; }
+    .answer-inner { padding: 16px 18px 20px 18px; }
+    .field-row { grid-template-columns: 1fr; }
+    .card-num, .question-block { padding-left: 18px; padding-right: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-tag">Funding &amp; ESA Applications</div>
+    <div class="header-title">WV Hope Scholarship</div>
+  </div>
+  <div class="header-sub">Provider Application Guide</div>
+</div>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- Card 1: What is this -->
+  <div class="qa-card open" data-index="0">
+    <div class="card-num">01 — About This Program</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What is the WV Hope Scholarship, and why should I apply?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>The <strong>West Virginia Hope Scholarship</strong> is an education savings account (ESA) program that allows qualifying WV families to use state education funds for K–12 educational expenses outside the public school system. As an approved Education Service Provider (ESP), you can receive payment directly through the Hope Scholarship portal when families choose your classes.</p>
+        <div class="callout">
+          You won't see the word "ESA" anywhere on the site — don't let that throw you off. This is it. Look for <strong>Education Service Provider</strong> or <strong>ESP</strong> throughout the application.
+        </div>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">Contact (Help)</div>
+            <div class="field-value">help@hopescholarshipwv.com · 681-999-HOPE (4673)</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Contact (Board Staff)</div>
+            <div class="field-value">hopescholarshipwv@wvsto.gov · (304) 340-5058</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Hours</div>
+            <div class="field-value">Monday – Friday, 8:00 a.m. – 5:00 p.m. ET</div>
+          </div>
+        </div>
+        <a class="resource-link" href="https://hopescholarshipwv.gov/Home/Service-Providers" target="_blank">↗ Hope Scholarship Service Provider Page</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Part 1 — Seal Form -->
+  <div class="qa-card" data-index="1">
+    <div class="card-num">02 — Part One</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What is Part 1 of the application?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Part 1 is the <strong>ESP Seal Request Form</strong> on the Service Providers page. It's quick — two minutes max. This registers your basic contact information and requests your official Hope Scholarship seal.</p>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div>Fill in your first name, last name, and email address.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div>Enter your <strong>legal business name</strong> (e.g. Megapixels, LLC — not your DBA or display name).</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div>Select whether you want a certificate or window cling mailed to you. If you're fully online, <strong>No</strong> is fine.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div>Check "I'm not a robot" and click Submit.</div>
+          </div>
+        </div>
+        <div class="note-callout">⚠ Done! That's all Part 1 requires. Move on to Part 2 immediately after.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Part 2 — New Provider Form -->
+  <div class="qa-card" data-index="2">
+    <div class="card-num">03 — Part Two</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What is Part 2 of the application?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Part 2 is the <strong>New Provider Request Form</strong>. Click the link on the Service Providers page. Here's how to fill out each field:</p>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">Provider Type</div>
+            <div class="field-value">Select <strong>Service Provider</strong> — not School. Online class providers are non-school service providers under Hope Scholarship program rules, even if a school confirmed this for you.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Educational Products</div>
+            <div class="field-value">Select <strong>Yes</strong> — this applies even for online classes.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Vendor Description</div>
+            <div class="field-value">Paste your <strong>"Is Your Student Creative?"</strong> blurb from the Organize Now lesson here.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Micro School?</div>
+            <div class="field-value">Select <strong>No</strong>. A microschool is a tuition-charging school operating as a full alternative to public/private school. An online class business does not qualify.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Background Checks</div>
+            <div class="field-value">Select <strong>Yes</strong> — but only if your background check is actually complete. See Card 04 for important details on this.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Business Name</div>
+            <div class="field-value">Use your <strong>legal LLC name</strong> exactly. You can email them afterward to ask about displaying a DBA, but they'll likely hold you to the legal name — especially when your W-9 is involved.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Address / City / State / Zip</div>
+            <div class="field-value">Fill in your business address as registered.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Website</div>
+            <div class="field-value">Your main website URL.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Vendor Portal Address Field</div>
+            <div class="field-value">Enter: <em>"Students must appear under the Purchases tab in the Vendor Portal first before they are given access to the class."</em> This field relates to how invoicing flows through the portal — if they follow up, just reply to their email.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Refund Policy</div>
+            <div class="field-value">Select <strong>Yes</strong>. This is required by program rules — Hope Scholarship funds must be refunded for any services not actually delivered to the student. You do not have flexibility to opt out of this.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Timezone / Contact Info</div>
+            <div class="field-value">Your timezone, your name (or your team's), your email, and phone number.</div>
+          </div>
+        </div>
+        <p>Click <strong>Submit</strong>. The whole form should take about five minutes once you have your information ready.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: Background checks -->
+  <div class="qa-card" data-index="3">
+    <div class="card-num">04 — Background Checks</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What do I need to know about the background check requirement?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>This is the one field that requires the most care. By selecting <strong>Yes</strong> on background checks, you are making a <strong>legal certification</strong> to the Hope Scholarship Board that:</p>
+        <div class="callout">
+          Every employee or person on your team who will have contact with Hope Scholarship students has passed a criminal background check and is <strong>not</strong> on a federal or state sex offender registry.
+        </div>
+        <p>This is a requirement under West Virginia law — not just a checkbox. Only select Yes if this is genuinely true for your situation.</p>
+        <div class="note-callout">⚠ If your COR background check is still in process when you apply: reach out to the Hope Scholarship team directly at help@hopescholarshipwv.com or 681-999-HOPE before submitting, and ask how to handle it. Do not certify something that isn't complete yet. In practice, the odds of getting a WV student before your COR is processed are low — but if it does happen, contact them immediately and ask whether an existing background check (such as through Outschool) can serve temporarily.</div>
+        <div class="badge-row">
+          <span class="badge">Legal certification</span>
+          <span class="badge warn">When in doubt — ask first</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Refunds -->
+  <div class="qa-card" data-index="4">
+    <div class="card-num">05 — Refund Policy</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What does the Hope Scholarship refund policy actually require?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>The refund field on the application isn't really a choice — it's a program requirement. Here's what the rules say:</p>
+        <div class="callout">
+          Hope Scholarship funds must be refunded to the student's account any time services are not actually delivered. You may only keep funds equal to what you actually provided.
+        </div>
+        <p>In practice for online class providers:</p>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-num">✓</div>
+            <div>Student pays for a live class and doesn't show — but the class ran as scheduled. <strong>No refund required.</strong> Service was rendered.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">✓</div>
+            <div>Student pays for access to a pre-recorded class and you never provide access. <strong>Refund required.</strong></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">✓</div>
+            <div>Student pays for a semester of services and you only deliver part of it. <strong>Prorated refund required.</strong></div>
+          </div>
+        </div>
+        <div class="note-callout">⚠ Refunds must go directly back to the student's Hope Scholarship account — never directly to the parent. Contact the Hope Scholarship team to process any refund. You have 30 days from the triggering event.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: Provider type clarified -->
+  <div class="qa-card" data-index="5">
+    <div class="card-num">06 — Provider vs. School</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Why am I a "Service Provider" and not a "School"?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>The Hope Scholarship program has two distinct categories, and the distinction matters for what's required of you.</p>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">Participating School</div>
+            <div class="field-value">A private or nonpublic school that enrolls Hope Scholarship students for tuition, submits attendance records annually, and follows specific school-level program rules. Microschools and learning pods do <em>not</em> qualify as participating schools.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Non-School Service Provider</div>
+            <div class="field-value">Any individual or entity offering qualifying educational services — tutoring, online classes, arts instruction, therapies, etc. This is what we are. Far fewer ongoing requirements, and you invoice per service through the portal.</div>
+          </div>
+        </div>
+        <div class="callout">
+          Online class providers like us are <strong>non-school service providers</strong>. You do not need to track attendance for the state, submit tuition schedules, or meet school-level compliance requirements. Select Service Provider on your application with confidence.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 7: Getting paid -->
+  <div class="qa-card" data-index="6">
+    <div class="card-num">07 — Getting Paid</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">How does payment actually work once I'm approved?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>All payments go through the <strong>Hope Scholarship online portal</strong> — there is no invoicing outside the system. Here's the basic flow:</p>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div>A student must appear under the <strong>Purchases tab</strong> in your Vendor Portal before you can invoice for their class.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div>Once they appear, you can submit an invoice through the portal for the service.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div>Payment is made electronically (ACH) directly to your connected bank account.</div>
+          </div>
+        </div>
+        <div class="callout">
+          You'll need to connect your bank account through the portal before you can receive any funds. See the <strong>Connect Your Bank Account</strong> guide on the Service Providers page.
+        </div>
+        <div class="note-callout">⚠ Hope Scholarship funds can never be refunded, rebated, or paid directly to a parent or student. All transactions — including refunds — go through the portal with the help of the Hope Scholarship team.</div>
+        <a class="resource-link" href="https://hopescholarshipwv.gov/Home/Service-Providers" target="_blank">↗ Connect Your Bank Account & Portal Instructions</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 8: After submitting -->
+  <div class="qa-card" data-index="7">
+    <div class="card-num">08 — After You Submit</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What happens after I submit the application?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Most providers are approved as long as they offer qualifying educational services — the process is generally straightforward. A few things to know:</p>
+        <div class="callout">
+          All Hope Scholarship communications — including legally required Board notices — go to the <strong>primary contact email</strong> you listed on your application. Monitor that inbox. If your email changes, update it in the portal immediately.
+        </div>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div>Watch for a confirmation or follow-up email from the Hope Scholarship team.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div>Once approved, connect your bank account through the portal so you can receive payments.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div>Set up your service offerings in the portal. (See the <em>Creating a Service Offering</em> guide on their site.)</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div>If anything on your application needs to be corrected, email them — they're easy to work with.</div>
+          </div>
+        </div>
+        <div class="note-callout">⚠ If any information changes after approval — contact info, bank account, team members — update it in the portal right away. You are responsible for keeping your profile current.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="checklist-section">
+    <div class="checklist-title">Application Checklist</div>
+    <div class="checklist-rule"></div>
+    <div class="checklist-items">
+      <div class="checklist-item">
+        <div class="check-num">1</div>
+        <div class="check-text">Have your <strong>legal LLC name</strong> ready — this is what goes on the form, not your DBA</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">2</div>
+        <div class="check-text">Pull your <strong>"Is Your Student Creative?" vendor blurb</strong> from the Organize Now lesson — that goes in the description field</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">3</div>
+        <div class="check-text">Confirm your <strong>background check is complete</strong> before selecting Yes on that field</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">4</div>
+        <div class="check-text">Complete <strong>Part 1</strong> — the seal request form on the Service Providers page</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">5</div>
+        <div class="check-text">Complete <strong>Part 2</strong> — the New Provider Request Form (link on same page)</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">6</div>
+        <div class="check-text">Watch your email for approval confirmation from the Hope Scholarship team</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">7</div>
+        <div class="check-text">Connect your <strong>bank account</strong> through the portal once approved</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">8</div>
+        <div class="check-text">Set up your <strong>service offerings</strong> in the portal so families can find and pay for your classes</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    West Virginia Hope Scholarship · Funding &amp; ESA Applications<br>
+    © Megapixels, LLC · For enrolled clients only
+  </div>
+
+</div>
+
+<script>
+  const TOTAL = 8;
+
+  function buildDots() {
+    const bar = document.getElementById('progressBar');
+    for (let i = 0; i < TOTAL; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.dataset.index = i;
+      d.addEventListener('click', () => scrollToCard(i));
+      bar.appendChild(d);
+    }
+  }
+
+  function scrollToCard(i) {
+    const cards = document.querySelectorAll('.qa-card[data-index]');
+    if (cards[i]) cards[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function updateDots() {
+    const cards = document.querySelectorAll('.qa-card[data-index]');
+    const dots  = document.querySelectorAll('.dot');
+    let active  = 0;
+    cards.forEach((card, i) => {
+      const rect = card.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.5) active = i;
+    });
+    dots.forEach((d, i) => {
+      d.classList.toggle('active',  i === active);
+      d.classList.toggle('visited', i < active);
+    });
+  }
+
+  function toggle(el) {
+    el.closest('.qa-card').classList.toggle('open');
+  }
+
+  buildDots();
+  window.addEventListener('scroll', updateDots, { passive: true });
+</script>
+</body>
+</html>

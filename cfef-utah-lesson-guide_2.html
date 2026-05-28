@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Optimize Children First / Utah – CFEF Provider Directory</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #5f8f8a;
+    --teal-light: #8fbfba;
+    --teal-faint: #e8f0ef;
+    --teal-mid: #c5dbd9;
+    --cream: #f7f5f1;
+    --warm-white: #fdfcfa;
+    --stone: #9c9790;
+    --charcoal: #3a3835;
+    --ink: #2a2826;
+    --divider: #e2ddd7;
+    --warn-bg: #fdf6ec;
+    --warn-border: #c4a882;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  .header {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    padding: 36px 60px 32px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  .header-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    background: var(--teal-faint);
+    border: 1px solid var(--teal-mid);
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 4px;
+    display: inline-block;
+  }
+
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--charcoal);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--stone);
+    font-weight: 300;
+    margin-left: auto;
+    padding-bottom: 2px;
+    white-space: nowrap;
+  }
+
+  .progress-bar {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 14px 60px;
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    flex-wrap: wrap;
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--divider);
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .dot.active  { background: var(--teal); transform: scale(1.3); }
+  .dot.visited { background: var(--teal-light); }
+
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 40px;
+  }
+
+  /* ── Cards ── */
+  .qa-card {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s forwards;
+  }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  .qa-card:nth-child(1)  { animation-delay: 0.05s; }
+  .qa-card:nth-child(2)  { animation-delay: 0.10s; }
+  .qa-card:nth-child(3)  { animation-delay: 0.15s; }
+  .qa-card:nth-child(4)  { animation-delay: 0.20s; }
+  .qa-card:nth-child(5)  { animation-delay: 0.25s; }
+  .qa-card:nth-child(6)  { animation-delay: 0.30s; }
+  .qa-card:nth-child(7)  { animation-delay: 0.35s; }
+  .qa-card:nth-child(8)  { animation-delay: 0.40s; }
+
+  .card-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--stone);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 28px 0;
+    opacity: 0.7;
+  }
+
+  .question-block {
+    padding: 24px 28px 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .q-marker {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--teal);
+    flex-shrink: 0;
+    margin-top: 1px;
+    width: 20px;
+  }
+
+  /* For non-Q section headers, use a different marker style */
+  .section-marker {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--teal);
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 20px;
+  }
+
+  .question-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--charcoal);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .toggle-icon {
+    color: var(--teal-light);
+    font-size: 20px;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+    font-weight: 300;
+    line-height: 1.3;
+  }
+  .qa-card.open .toggle-icon { transform: rotate(45deg); }
+
+  .answer-block {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .qa-card.open .answer-block { max-height: 3000px; }
+
+  .answer-inner {
+    padding: 20px 28px 26px 64px;
+    border-top: 1px solid var(--teal-faint);
+  }
+
+  .answer-inner p {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--charcoal);
+    line-height: 1.75;
+    margin-bottom: 12px;
+  }
+  .answer-inner p:last-child { margin-bottom: 0; }
+
+  /* ── Callouts ── */
+  .callout {
+    background: var(--teal-faint);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 3px 3px 0;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 13.5px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--charcoal);
+  }
+
+  .note-callout {
+    background: var(--warn-bg);
+    border-left: 3px solid var(--warn-border);
+    border-radius: 0 3px 3px 0;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 13px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.65;
+    color: var(--charcoal);
+  }
+
+  /* ── Field list (two-col key/value) ── */
+  .field-list {
+    margin: 14px 0;
+    border: 1px solid var(--divider);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    border-bottom: 1px solid var(--divider);
+  }
+  .field-row:last-child { border-bottom: none; }
+
+  .field-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--teal);
+    background: var(--teal-faint);
+    padding: 10px 14px;
+    display: flex;
+    align-items: flex-start;
+    letter-spacing: 0.02em;
+  }
+
+  .field-value {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--charcoal);
+    padding: 10px 14px;
+    line-height: 1.6;
+    background: var(--warm-white);
+  }
+
+  /* ── Step list ── */
+  .step-list {
+    margin: 14px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    font-size: 13.5px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--charcoal);
+  }
+
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--warm-white);
+    background: var(--teal);
+    width: 22px; height: 22px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── Tags / badges ── */
+  .badge-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 2px;
+    background: var(--teal-faint);
+    color: var(--teal);
+    border: 1px solid var(--teal-mid);
+  }
+
+  .badge.warn {
+    background: var(--warn-bg);
+    color: #a07840;
+    border-color: var(--warn-border);
+  }
+
+  /* ── Checklist ── */
+  .checklist-section {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    padding: 32px 36px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s 0.50s forwards;
+  }
+
+  .checklist-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+
+  .checklist-rule {
+    height: 1px;
+    background: var(--teal-mid);
+    margin-bottom: 20px;
+  }
+
+  .checklist-items { display: flex; flex-direction: column; gap: 10px; }
+
+  .checklist-item { display: flex; gap: 14px; align-items: center; }
+
+  .check-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--warm-white);
+    background: var(--teal);
+    width: 26px; height: 26px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .check-text {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--charcoal);
+    line-height: 1.5;
+  }
+
+  /* ── Resource link ── */
+  .resource-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--teal);
+    text-decoration: none;
+    border-bottom: 1px solid var(--teal-mid);
+    padding-bottom: 1px;
+    letter-spacing: 0.03em;
+  }
+  .resource-link:hover { color: var(--teal-light); }
+
+  /* ── Footer ── */
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--stone);
+    margin-top: 48px;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 640px) {
+    .header { padding: 24px 20px 20px; flex-wrap: wrap; }
+    .header-sub { margin-left: 0; }
+    .progress-bar { padding: 12px 20px; }
+    .content { padding: 32px 16px; }
+    .answer-inner { padding: 16px 18px 20px 18px; }
+    .field-row { grid-template-columns: 1fr; }
+    .card-num, .question-block { padding-left: 18px; padding-right: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-tag">Funding &amp; Directory Optimization</div>
+    <div class="header-title">Optimize Children First / Utah</div>
+  </div>
+  <div class="header-sub">CFEF Provider Directory</div>
+</div>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- Card 1: What is this school -->
+  <div class="qa-card open" data-index="0">
+    <div class="card-num">01 — About This School</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What is Children First Education Fund, and why does my listing matter here?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p><strong>Children First Education Fund (CFEF)</strong> is a Utah nonprofit that administers the <strong>Carson Smith Opportunity Scholarship (CSOS)</strong> — a state-funded scholarship for Utah students with disabilities in grades K–12. As an approved service provider, your listing is how families find and choose you.</p>
+        <div class="callout">
+          The directory is <strong>publicly searchable</strong> at <strong>serviceprovider.cfe-fund.org/directory</strong> — families can type keywords to find providers. This means your listing text, title, and categories directly affect whether you show up.
+        </div>
+        <div class="note-callout">⚠ Note: CFEF recently rebranded their platform. The organization is now called <strong>Children First Education Fund</strong> (no apostrophe-s), and listings are now referred to as <strong>Service Providers</strong>, not vendors. Use this language when emailing them.</div>
+        <a class="resource-link" href="https://serviceprovider.cfe-fund.org/directory/" target="_blank">↗ CFEF Service Provider Directory</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: The problem -->
+  <div class="qa-card" data-index="1">
+    <div class="card-num">02 — The Problem</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Why might my listing not reflect what I submitted on my application?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>CFEF staff create your directory listing on your behalf — often using AI tools fed by your application or website content. You are <strong>not notified</strong> when this happens, and you won't know it's been created unless you go look.</p>
+        <div class="callout">
+          Common issues to watch for:<br><br>
+          — Business name wrong or incomplete (e.g. "Megapixels" instead of "Megapixels School of the Arts")<br>
+          — Description clearly AI-generated and not in your voice<br>
+          — Stock photo used instead of your own image<br>
+          — Wrong or outdated address<br>
+          — Missing or incorrect keywords / categories<br>
+          — Age groups not listed or incorrect
+        </div>
+        <p>Don't assume your listing is accurate just because your application was. Go find yourself in the directory and read every field.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: How to find yourself -->
+  <div class="qa-card" data-index="2">
+    <div class="card-num">03 — Finding Your Listing</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">How do I find my listing in the directory?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Go to <strong>serviceprovider.cfe-fund.org/directory</strong> and type your school or business name in the search bar. Try partial names too — you may show up under a shortened version of your name.</p>
+        <p>Once you find your listing, check every field carefully:</p>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">Business Name</div>
+            <div class="field-value">Is it your full, correct name?</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Description</div>
+            <div class="field-value">Does it sound like you? Is it accurate and keyword-rich?</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Title / Tagline</div>
+            <div class="field-value">Does it include relevant keywords like "online"? Is it compelling?</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Photo</div>
+            <div class="field-value">Is it your image, or a stock photo?</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Address</div>
+            <div class="field-value">Is it current? Online providers may prefer to list as "Online."</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Website</div>
+            <div class="field-value">Does the link work and go to the right page?</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Age Groups</div>
+            <div class="field-value">Are all your grade levels listed? (e.g. Kindergarten, Primary, Secondary)</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Categories</div>
+            <div class="field-value">Do the keywords match what families would actually search?</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Disability Categories</div>
+            <div class="field-value">If relevant, are you listed under the disabilities you support well?</div>
+          </div>
+        </div>
+        <div class="note-callout">⚠ Also test your keywords — type in terms like "online art" or "drawing" and see if you appear. If not, make sure those words are actually in your listing text.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: How to request changes -->
+  <div class="qa-card" data-index="3">
+    <div class="card-num">04 — Requesting Changes</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">How do I get my listing updated?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>You can't edit your listing directly — you email CFEF and tell them exactly what you want changed. Be specific and organized so they can make all the updates in one pass.</p>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">Email</div>
+            <div class="field-value">providers@cfe-fund.org</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Phone</div>
+            <div class="field-value">(801) 406-9080</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Subject line</div>
+            <div class="field-value">Please Update My Service Provider Directory Listing</div>
+          </div>
+        </div>
+        <div class="callout">
+          Structure your email clearly — go field by field so nothing gets missed. Include:<br><br>
+          — Correct business name<br>
+          — Address (or request "Online" if you prefer)<br>
+          — Phone &amp; website<br>
+          — New title/tagline<br>
+          — Updated written description (paste it in or attach)<br>
+          — Age groups you teach<br>
+          — Categories/keywords you want listed<br>
+          — Disability categories (if applicable)<br>
+          — Photo (attach your preferred image — not a stock photo)
+        </div>
+        <p>An email template is included below this video for you to copy and customize. Change everything to your own information before sending.</p>
+        <p>Once they've made updates, <strong>go back and check</strong> that everything actually looks the way you wanted. Don't assume it's correct until you've verified it yourself.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Keywords & searchability -->
+  <div class="qa-card" data-index="4">
+    <div class="card-num">05 — Keywords &amp; Searchability</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">How does search work in this directory, and how do I make sure I show up?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>The CFEF directory search pulls from your full listing text — including your title and description. That means the words you use directly determine whether families find you.</p>
+        <div class="callout">
+          Think about what a parent would actually type. If you teach online art, make sure the word <strong>"online"</strong> appears in your title or description. If you teach drawing, make sure <strong>"drawing"</strong> is in there — don't assume it will be inferred from "art."
+        </div>
+        <p>You can test this yourself: go to the directory and search for keywords you'd expect to show up under. If you don't appear, those words aren't in your listing.</p>
+        <div class="badge-row">
+          <span class="badge">Test "online art"</span>
+          <span class="badge">Test "drawing"</span>
+          <span class="badge">Test your name</span>
+          <span class="badge">Test your niche</span>
+        </div>
+        <div class="note-callout">⚠ The category/filter system on the directory may have a bug — selecting individual filters may not work. Keyword search in the main bar is the most reliable way families will find you, so prioritize getting your keywords into your text.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: Categories -->
+  <div class="qa-card" data-index="5">
+    <div class="card-num">06 — Categories</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What categories should I ask to be listed under?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>It's unclear whether CFEF has a fixed list of categories or allows free-form entries. The safest approach is to email them and ask for the list of available categories — then choose what fits.</p>
+        <div class="callout">
+          If they don't provide a list, just tell them what you offer. For art and creative educators, consider:<br><br>
+          — Art<br>
+          — Drawing<br>
+          — Photography<br>
+          — Writing (if you offer it, even occasionally)<br>
+          — Online (if you teach virtually)
+        </div>
+        <p>There may be a limit on how many categories you can have — possibly two or three. Prioritize the ones most central to what you teach. If you offer writing but aren't actively marketing it, you can still include it so you're not locked out later.</p>
+        <div class="note-callout">⚠ We're still confirming whether CFEF has a set category list. Check below this video for any updates — we'll add details here once we hear back.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 7: Disability categories -->
+  <div class="qa-card" data-index="6">
+    <div class="card-num">07 — Disability Categories</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Should I fill in the Disability Categories section?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Yes — if your classes work well for students with specific disabilities, this is worth including. The Carson Smith Scholarship is specifically for students with disabilities, so families are actively filtering for providers who can support their child's needs.</p>
+        <div class="callout">
+          In your email to CFEF, list the disability categories that genuinely apply to your teaching. For example: "My classes work well for students with ADHD, dyslexia, and anxiety."<br><br>
+          Make sure it's also clear that you welcome students without disabilities — you don't want to accidentally narrow your audience.
+        </div>
+        <p>You can copy and paste from the category options listed in the directory. Only include what's genuinely true for your classes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="checklist-section">
+    <div class="checklist-title">Optimization Checklist</div>
+    <div class="checklist-rule"></div>
+    <div class="checklist-items">
+      <div class="checklist-item">
+        <div class="check-num">1</div>
+        <div class="check-text">Find your listing at <strong>serviceprovider.cfe-fund.org/directory</strong> and read every field</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">2</div>
+        <div class="check-text">Test keyword searches — make sure you show up for terms families would actually type</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">3</div>
+        <div class="check-text">Note everything you want changed: name, address, title, description, photo, age groups, categories</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">4</div>
+        <div class="check-text">Write your updated description (use the vendor description lesson for guidance)</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">5</div>
+        <div class="check-text">Choose a photo — a real image of your work or students, not a stock photo</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">6</div>
+        <div class="check-text">Email <strong>providers@cfe-fund.org</strong> with all requested changes (use the template below the video)</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">7</div>
+        <div class="check-text">After updates are made, go back and verify everything looks correct</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Children First Education Fund · Funding &amp; Directory Optimization<br>
+    © Megapixels, LLC · For enrolled clients only
+  </div>
+
+</div>
+
+<script>
+  const TOTAL = 7;
+
+  function buildDots() {
+    const bar = document.getElementById('progressBar');
+    for (let i = 0; i < TOTAL; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.dataset.index = i;
+      d.addEventListener('click', () => scrollToCard(i));
+      bar.appendChild(d);
+    }
+  }
+
+  function scrollToCard(i) {
+    const cards = document.querySelectorAll('.qa-card[data-index]');
+    if (cards[i]) cards[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function updateDots() {
+    const cards = document.querySelectorAll('.qa-card[data-index]');
+    const dots  = document.querySelectorAll('.dot');
+    let active  = 0;
+    cards.forEach((card, i) => {
+      const rect = card.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.5) active = i;
+    });
+    dots.forEach((d, i) => {
+      d.classList.toggle('active',  i === active);
+      d.classList.toggle('visited', i < active);
+    });
+  }
+
+  function toggle(el) {
+    el.closest('.qa-card').classList.toggle('open');
+  }
+
+  buildDots();
+  window.addEventListener('scroll', updateDots, { passive: true });
+</script>
+</body>
+</html>

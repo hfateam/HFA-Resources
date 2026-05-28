@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClassWallet Q&A</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #5f8f8a;
+    --teal-light: #8fbfba;
+    --teal-faint: #e8f0ef;
+    --teal-mid: #c5dbd9;
+    --cream: #f7f5f1;
+    --warm-white: #fdfcfa;
+    --stone: #9c9790;
+    --charcoal: #3a3835;
+    --ink: #2a2826;
+    --divider: #e2ddd7;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  /* Header */
+  .header {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    padding: 36px 60px 32px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  .header-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    background: var(--teal-faint);
+    border: 1px solid var(--teal-mid);
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 4px;
+  }
+
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--charcoal);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--stone);
+    font-weight: 300;
+    margin-left: auto;
+    padding-bottom: 2px;
+  }
+
+  /* Progress dots */
+  .progress-bar {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 14px 60px;
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--divider);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .dot.active { background: var(--teal); transform: scale(1.3); }
+  .dot.visited { background: var(--teal-light); }
+
+  /* Main content */
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 40px;
+  }
+
+  /* Card */
+  .qa-card {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .qa-card:nth-child(1) { animation-delay: 0.05s; }
+  .qa-card:nth-child(2) { animation-delay: 0.12s; }
+  .qa-card:nth-child(3) { animation-delay: 0.19s; }
+  .qa-card:nth-child(4) { animation-delay: 0.26s; }
+  .qa-card:nth-child(5) { animation-delay: 0.33s; }
+  .qa-card:nth-child(6) { animation-delay: 0.40s; }
+  .qa-card:nth-child(7) { animation-delay: 0.47s; }
+
+  .question-block {
+    padding: 24px 28px 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .q-marker {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--teal);
+    flex-shrink: 0;
+    margin-top: 1px;
+    width: 20px;
+  }
+
+  .question-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--charcoal);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .toggle-icon {
+    color: var(--teal-light);
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: transform 0.3s;
+    font-weight: 300;
+  }
+
+  .qa-card.open .toggle-icon {
+    transform: rotate(45deg);
+  }
+
+  .answer-block {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .qa-card.open .answer-block {
+    max-height: 800px;
+  }
+
+  .answer-inner {
+    padding: 0 28px 26px 64px;
+    border-top: 1px solid var(--teal-faint);
+    padding-top: 20px;
+  }
+
+  .answer-inner p {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--charcoal);
+    line-height: 1.75;
+    margin-bottom: 12px;
+  }
+  .answer-inner p:last-child { margin-bottom: 0; }
+
+  /* Permission boxes */
+  .perm-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .perm-box {
+    border-radius: 3px;
+    padding: 16px 18px;
+  }
+
+  .perm-box.user {
+    background: var(--cream);
+    border: 1px solid var(--divider);
+  }
+
+  .perm-box.admin {
+    background: var(--teal-faint);
+    border: 1px solid var(--teal-mid);
+  }
+
+  .perm-box h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 10px;
+  }
+
+  .perm-box.admin h4 { color: var(--teal); }
+
+  .perm-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.5;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+
+  .perm-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-size: 12px;
+  }
+
+  .can { color: var(--teal); }
+  .cannot { color: #c4a882; }
+
+  /* Status badges */
+  .status-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 2px;
+    background: var(--teal-faint);
+    color: var(--teal);
+    border: 1px solid var(--teal-mid);
+  }
+
+  /* Highlight callout */
+  .callout {
+    background: var(--teal-faint);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 3px 3px 0;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 13.5px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--charcoal);
+  }
+
+  /* Resource link */
+  .resource-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--teal);
+    text-decoration: none;
+    border-bottom: 1px solid var(--teal-mid);
+    padding-bottom: 1px;
+    letter-spacing: 0.03em;
+  }
+
+  .resource-link:hover { color: var(--teal-light); }
+
+  /* Footer note */
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--stone);
+    margin-top: 48px;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+  }
+
+  /* Number label on cards */
+  .card-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--stone);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 28px 0;
+    opacity: 0.7;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-tag">Homeschool Funding Accelerator</div>
+    <div class="header-title">ClassWallet Q&amp;A</div>
+  </div>
+  <div class="header-sub">Vendor Training Reference</div>
+</div>
+
+<div class="content">
+
+  <!-- Q1 -->
+  <div class="qa-card open">
+    <div class="card-num">01 — Access &amp; Roles</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="q-marker">Q</span>
+      <span class="question-text">If I want to add a VA but don't want them to see or change my financial info, should I add them as an Admin or a User? What if I did want them to be able to do invoicing for me?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>For a VA who should <em>not</em> touch your financial info, add them as a <strong>User</strong>. For someone handling invoicing, you'd move up to <strong>Admin</strong>.</p>
+        <div class="perm-grid">
+          <div class="perm-box user">
+            <h4>User Role</h4>
+            <div class="perm-item"><span class="perm-icon can">✓</span><span>View Payment Reports</span></div>
+            <div class="perm-item"><span class="perm-icon can">✓</span><span>Manage their own login credentials</span></div>
+            <div class="perm-item"><span class="perm-icon cannot">✗</span><span>Cannot see or change bank account</span></div>
+            <div class="perm-item"><span class="perm-icon cannot">✗</span><span>Cannot invite other users</span></div>
+            <div class="perm-item"><span class="perm-icon cannot">✗</span><span>Cannot edit vendor profile</span></div>
+          </div>
+          <div class="perm-box admin">
+            <h4>Admin Role</h4>
+            <p style="font-size:12px; color: var(--teal); margin-bottom:10px; font-weight:400;">Everything in User, plus:</p>
+            <div class="perm-item"><span class="perm-icon can">✓</span><span>Update linked bank account</span></div>
+            <div class="perm-item"><span class="perm-icon can">✓</span><span>Invite other users &amp; admins</span></div>
+            <div class="perm-item"><span class="perm-icon can">✓</span><span>Manage vendor profile &amp; display name</span></div>
+          </div>
+        </div>
+        <a class="resource-link" href="https://classwallet.my.site.com/classwallet/s/article/DirectPay-User-Management-Invitation-and-Access-Control" target="_blank">↗ ClassWallet Help Article</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="qa-card">
+    <div class="card-num">02 — Search &amp; Discoverability</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="q-marker">Q</span>
+      <span class="question-text">In my display name, are the keywords I'm using searchable by families looking for my classes?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Yes — but families must search in a specific place.</p>
+        <div class="callout">
+          Families need to use the <strong>Direct Pay</strong> section to find you. Under that search bar, they can type your full display name (e.g., <em>"1 Art – Megapixels School"</em>) or even just the number <em>"1"</em> and your school will appear in results.
+        </div>
+        <p>The general search elsewhere in the platform may not surface your name — Direct Pay is the key entry point.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="qa-card">
+    <div class="card-num">03 — Credentials</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="q-marker">Q</span>
+      <span class="question-text">Does it make sense to upload a college degree in Credentials even if it's not a teaching degree? Who sees these, and what are they used for?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p><strong>No need to upload it</strong> — at least not right now.</p>
+        <p>The credentials section is currently for your own personal visibility only. It is not linked to your application and is not visible to families, so uploading a degree (teaching or otherwise) won't affect how you appear in the system.</p>
+        <div class="callout">This may change as the platform evolves, but for now you can skip this section entirely.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="qa-card">
+    <div class="card-num">04 — Vendor Categories</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="q-marker">Q</span>
+      <span class="question-text">Can I be listed in more than one vendor category? Would multiple categories make me show up more often in search?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Yes, you can apply for multiple categories. However, only <strong>one primary category</strong> will display on your actual profile.</p>
+        <div class="callout">
+          This doesn't limit your visibility. As long as you're approved for additional services, families can still find and select you whenever they search for those specific categories in the system.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="qa-card">
+    <div class="card-num">05 — Payments &amp; Invoicing</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="q-marker">Q</span>
+      <span class="question-text">For Payment Reports, is that where I'd go to do the invoicing?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>The Payment Report is your <strong>dashboard for viewing payments</strong> — not where invoicing originates. Transactions are initiated manually by parents, not by you.</p>
+        <p>Here's how the Direct Pay flow works:</p>
+        <div class="callout">
+          1. You send an invoice to the parent.<br><br>
+          2. The parent manually submits the payment through their ClassWallet account.<br><br>
+          3. Once approved by the program administrator, you receive a deposit in <strong>2–10 business days</strong>.<br><br>
+          4. The transaction then appears in your Payment Report.
+        </div>
+        <p>Note: payments pending administrator approval will <em>not</em> yet be visible in the report.</p>
+        <div class="status-row">
+          <span class="badge">Queued</span>
+          <span class="badge">Initiated</span>
+          <span class="badge">Settled</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="qa-card">
+    <div class="card-num">06 — Profile</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="q-marker">Q</span>
+      <span class="question-text">How long can my vendor description be?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>There's no official character limit. The description box is generous — many vendors write very detailed, lengthy descriptions without any issues.</p>
+        <div class="callout">Feel free to include everything families need to know. Don't hold back!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="qa-card">
+    <div class="card-num">07 — Platform Setup</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="q-marker">Q</span>
+      <span class="question-text">For ClassWallet, once a vendor sets up their account, does it work for all schools — or do they have to set it up separately for each school?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>For ClassWallet, you only have to set up your account once, and it will already work for all the schools.</p>
+        <p>For Odyssey, it's different — each ESA under Odyssey has its own portal link, so vendors will need to set up their account separately for each school.</p>
+        <p>For both ClassWallet and Odyssey, the information a vendor puts in does show up in the vendor directory.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">ClassWallet Vendor Training · Homeschool Funding Accelerator<br>© Megapixels, LLC</div>
+
+</div>
+
+<script>
+  function toggle(el) {
+    const card = el.closest('.qa-card');
+    card.classList.toggle('open');
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Optimize Your Vendor Directory Listing</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #6b9e9e;
+    --teal-light: #a8c9c9;
+    --teal-muted: #e8f0f0;
+    --teal-deep: #4a7c7c;
+    --cream: #faf8f5;
+    --sand: #f0ece4;
+    --warm-gray: #9e9690;
+    --charcoal: #2e2b28;
+    --mid: #5c5855;
+    --border: #ddd8d0;
+    --white: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: var(--cream);
+    color: var(--charcoal);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* HEADER */
+  .hero {
+    background: linear-gradient(135deg, var(--charcoal) 0%, #3d3a36 60%, #4a7c7c 100%);
+    padding: 60px 40px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(107,158,158,0.15);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: rgba(107,158,158,0.10);
+  }
+  .lesson-tag {
+    display: inline-block;
+    background: rgba(107,158,158,0.3);
+    color: var(--teal-light);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 5vw, 40px);
+    color: var(--white);
+    font-weight: 600;
+    line-height: 1.25;
+    max-width: 640px;
+    margin: 0 auto 16px;
+  }
+  .hero p {
+    color: rgba(255,255,255,0.65);
+    font-size: 15px;
+    max-width: 480px;
+    margin: 0 auto;
+    font-weight: 300;
+  }
+
+  /* MAIN CONTENT */
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  /* INTRO CARD */
+  .intro-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--teal);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin: 40px 0 36px;
+  }
+  .intro-card p {
+    color: var(--mid);
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+  .intro-card p:last-child { margin-bottom: 0; }
+  .intro-card strong { color: var(--charcoal); font-weight: 500; }
+
+  /* SECTION HEADERS */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    margin-top: 44px;
+  }
+  .step-num {
+    width: 32px; height: 32px;
+    background: var(--teal);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .section-label h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--charcoal);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 14px;
+  }
+  .card h3 {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+  .card p {
+    font-size: 14.5px;
+    color: var(--mid);
+    line-height: 1.65;
+  }
+
+  /* THE 4 PILLARS */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 4px;
+  }
+  @media (max-width: 520px) {
+    .pillars { grid-template-columns: 1fr; }
+  }
+  .pillar {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pillar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--teal);
+  }
+  .pillar-icon {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .pillar h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+  .pillar p {
+    font-size: 13.5px;
+    color: var(--mid);
+    line-height: 1.6;
+  }
+
+  /* PATH SPLIT */
+  .path-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  @media (max-width: 560px) {
+    .path-split { grid-template-columns: 1fr; }
+  }
+  .path-card {
+    border-radius: 10px;
+    padding: 24px 22px;
+    border: 1.5px solid;
+  }
+  .path-card.private {
+    background: var(--sand);
+    border-color: var(--border);
+  }
+  .path-card.public {
+    background: var(--teal-muted);
+    border-color: var(--teal-light);
+  }
+  .path-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .path-card.private .path-tag {
+    background: var(--border);
+    color: var(--warm-gray);
+  }
+  .path-card.public .path-tag {
+    background: var(--teal-light);
+    color: var(--teal-deep);
+  }
+  .path-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 10px;
+  }
+  .path-card ul {
+    list-style: none;
+    padding: 0;
+  }
+  .path-card ul li {
+    font-size: 14px;
+    color: var(--mid);
+    padding: 5px 0;
+    padding-left: 18px;
+    position: relative;
+    line-height: 1.55;
+  }
+  .path-card ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--teal);
+    font-size: 13px;
+  }
+
+  /* CALLOUT */
+  .callout {
+    background: var(--teal-muted);
+    border: 1px solid var(--teal-light);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin-top: 14px;
+  }
+  .callout-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-deep);
+    margin-bottom: 8px;
+  }
+  .callout p {
+    font-size: 14.5px;
+    color: var(--mid);
+    line-height: 1.65;
+  }
+  .callout strong { color: var(--charcoal); font-weight: 500; }
+
+  /* REMINDER STRIP */
+  .reminder {
+    background: var(--charcoal);
+    border-radius: 10px;
+    padding: 22px 28px;
+    margin-top: 40px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .reminder-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .reminder p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.6;
+  }
+  .reminder strong { color: var(--white); font-weight: 500; }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px 0 0;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 24px 24px 40px;
+    color: var(--warm-gray);
+    font-size: 13px;
+  }
+  .footer span {
+    color: var(--teal);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero h1, .hero p, .intro-card, .pillars, .path-split, .callout, .reminder {
+    animation: fadeUp 0.5s ease both;
+  }
+  .hero p { animation-delay: 0.08s; }
+  .intro-card { animation-delay: 0.12s; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="lesson-tag">Homeschool Funding Accelerator · Vendor Optimization</div>
+  <h1>How to Optimize Your Vendor Directory Listing</h1>
+  <p>Once you've been accepted to a school, this is how you make sure families can actually find and choose you.</p>
+</div>
+
+<div class="container">
+
+  <div class="intro-card">
+    <p><strong>What is a vendor directory?</strong> When a school accepts you as a vendor, they typically list you in a directory, essentially a searchable marketplace where homeschool families browse and choose where to spend their education funds.</p>
+    <p>Think of it like a profile page for your business. Your job is to make yours so clear, compelling, and complete that a parent scrolling quickly stops and says, <em>"Yes, this one."</em></p>
+    <p><strong>The good news:</strong> most vendors don't put much effort into their listings. That means a little intentionality goes a long, long way.</p>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="section-label">
+    <div class="step-num">1</div>
+    <h2>Find Your Listing</h2>
+  </div>
+  <div class="card">
+    <p>After acceptance, locate your listing in the school's vendor directory. Use our school directory to find the specific directory for each school you've been accepted to. Depending on the school, you'll either log in directly to edit your listing, or you'll need to email the school with the changes you'd like made. Both are normal, so just check how each school handles it.</p>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="section-label">
+    <div class="step-num">2</div>
+    <h2>Apply the Five Pillars to Every Listing</h2>
+  </div>
+
+  <p style="font-size:14.5px; color:var(--mid); margin-bottom:18px;">Whether the directory is public or private, these five things apply to <em>every single listing</em> you have, no exceptions.</p>
+
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pillar-icon">✅</div>
+      <h3>Fully Filled Out</h3>
+      <p>Don't leave a single field blank. Parents need complete information to make a buying decision, and the more you fill out, the more often you'll show up in search results within the directory.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">🔍</div>
+      <h3>Keyword Rich</h3>
+      <p>Use the words families actually search for: art, photography, drawing, online, and so on. If the words aren't there, you won't show up.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">✨</div>
+      <h3>Compelling</h3>
+      <p>Your listing should make a parent feel something. What transformation do you offer their child? What makes you stand out from everyone else? Why are you the perfect fit for <em>their</em> kid specifically? Lead with that, not just your credentials.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">💡</div>
+      <h3>Clear</h3>
+      <p>A parent should immediately understand what you offer, who it's for, and how it works. No jargon, no vague language. If it takes effort to understand, they'll move on.</p>
+    </div>
+    <div class="pillar" style="grid-column: 1 / -1;">
+      <div class="pillar-icon">👉</div>
+      <h3>Ends with a Call to Action</h3>
+      <p>Don't just describe what you do. Tell the parent exactly what to do next. Give them a clear, easy next step that feels exciting, not salesy. Examples: <em>Try a free trial class, Grab our free starter guide, Save your spot today, Sign up now (spots fill fast).</em> A listing without a CTA leaves parents with nowhere to go.</p>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="section-label">
+    <div class="step-num">3</div>
+    <h2>Public vs. Private Directories</h2>
+  </div>
+
+  <p style="font-size:14.5px; color:var(--mid); margin-bottom:16px;">Some school directories are visible to the public, meaning anyone can browse them; others are private, visible only to enrolled families. Here's how your approach shifts:</p>
+
+  <div class="path-split">
+    <div class="path-card private">
+      <div class="path-tag">🔒 Private Directory</div>
+      <h3>Optimize in a vacuum</h3>
+      <ul>
+        <li>You can't see other vendors' listings</li>
+        <li>Focus entirely on your own profile</li>
+        <li>Apply all four pillars thoroughly</li>
+        <li>That's genuinely all you can do, and it's enough</li>
+      </ul>
+    </div>
+    <div class="path-card public">
+      <div class="path-tag">🌐 Public Directory</div>
+      <h3>Optimize with context</h3>
+      <ul>
+        <li>Browse listings beyond just your niche</li>
+        <li>Look for ones that genuinely stand out</li>
+        <li>Notice what they're doing that you aren't</li>
+        <li>Get inspired, then apply it to yours</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">💬 A note on public directories</div>
+    <p>When you browse other listings, you're not looking to copy anyone. You're looking to <strong>learn what's possible</strong>. Maybe you didn't know you could add a video. Maybe you didn't know you could include a photo gallery. Maybe another vendor's bio format is just much clearer than yours. That's valuable intel. Use it.</p>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="section-label">
+    <div class="step-num">4</div>
+    <h2>Study Strong Examples</h2>
+  </div>
+  <div class="card">
+    <h3>What does a great listing actually look like?</h3>
+    <p>Inside HFA, you'll find curated examples of strong vendor listings, real profiles that do this well. When you're optimizing your own, use those as a reference point. You can also find examples yourself: browse any public directory and look for a listing that immediately grabs your attention. Ask yourself what it's doing right. Then bring that energy to yours.</p>
+  </div>
+
+  <div class="reminder">
+    <div class="reminder-icon">🌿</div>
+    <p><strong>The goal is simple:</strong> when a family finds your listing, they should feel confident, excited, and ready to say yes. A listing that's complete, keyword-rich, compelling, clear, and ends with a strong call to action does exactly that, and it's well within your reach. You've already done the hard part by getting accepted. Now let's make sure families can find you.</p>
+  </div>
+
+</div>
+
+<hr class="divider">
+<div class="footer">
+  Homeschool Funding Accelerator &nbsp;·&nbsp; <span>© Megapixels, LLC</span>
+</div>
+
+</body>
+</html>

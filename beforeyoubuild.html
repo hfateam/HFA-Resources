@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HFA Prep Worksheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal:        #5e9090;
+    --teal-light:  #8ab4b4;
+    --teal-pale:   #d6e8e8;
+    --teal-faint:  #eef5f5;
+    --ink:         #2c2c2c;
+    --mid:         #6b6b6b;
+    --soft:        #a8a8a8;
+    --rule:        #dde6e6;
+    --bg:          #f7f5f2;
+    --card:        #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 48px 24px 80px;
+  }
+
+  /* ── header ── */
+  .header {
+    max-width: 740px;
+    margin: 0 auto 48px;
+    position: relative;
+  }
+
+  .eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(36px, 6vw, 56px);
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--teal);
+  }
+
+  .subtitle {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--mid);
+    max-width: 520px;
+    border-left: 2px solid var(--teal-pale);
+    padding-left: 16px;
+  }
+
+  .teal-rule {
+    width: 48px;
+    height: 2px;
+    background: var(--teal);
+    margin: 24px 0 0;
+  }
+
+  /* ── progress dots ── */
+  .progress-bar {
+    max-width: 740px;
+    margin: 0 auto 40px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .prog-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .prog-step:last-child { flex: 0; }
+
+  .prog-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 2px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--soft);
+    flex-shrink: 0;
+    transition: all .3s ease;
+  }
+
+  .prog-dot.active {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: white;
+  }
+
+  .prog-dot.done {
+    background: var(--teal-pale);
+    border-color: var(--teal-light);
+    color: var(--teal);
+  }
+
+  .prog-line {
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+    margin: 0 4px;
+  }
+
+  .prog-line.done { background: var(--teal-light); }
+
+  /* ── sections ── */
+  .section {
+    max-width: 740px;
+    margin: 0 auto 32px;
+    background: var(--card);
+    border-radius: 12px;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+    transition: box-shadow .2s ease;
+  }
+
+  .section:hover { box-shadow: 0 4px 24px rgba(94,144,144,.10); }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 22px 28px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--teal-faint);
+  }
+
+  .section-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--teal-light);
+    line-height: 1;
+    min-width: 28px;
+  }
+
+  .section-title {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .section-hint {
+    font-size: 12px;
+    color: var(--mid);
+    margin-top: 2px;
+    font-weight: 300;
+  }
+
+  .section-body { padding: 24px 28px; }
+
+  /* ── form elements ── */
+  label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 6px;
+    margin-top: 18px;
+  }
+
+  label:first-child { margin-top: 0; }
+
+  input[type="text"],
+  textarea,
+  select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    border-radius: 7px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    resize: vertical;
+  }
+
+  input[type="text"]:focus,
+  textarea:focus,
+  select:focus {
+    border-color: var(--teal-light);
+    box-shadow: 0 0 0 3px rgba(94,144,144,.12);
+  }
+
+  input::placeholder, textarea::placeholder { color: var(--soft); }
+
+  /* ── class rows ── */
+  .class-list { display: flex; flex-direction: column; gap: 14px; }
+
+  .class-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 100px auto;
+    gap: 10px;
+    align-items: end;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 14px;
+    animation: fadeIn .25s ease;
+  }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+
+  .class-row .field-group { display: flex; flex-direction: column; }
+  .class-row label { margin-top: 0; }
+
+  .delete-btn {
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--soft);
+    font-size: 16px;
+    transition: all .2s;
+    flex-shrink: 0;
+    margin-bottom: 1px;
+  }
+
+  .delete-btn:hover { border-color: #d9a0a0; color: #c97070; background: #fff5f5; }
+
+  .add-btn {
+    margin-top: 14px;
+    background: none;
+    border: 1.5px dashed var(--teal-light);
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--teal);
+    cursor: pointer;
+    width: 100%;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .add-btn:hover { background: var(--teal-faint); border-style: solid; }
+
+  /* ── toggle chips ── */
+  .chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+
+  .chip {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--rule);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+    user-select: none;
+    color: var(--mid);
+    background: var(--bg);
+  }
+
+  .chip.selected {
+    background: var(--teal-pale);
+    border-color: var(--teal-light);
+    color: var(--teal);
+    font-weight: 500;
+  }
+
+  /* ── counter ── */
+  .counter-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-top: 6px;
+  }
+
+  .counter-btn {
+    width: 36px;
+    height: 36px;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    font-size: 18px;
+    color: var(--teal);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s;
+    flex-shrink: 0;
+  }
+
+  .counter-btn:first-child { border-radius: 7px 0 0 7px; }
+  .counter-btn:last-child  { border-radius: 0 7px 7px 0; }
+  .counter-btn:hover { background: var(--teal-faint); }
+
+  .counter-val {
+    width: 52px;
+    height: 36px;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    border-left: none;
+    border-right: none;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--card);
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+  }
+
+  /* ── pricing split ── */
+  .price-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 4px;
+  }
+
+  .price-card {
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: var(--bg);
+  }
+
+  .price-card .type { font-size: 11px; font-weight: 500; letter-spacing:.06em; text-transform:uppercase; color:var(--mid); margin-bottom: 8px; }
+
+  .price-card input { margin: 0; }
+
+  /* ── callout ── */
+  .callout {
+    background: var(--teal-faint);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--mid);
+    line-height: 1.6;
+    margin-top: 16px;
+  }
+
+  .callout strong { color: var(--teal); font-weight: 500; }
+
+  /* ── summary panel ── */
+  #summary {
+    max-width: 740px;
+    margin: 40px auto 0;
+    background: var(--ink);
+    border-radius: 12px;
+    padding: 28px 32px;
+    color: white;
+  }
+
+  #summary h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 26px;
+    color: white;
+    margin-bottom: 20px;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .sum-item { }
+  .sum-label { font-size: 10px; letter-spacing:.12em; text-transform:uppercase; color: rgba(255,255,255,.45); margin-bottom: 4px; }
+  .sum-value { font-size: 14px; color: rgba(255,255,255,.9); line-height: 1.5; }
+
+  @media (max-width: 560px) {
+    .class-row { grid-template-columns: 1fr 1fr; }
+    .class-row .delete-btn { grid-column: span 2; width: 100%; justify-content: center; }
+    .price-split { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="eyebrow">Homeschool Funding Accelerator</div>
+  <h1>Before You Build,<br><em>Let's Get Clear.</em></h1>
+  <p class="subtitle">Before you jump into the four setup lessons, take 10 minutes here to sketch out your offer. You'll return to these answers again and again.</p>
+  <div class="teal-rule"></div>
+</div>
+
+<!-- Progress -->
+<div class="progress-bar" id="progressBar">
+  <div class="prog-step">
+    <div class="prog-dot active" id="dot1">1</div>
+    <div class="prog-line" id="line1"></div>
+  </div>
+  <div class="prog-step">
+    <div class="prog-dot" id="dot2">2</div>
+    <div class="prog-line" id="line2"></div>
+  </div>
+  <div class="prog-step">
+    <div class="prog-dot" id="dot3">3</div>
+    <div class="prog-line" id="line3"></div>
+  </div>
+  <div class="prog-step">
+    <div class="prog-dot" id="dot4">4</div>
+  </div>
+</div>
+
+<!-- SECTION 1: Your Classes -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <div>
+      <div class="section-title">Your Classes</div>
+      <div class="section-hint">What will you teach? Don't overthink it — rough ideas are perfect.</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="class-list" id="classList"></div>
+    <button class="add-btn" onclick="addClass()">+ Add a class</button>
+    <div class="callout">
+      <strong>Tip:</strong> List every class you're thinking of offering. You can always adjust later — this is just your starting point.
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: Live vs Pre-Recorded -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <div>
+      <div class="section-title">Format</div>
+      <div class="section-hint">How do you want to deliver your classes?</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <label>Primary format</label>
+    <div class="chip-group" id="formatChips">
+      <div class="chip" onclick="toggleChip(this, 'format')">All live</div>
+      <div class="chip" onclick="toggleChip(this, 'format')">All pre-recorded</div>
+      <div class="chip" onclick="toggleChip(this, 'format')">Mix of both</div>
+      <div class="chip" onclick="toggleChip(this, 'format')">Not sure yet</div>
+    </div>
+
+    <label style="margin-top:18px;">How many live class options will a student choose from?</label>
+    <div class="chip-group" id="liveOptionsChips">
+      <div class="chip" onclick="toggleChip(this, 'liveOptions')">1 option</div>
+      <div class="chip" onclick="toggleChip(this, 'liveOptions')">2 options</div>
+      <div class="chip" onclick="toggleChip(this, 'liveOptions')">No live classes</div>
+      <div class="chip" onclick="toggleChip(this, 'liveOptions')">Not sure yet</div>
+    </div>
+
+    <div class="callout" style="margin-top:16px;">
+      <strong>Live classes:</strong> Keep it to 1–2 scheduling options per student — too many choices creates confusion. You can offer more live classes if they serve different ages or subjects, but any one student should have 1–2 times to pick from.<br><br>
+      <strong>Pre-recorded:</strong> No limit — you'll create these as students join, not all upfront.
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: Pricing Gut Check -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <div>
+      <div class="section-title">Pricing Gut Check</div>
+      <div class="section-hint">What feels right to you right now? Market research will help you refine this.</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <p style="font-size:13px; color:var(--mid); line-height:1.7; margin-bottom:16px;">You'll list both a <strong style="color:var(--ink)">monthly price</strong> and a <strong style="color:var(--ink)">per-semester price</strong> for each class — most schools require one or the other. To think through what feels right, consider how much you'd charge per session, then work outward.</p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px;">
+      <div class="price-card">
+        <div class="type">Per session (gut check)</div>
+        <input type="text" placeholder="e.g. $15" oninput="updateSummary()" id="priceSession">
+      </div>
+      <div class="price-card">
+        <div class="type">Monthly (× sessions/mo)</div>
+        <input type="text" placeholder="e.g. $50/mo" oninput="updateSummary()" id="priceLow">
+      </div>
+      <div class="price-card">
+        <div class="type">Per semester (~4–5 months)</div>
+        <input type="text" placeholder="e.g. $200/sem" oninput="updateSummary()" id="priceHigh">
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Remember:</strong> These are gut-check numbers only — market research comes next and will help you refine them. Most schools will pay monthly or per-semester; per-session billing is rare and per-year is almost never allowed.
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4: Your Vibe / Business Description Seed -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <div>
+      <div class="section-title">Your Business Description</div>
+      <div class="section-hint">Paste your Skool profile's About section — or jot something rough. You'll polish it in the Vendor Description lesson.</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <label>About your business</label>
+    <textarea rows="5" placeholder="Paste your Skool 'About' section here, or write a few sentences about what you offer, who you serve, and what makes your classes special." id="oneLiner" oninput="updateSummary()"></textarea>
+
+    <label style="margin-top:18px;">Who is your ideal student?</label>
+    <div class="chip-group" id="ageChips">
+      <div class="chip" onclick="toggleChip(this, 'age')">K–2 (Ages 5–7)</div>
+      <div class="chip" onclick="toggleChip(this, 'age')">3–5 (Ages 8–10)</div>
+      <div class="chip" onclick="toggleChip(this, 'age')">6–8 (Ages 11–13)</div>
+      <div class="chip" onclick="toggleChip(this, 'age')">9–12 (Ages 14–18)</div>
+      <div class="chip" onclick="toggleChip(this, 'age')">All ages</div>
+    </div>
+  </div>
+</div>
+
+<!-- Summary -->
+<div id="summary">
+  <h2>Your Snapshot</h2>
+  <div class="summary-grid" id="summaryGrid">
+    <div class="sum-item">
+      <div class="sum-label">Classes</div>
+      <div class="sum-value" id="sumClasses">—</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-label">Format</div>
+      <div class="sum-value" id="sumFormat">—</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-label">Price range</div>
+      <div class="sum-value" id="sumPrice">—</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-label">Age group</div>
+      <div class="sum-value" id="sumAge">—</div>
+    </div>
+    <div class="sum-item" style="grid-column: span 2;">
+      <div class="sum-label">Description</div>
+      <div class="sum-value" id="sumOneLiner">—</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── class rows ──
+  let classId = 0;
+
+  function addClass() {
+    classId++;
+    const id = classId;
+    const list = document.getElementById('classList');
+    const row = document.createElement('div');
+    row.className = 'class-row';
+    row.id = `row-${id}`;
+    row.innerHTML = `
+      <div class="field-group">
+        <label>Class name</label>
+        <input type="text" placeholder="e.g. Watercolor for Beginners" oninput="updateSummary()">
+      </div>
+      <div class="field-group">
+        <label>Subject / Description</label>
+        <input type="text" placeholder="e.g. Visual arts" oninput="updateSummary()">
+      </div>
+      <div class="field-group">
+        <label>Est. price</label>
+        <input type="text" placeholder="e.g. $40/mo" oninput="updateSummary()">
+      </div>
+      <button class="delete-btn" onclick="deleteClass(${id})" title="Remove">×</button>
+    `;
+    list.appendChild(row);
+    updateProgress();
+    updateSummary();
+  }
+
+  function deleteClass(id) {
+    const row = document.getElementById(`row-${id}`);
+    if (row) row.remove();
+    updateSummary();
+    updateProgress();
+  }
+
+  // ── chips ──
+  const chipSelections = {};
+
+  function toggleChip(el, group) {
+    const siblings = el.parentElement.querySelectorAll('.chip');
+    siblings.forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    chipSelections[group] = el.textContent;
+    updateSummary();
+    updateProgress();
+  }
+
+  // ── counter ──
+  function adjustCounter(id, delta) {
+    const el = document.getElementById(id);
+    const val = parseInt(el.value) || 0;
+    el.value = Math.max(0, val + delta);
+    updateSummary();
+    updateProgress();
+  }
+
+  // ── summary ──
+  function updateSummary() {
+    // classes
+    const rows = document.querySelectorAll('.class-row');
+    let classNames = [];
+    rows.forEach(r => {
+      const name = r.querySelector('input').value.trim();
+      if (name) classNames.push(name);
+    });
+    document.getElementById('sumClasses').textContent = classNames.length ? classNames.join(', ') : '—';
+
+    // format
+    let fmt = chipSelections['format'] || '';
+    const liveOpt = chipSelections['liveOptions'];
+    if (liveOpt) fmt += fmt ? ` · ${liveOpt} for students` : liveOpt;
+    document.getElementById('sumFormat').textContent = fmt || '—';
+
+    // price
+    const session = document.getElementById('priceSession').value.trim();
+    const monthly = document.getElementById('priceLow').value.trim();
+    const semester = document.getElementById('priceHigh').value.trim();
+    let priceParts = [];
+    if (session) priceParts.push(`${session}/session`);
+    if (monthly) priceParts.push(`${monthly}/mo`);
+    if (semester) priceParts.push(`${semester}/sem`);
+    document.getElementById('sumPrice').textContent = priceParts.length ? priceParts.join(' · ') : '—';
+
+    // age
+    document.getElementById('sumAge').textContent = chipSelections['age'] || '—';
+
+    // one-liner
+    const ol = document.getElementById('oneLiner').value.trim();
+    document.getElementById('sumOneLiner').textContent = ol || '—';
+
+    updateProgress();
+  }
+
+  // ── progress ──
+  function updateProgress() {
+    const rows = document.querySelectorAll('.class-row').length;
+    const hasFormat = !!chipSelections['format'];
+    const hasPrice = !!(document.getElementById('priceSession').value || document.getElementById('priceLow').value || document.getElementById('priceHigh').value);
+    const hasOneLiner = !!document.getElementById('oneLiner').value.trim();
+
+    const steps = [rows > 0, hasFormat, hasPrice, hasOneLiner];
+    for (let i = 1; i <= 4; i++) {
+      const dot = document.getElementById(`dot${i}`);
+      const line = document.getElementById(`line${i}`);
+      if (steps[i-1]) {
+        dot.classList.remove('active');
+        dot.classList.add('done');
+        dot.textContent = '✓';
+        if (line) line.classList.add('done');
+      } else {
+        dot.classList.remove('done');
+        dot.textContent = i;
+        // set active to first incomplete
+      }
+    }
+    // highlight next incomplete
+    for (let i = 1; i <= 4; i++) {
+      const dot = document.getElementById(`dot${i}`);
+      if (!steps[i-1]) { dot.classList.add('active'); break; }
+    }
+  }
+
+  // seed one empty class row
+  addClass();
+</script>
+</body>
+</html>

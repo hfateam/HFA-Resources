@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Google Drive URL Converter — HFA Team</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:        #5f8f8a;
+      --teal-light:  #8fbfba;
+      --teal-faint:  #e8f0ef;
+      --teal-mid:    #c5dbd9;
+      --cream:       #f7f5f1;
+      --warm-white:  #fdfcfa;
+      --stone:       #9c9790;
+      --charcoal:    #3a3835;
+      --ink:         #2a2826;
+      --divider:     #e2ddd7;
+      --warn-bg:     #fdf6ec;
+      --warn-border: #c4a882;
+      --warn-text:   #7a5c30;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 1.25rem 5rem;
+    }
+
+    header {
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 2.5rem;
+    }
+
+    .header-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 500;
+      color: var(--charcoal);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--stone);
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 600px;
+      background: var(--warm-white);
+      border: 1px solid var(--divider);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--divider);
+      background: var(--cream);
+    }
+
+    .tab {
+      flex: 1;
+      padding: 0.85rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: var(--stone);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .tab.active {
+      color: var(--charcoal);
+      font-weight: 500;
+      background: var(--warm-white);
+      border-bottom-color: var(--teal);
+    }
+
+    .tab:hover:not(.active) {
+      color: var(--charcoal);
+      background: var(--teal-faint);
+    }
+
+    .panel { display: none; padding: 1.75rem; }
+    .panel.active { display: block; }
+
+    .hint {
+      font-size: 0.78rem;
+      color: var(--stone);
+      margin-bottom: 1.1rem;
+      line-height: 1.6;
+      padding-left: 0.85rem;
+      border-left: 2px solid var(--teal-mid);
+    }
+
+    .hint code {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.73rem;
+      background: var(--teal-faint);
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: var(--teal);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      resize: vertical;
+      font-size: 0.78rem;
+      font-family: 'DM Mono', monospace;
+      font-weight: 300;
+      border: 1px solid var(--divider);
+      border-radius: 6px;
+      padding: 10px 12px;
+      background: var(--cream);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.15s;
+      line-height: 1.6;
+    }
+
+    textarea:focus { border-color: var(--teal); }
+    textarea::placeholder { color: var(--stone); }
+
+    .select-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 0.75rem;
+    }
+
+    .select-row label {
+      font-size: 0.78rem;
+      color: var(--stone);
+      white-space: nowrap;
+    }
+
+    select {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      color: var(--ink);
+      background: var(--cream);
+      border: 1px solid var(--divider);
+      border-radius: 5px;
+      padding: 5px 8px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    select:focus { border-color: var(--teal); }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 1rem;
+    }
+
+    button.primary {
+      flex: 1;
+      padding: 0.65rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: 0.01em;
+    }
+
+    button.primary:hover { background: #4a7470; }
+    button.primary:active { transform: scale(0.98); }
+
+    button.ghost {
+      padding: 0.65rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 400;
+      background: none;
+      color: var(--stone);
+      border: 1px solid var(--divider);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    button.ghost:hover {
+      background: var(--teal-faint);
+      color: var(--charcoal);
+      border-color: var(--teal-mid);
+    }
+
+    .results { margin-top: 1.25rem; }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.6rem;
+    }
+
+    .results-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--stone);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    button.copy-all {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      color: var(--teal);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 0;
+      font-weight: 500;
+    }
+
+    button.copy-all:hover { color: #4a7470; }
+
+    .result-item {
+      background: var(--cream);
+      border: 1px solid var(--divider);
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+
+    .result-source {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--stone);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 5px;
+    }
+
+    .result-url-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .result-url {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.73rem;
+      color: var(--charcoal);
+      flex: 1;
+      word-break: break-all;
+      line-height: 1.55;
+    }
+
+    button.copy-one {
+      flex: 0 0 auto;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      background: var(--warm-white);
+      color: var(--stone);
+      border: 1px solid var(--divider);
+      border-radius: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    button.copy-one:hover {
+      background: var(--teal-faint);
+      color: var(--teal);
+      border-color: var(--teal-mid);
+    }
+
+    .error-box {
+      margin-top: 1rem;
+      padding: 10px 13px;
+      background: var(--warn-bg);
+      border-left: 3px solid var(--warn-border);
+      border-radius: 0 6px 6px 0;
+      font-size: 0.78rem;
+      color: var(--warn-text);
+      line-height: 1.55;
+    }
+
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.72rem;
+      color: var(--stone);
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    .divider-line {
+      width: 40px;
+      height: 1px;
+      background: var(--teal-mid);
+      margin: 1rem auto;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <p class="header-label">HFA Team Tools</p>
+  <h1>Google Drive URL Converter</h1>
+  <p class="subtitle">Convert share links into direct image URLs or "make a copy" links — paste one or many, one per line.</p>
+</header>
+
+<div class="card">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('direct', this)">Direct image URL</button>
+    <button class="tab" onclick="switchTab('copy', this)">Make a copy link</button>
+  </div>
+
+  <!-- Direct URL panel -->
+  <div class="panel active" id="panel-direct">
+    <p class="hint">For CSV uploads and portals that need a raw image URL. File must be shared as <code>Anyone with the link</code>.</p>
+    <textarea id="input-direct" placeholder="Paste Google Drive share link(s) here — one per line"></textarea>
+    <div class="btn-row">
+      <button class="primary" onclick="convertDirect()">Convert to direct URL</button>
+      <button class="ghost" onclick="clearPanel('direct')">Clear</button>
+    </div>
+    <div class="results" id="results-direct" style="display:none"></div>
+    <div class="error-box" id="error-direct" style="display:none"></div>
+  </div>
+
+  <!-- Make a copy panel -->
+  <div class="panel" id="panel-copy">
+    <p class="hint">For Google Docs, Sheets, or Slides you want to share as a template. Opens a prompt for the viewer to save their own copy.</p>
+    <textarea id="input-copy" placeholder="Paste Google Drive share link(s) here — one per line"></textarea>
+    <div class="select-row">
+      <label for="file-type">File type:</label>
+      <select id="file-type">
+        <option value="auto">Auto-detect</option>
+        <option value="document">Google Doc</option>
+        <option value="spreadsheets">Google Sheet</option>
+        <option value="presentation">Google Slides</option>
+        <option value="forms">Google Form</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="primary" onclick="convertCopy()">Generate copy link</button>
+      <button class="ghost" onclick="clearPanel('copy')">Clear</button>
+    </div>
+    <div class="results" id="results-copy" style="display:none"></div>
+    <div class="error-box" id="error-copy" style="display:none"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="divider-line"></div>
+  HFA Team Resources &nbsp;·&nbsp; Files must be publicly shared to work correctly
+</footer>
+
+<script>
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+function extractFileId(url) {
+  url = url.trim();
+  let m;
+  m = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return { id: m[1], type: 'file' };
+  m = url.match(/\/document\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return { id: m[1], type: 'document' };
+  m = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return { id: m[1], type: 'spreadsheets' };
+  m = url.match(/\/presentation\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return { id: m[1], type: 'presentation' };
+  m = url.match(/\/forms\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return { id: m[1], type: 'forms' };
+  m = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (m) return { id: m[1], type: 'file' };
+  m = url.match(/\/open\?id=([a-zA-Z0-9_-]+)/);
+  if (m) return { id: m[1], type: 'file' };
+  return null;
+}
+
+function showResults(panelName, outputs, failed) {
+  const container = document.getElementById('results-' + panelName);
+  const errBox = document.getElementById('error-' + panelName);
+  container.innerHTML = '';
+  errBox.style.display = 'none';
+
+  if (outputs.length === 0) {
+    errBox.textContent = "Couldn't find a valid Google Drive file ID in any of those links. Make sure the file is shared publicly and you're using the share link.";
+    errBox.style.display = 'block';
+    container.style.display = 'none';
+    return;
+  }
+
+  const header = document.createElement('div');
+  header.className = 'results-header';
+  header.innerHTML = `<span class="results-label">${outputs.length} URL${outputs.length > 1 ? 's' : ''} converted</span>
+    <button class="copy-all" onclick="copyAll('${panelName}')">Copy all</button>`;
+  container.appendChild(header);
+
+  outputs.forEach(({ original, url }) => {
+    const item = document.createElement('div');
+    item.className = 'result-item';
+    item.innerHTML = `
+      <div class="result-source">${original}</div>
+      <div class="result-url-row">
+        <span class="result-url" data-url="${url}">${url}</span>
+        <button class="copy-one" onclick="copySingle(this, '${url}')">Copy</button>
+      </div>`;
+    container.appendChild(item);
+  });
+
+  container.style.display = 'block';
+
+  if (failed.length > 0) {
+    errBox.textContent = `Converted ${outputs.length} link(s). Couldn't parse: ${failed.join(', ')} — double-check those are valid Drive share URLs.`;
+    errBox.style.display = 'block';
+  }
+}
+
+function convertDirect() {
+  const raw = document.getElementById('input-direct').value.trim();
+  if (!raw) return;
+  const lines = raw.split('\n').filter(l => l.trim());
+  const outputs = [], failed = [];
+  lines.forEach((line, i) => {
+    const parsed = extractFileId(line.trim());
+    if (parsed) {
+      outputs.push({ original: line.trim(), url: `https://drive.google.com/uc?export=view&id=${parsed.id}` });
+    } else { failed.push(`Line ${i + 1}`); }
+  });
+  showResults('direct', outputs, failed);
+}
+
+function convertCopy() {
+  const raw = document.getElementById('input-copy').value.trim();
+  const forcedType = document.getElementById('file-type').value;
+  if (!raw) return;
+  const lines = raw.split('\n').filter(l => l.trim());
+  const outputs = [], failed = [];
+  const typeMap = { document: 'document', spreadsheets: 'spreadsheets', presentation: 'presentation', forms: 'forms', file: 'document' };
+  lines.forEach((line, i) => {
+    const parsed = extractFileId(line.trim());
+    if (parsed) {
+      const t = forcedType === 'auto' ? (typeMap[parsed.type] || 'document') : forcedType;
+      outputs.push({ original: line.trim(), url: `https://docs.google.com/${t}/d/${parsed.id}/copy` });
+    } else { failed.push(`Line ${i + 1}`); }
+  });
+  showResults('copy', outputs, failed);
+}
+
+function copySingle(btn, url) {
+  navigator.clipboard.writeText(url).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.style.background = '#e8f0ef';
+    btn.style.color = '#5f8f8a';
+    btn.style.borderColor = '#8fbfba';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 1500);
+  });
+}
+
+function copyAll(panelName) {
+  const urls = Array.from(document.querySelectorAll(`#results-${panelName} .result-url`)).map(s => s.dataset.url).join('\n');
+  navigator.clipboard.writeText(urls).then(() => {
+    const btn = document.querySelector(`#results-${panelName} .copy-all`);
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  });
+}
+
+function clearPanel(name) {
+  document.getElementById('input-' + name).value = '';
+  document.getElementById('results-' + name).style.display = 'none';
+  document.getElementById('results-' + name).innerHTML = '';
+  document.getElementById('error-' + name).style.display = 'none';
+}
+</script>
+</body>
+</html>

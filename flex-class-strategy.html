@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flex Class Strategy — HFA</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #6b9e9a;
+    --teal-light: #9dc4c0;
+    --teal-faint: #e8f2f1;
+    --teal-dark: #4a7a76;
+    --cream: #f8f6f2;
+    --warm-white: #fdfcfa;
+    --stone: #8c8680;
+    --dark: #2d2b28;
+    --mid: #6b6661;
+    --border: #e0ddd8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--warm-white);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 60px 40px 80px;
+  }
+
+  /* Header */
+  .label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--dark);
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s ease forwards;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--teal-dark);
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--stone);
+    font-weight: 300;
+    margin-bottom: 52px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s ease forwards;
+  }
+
+  /* Divider */
+  .divider {
+    width: 48px;
+    height: 1px;
+    background: var(--teal-light);
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.25s ease forwards;
+  }
+
+  /* Core principle box */
+  .principle {
+    background: var(--teal-faint);
+    border-left: 3px solid var(--teal);
+    padding: 24px 28px;
+    margin-bottom: 52px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.3s ease forwards;
+  }
+
+  .principle p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--dark);
+    font-style: italic;
+  }
+
+  /* Steps */
+  .steps-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.35s ease forwards;
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 0 24px;
+    margin-bottom: 36px;
+    opacity: 0;
+  }
+
+  .step:nth-child(1) { animation: fadeUp 0.6s 0.4s ease forwards; }
+  .step:nth-child(2) { animation: fadeUp 0.6s 0.5s ease forwards; }
+  .step:nth-child(3) { animation: fadeUp 0.6s 0.6s ease forwards; }
+  .step:nth-child(4) { animation: fadeUp 0.6s 0.7s ease forwards; }
+  .step:nth-child(5) { animation: fadeUp 0.6s 0.8s ease forwards; }
+
+  .step-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--teal-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--teal-dark);
+    font-weight: 400;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .step-content h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+
+  .step-content p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--mid);
+    font-weight: 300;
+  }
+
+  .step-content .highlight {
+    display: inline-block;
+    background: var(--teal-faint);
+    color: var(--teal-dark);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    margin-top: 8px;
+    letter-spacing: 0.03em;
+  }
+
+  /* Two-col insight */
+  .insight-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 52px 0;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.85s ease forwards;
+  }
+
+  .insight-card {
+    padding: 24px;
+    border: 1px solid var(--border);
+    background: var(--cream);
+  }
+
+  .insight-card .card-label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 10px;
+  }
+
+  .insight-card p {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--mid);
+    font-weight: 300;
+  }
+
+  /* Waitlist note */
+  .note {
+    border-top: 1px solid var(--border);
+    padding-top: 36px;
+    margin-top: 8px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.95s ease forwards;
+  }
+
+  .note h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--dark);
+    margin-bottom: 10px;
+  }
+
+  .note p {
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--mid);
+    font-weight: 300;
+    max-width: 580px;
+  }
+
+  /* Quote */
+  .quote-block {
+    margin: 48px 0 0;
+    padding: 28px 32px;
+    background: var(--dark);
+    opacity: 0;
+    animation: fadeUp 0.6s 1.05s ease forwards;
+  }
+
+  .quote-block p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.65;
+    color: var(--teal-light);
+  }
+
+  .quote-block span {
+    display: block;
+    margin-top: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--stone);
+    font-style: normal;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .page { padding: 40px 24px 60px; }
+    .insight-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="label">Homeschool Funding Accelerator · Lesson</div>
+
+  <h1>Build Your Flex Classes <em>As You Go</em></h1>
+  <p class="subtitle">A smarter approach to creating content that students actually want</p>
+  <div class="divider"></div>
+
+  <div class="principle">
+    <p>You don't need a fully built class before your first student. List your flex ideas, let a real student sign up, then build together — one lesson at a time.</p>
+  </div>
+
+  <div class="steps-label">The Process</div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>List your flex ideas — not finished classes</h3>
+        <p>Put as many flex class ideas as you want on your DLS and website. You don't need the class built. You just need the idea listed and advertised.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Wait for a real student to sign up</h3>
+        <p>Once someone enrolls, that's your green light. Now you know there's actual demand — and you have a real student to tailor the content around.</p>
+        <div class="highlight">Ask them what they want to learn or what they're struggling with</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Tell the student: "You'll get access in one week"</h3>
+        <p>This gives you a week to create the first two lessons before opening the class. Two lessons upfront is your buffer — if you get sick, go on vacation, or life happens, your student isn't left waiting.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Release one new lesson every week after that</h3>
+        <p>Create one lesson per week going forward. You're building just ahead of your student — not months ahead, not in a vacuum.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h3>Don't worry if you start with just one or two students</h3>
+        <p>In most cases, more students come the following year. It's always worth building. The only thing to regret is creating an entire class before anyone signs up — and finding out later it wasn't what students needed.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="insight-row">
+    <div class="insight-card">
+      <div class="card-label">Why This Works</div>
+      <p>You can customize the content around the students who are actually in your class — and avoid spending hours creating lessons that nobody ever sees.</p>
+    </div>
+    <div class="insight-card">
+      <div class="card-label">The Two-Lesson Buffer</div>
+      <p>Starting with two lessons means you have built-in breathing room. If something unexpected comes up, your student still has content waiting for them.</p>
+    </div>
+  </div>
+
+  <div class="note">
+    <h3>What if you're worried about capacity?</h3>
+    <p>You never have to offer a class just because it's on your website or DLS. If you know fall will be too busy, you can put interested students on a waitlist and note that the class is currently full or accepting limited enrollment. You can add language to your listings that students should confirm availability before signing up — something like, "Check with me to make sure this class is currently accepting new students." Only create what you have time for.</p>
+  </div>
+
+  <div class="quote-block">
+    <p>"I've never regretted doing it this way. The only thing I regret is creating a whole class ahead of time — and then sometimes nobody ever signs up, or the content isn't what real students actually needed."</p>
+    <span>— From experience building Megapixels School of the Arts</span>
+  </div>
+
+</div>
+</body>
+</html>

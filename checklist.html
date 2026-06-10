@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HFA Operations Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal:#6b9e9a;--teal-light:#9dc4c0;--teal-faint:#e8f2f1;--teal-dark:#4a7a76;
+    --cream:#f8f6f2;--warm-white:#fdfcfa;--stone:#8c8680;--dark:#2d2b28;--mid:#6b6661;
+    --border:#e0ddd8;--amber:#c9965a;--amber-faint:#fdf3e8;--rose:#b07070;--rose-faint:#f9efef;
+    --done-text:#b0aca8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--warm-white);color:var(--dark);min-height:100vh;}
+  nav{position:sticky;top:0;z-index:100;background:var(--warm-white);border-bottom:1px solid var(--border);
+      padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:56px;}
+  .nav-brand{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--dark);
+             display:flex;align-items:center;gap:10px;}
+  .nav-brand span{font-family:'DM Sans',sans-serif;font-size:9px;font-weight:500;letter-spacing:.16em;
+                  text-transform:uppercase;color:var(--teal);border:1px solid var(--teal-light);padding:2px 8px;}
+  .nav-links{display:flex;gap:4px;}
+  .nav-link{font-size:12px;font-weight:400;color:var(--stone);padding:6px 14px;border-radius:2px;
+            transition:all .15s;cursor:pointer;background:none;border:none;}
+  .nav-link:hover,.nav-link.active{color:var(--teal-dark);background:var(--teal-faint);}
+  .page{max-width:1080px;margin:0 auto;padding:48px 40px 80px;}
+  .section{display:none;}.section.active{display:block;}
+  .section-header{margin-bottom:32px;}
+  .eyebrow{font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;}
+  .section-header h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:300;line-height:1.2;color:var(--dark);}
+  .section-header h2 em{font-style:italic;color:var(--teal-dark);}
+  .section-desc{margin-top:8px;font-size:14px;color:var(--stone);font-weight:300;}
+  .progress-wrap{margin:20px 0 24px;display:flex;align-items:center;gap:16px;}
+  .progress-bar-track{flex:1;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:var(--teal);border-radius:2px;transition:width .4s;}
+  .progress-label{font-size:12px;font-weight:500;color:var(--teal-dark);white-space:nowrap;min-width:60px;text-align:right;}
+  .time-strip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;}
+  .time-card{padding:18px 20px;border:1px solid var(--border);background:var(--cream);}
+  .time-card-label{font-size:9px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;}
+  .time-card.amanda .time-card-label{color:var(--teal-dark);}
+  .time-card.meg .time-card-label{color:#8a5f2a;}
+  .time-card.shared-card .time-card-label{color:var(--rose);}
+  .time-nums{display:flex;align-items:baseline;gap:6px;}
+  .time-remaining{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--dark);line-height:1;}
+  .time-unit{font-size:11px;color:var(--stone);}
+  .time-sub{font-size:11px;color:var(--stone);margin-top:4px;}
+  .time-sub span{color:var(--mid);font-weight:500;}
+  .video-panel{background:var(--dark);padding:24px 28px;margin-bottom:32px;
+               display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .video-panel-title{grid-column:1/-1;font-family:'Cormorant Garamond',serif;font-size:1rem;
+                     font-weight:400;font-style:italic;color:var(--teal-light);margin-bottom:4px;}
+  .video-stat-label{font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--stone);margin-bottom:6px;}
+  .video-stat-num{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:white;line-height:1;}
+  .video-stat-sub{font-size:11px;color:var(--stone);margin-top:3px;}
+  .video-stat-sub span{color:var(--teal-light);}
+  .video-bar-track{height:2px;background:rgba(255,255,255,.12);margin-top:10px;}
+  .video-bar-fill{height:100%;background:var(--teal);transition:width .4s;}
+  .checklist-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .checklist-col{background:var(--cream);border:1px solid var(--border);padding:24px;}
+  .col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;
+              padding-bottom:14px;border-bottom:1px solid var(--border);}
+  .col-title{display:flex;align-items:center;gap:10px;}
+  .col-title h3{font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--dark);}
+  .owner-badge{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;}
+  .badge-amanda{background:var(--teal-faint);color:var(--teal-dark);border:1px solid var(--teal-light);}
+  .badge-meg{background:var(--amber-faint);color:#8a5f2a;border:1px solid #e8c89a;}
+  .badge-shared{background:var(--rose-faint);color:var(--rose);border:1px solid #ddbcbc;}
+  .col-count{font-size:11px;color:var(--stone);}
+  .task-item{display:flex;align-items:flex-start;gap:12px;padding:11px 0;
+             border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
+  .task-item:last-child{border-bottom:none;}
+  .task-item:hover{background:rgba(107,158,154,.04);}
+  .task-cb{width:16px;height:16px;border:1.5px solid var(--teal-light);border-radius:2px;
+           flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+  .task-item.done .task-cb{background:var(--teal);border-color:var(--teal);}
+  .task-item.done .task-cb::after{content:'';width:8px;height:5px;border-left:1.5px solid white;
+    border-bottom:1.5px solid white;transform:rotate(-45deg) translateY(-1px);display:block;}
+  .task-text{font-size:13.5px;font-weight:400;line-height:1.5;color:var(--dark);}
+  .task-item.done .task-text{text-decoration:line-through;color:var(--done-text);}
+  .task-meta{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;align-items:center;}
+  .task-tag{font-size:10px;font-weight:500;padding:2px 7px;letter-spacing:.03em;}
+  .tag-priority-1{background:#fce8e8;color:#8a3030;}
+  .tag-priority-2{background:var(--amber-faint);color:#7a4f20;}
+  .tag-priority-3{background:var(--cream);color:var(--stone);border:1px solid var(--border);}
+  .tag-sensitive{background:#f0f0f5;color:#5a5a7a;}
+  .tag-wait{background:#f5f5f0;color:#7a7860;}
+  .tag-time{background:transparent;color:var(--teal-dark);border:1px solid var(--teal-light);
+            font-size:10px;padding:2px 7px;display:inline-flex;align-items:center;gap:3px;}
+  .task-item.done .tag-time{opacity:.4;}
+  .shared-col{margin-top:24px;background:var(--rose-faint);border:1px solid #ddbcbc;padding:24px;}
+  .shared-tasks-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 32px;}
+  .filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:28px;flex-wrap:wrap;}
+  .search-input{font-family:'DM Sans',sans-serif;font-size:13px;background:var(--cream);
+                border:1px solid var(--border);color:var(--dark);padding:9px 14px;width:240px;outline:none;transition:border-color .15s;}
+  .search-input::placeholder{color:var(--stone);}
+  .search-input:focus{border-color:var(--teal-light);}
+  .filter-btn{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:.05em;
+              padding:8px 14px;border:1px solid var(--border);background:var(--cream);color:var(--mid);cursor:pointer;transition:all .15s;}
+  .filter-btn:hover,.filter-btn.active{background:var(--teal-faint);border-color:var(--teal-light);color:var(--teal-dark);}
+  .school-group{margin-bottom:36px;}
+  .group-label{font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);
+               margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+  .group-count{font-weight:400;color:var(--stone);letter-spacing:0;font-size:11px;}
+  .school-card{background:var(--cream);border:1px solid var(--border);padding:18px 22px;margin-bottom:6px;
+               display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;transition:border-color .15s;}
+  .school-card:hover{border-color:var(--teal-light);}
+  .school-name{font-size:14px;font-weight:500;color:var(--dark);margin-bottom:3px;}
+  .school-sub{font-size:12px;color:var(--stone);font-weight:300;display:flex;gap:12px;flex-wrap:wrap;}
+  .app-method{display:inline-block;font-size:10px;font-weight:500;letter-spacing:.06em;padding:3px 9px;margin-top:8px;}
+  .method-application{background:var(--teal-faint);color:var(--teal-dark);}
+  .method-email{background:var(--amber-faint);color:#7a4f20;}
+  .method-family{background:var(--rose-faint);color:var(--rose);}
+  .method-closed{background:#f0f0f0;color:var(--stone);}
+  .method-phone{background:#f0f0f5;color:#5a5a7a;}
+  .priority-dot{display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .p1{background:#c07070;}.p2{background:var(--amber);}.p3{background:var(--teal-light);}.p4{background:var(--border);}
+  .video-links{display:flex;flex-direction:column;gap:6px;align-items:flex-end;}
+  .video-link{font-size:11px;font-weight:500;padding:6px 12px;text-decoration:none;display:flex;align-items:center;
+              gap:6px;white-space:nowrap;transition:all .15s;border:1px solid transparent;}
+  .video-link-optimized{background:var(--teal-faint);color:var(--teal-dark);border-color:var(--teal-light);}
+  .video-link-optimized:hover{background:var(--teal-light);color:white;}
+  .video-link-training{background:var(--amber-faint);color:#7a4f20;border-color:#e8c89a;}
+  .video-link-training:hover{background:var(--amber);color:white;}
+  .video-link-placeholder{opacity:.4;cursor:default;font-style:italic;border-style:dashed;}
+  .video-link svg{width:11px;height:11px;flex-shrink:0;}
+  /* VIDEO MANAGER */
+  .vm-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px;}
+  .vm-stat-card{background:var(--dark);padding:18px 20px;}
+  .vm-stat-label{font-size:9px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);margin-bottom:6px;}
+  .vm-stat-nums{display:flex;align-items:baseline;gap:6px;}
+  .vm-stat-big{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:white;}
+  .vm-stat-unit{font-size:11px;color:var(--stone);}
+  .vm-stat-sub{font-size:11px;color:var(--stone);margin-top:3px;}
+  .vm-stat-sub span{color:var(--teal-light);}
+  .vm-bar-track{height:2px;background:rgba(255,255,255,.12);margin-top:10px;}
+  .vm-bar-fill{height:100%;background:var(--teal);transition:width .4s;}
+  /* Sheets sync banner */
+  .sync-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;
+               background:var(--cream);border:1px solid var(--border);padding:14px 18px;margin-bottom:24px;flex-wrap:wrap;}
+  .sync-info{font-size:12px;color:var(--mid);}
+  .sync-info strong{color:var(--dark);font-weight:500;}
+  .sync-status{font-size:11px;display:flex;align-items:center;gap:6px;}
+  .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0;}
+  .sync-dot.synced{background:#7ab87a;}.sync-dot.syncing{background:var(--amber);}.sync-dot.error{background:var(--rose);}
+  .sync-btn{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;padding:7px 14px;
+            background:var(--teal);color:white;border:none;cursor:pointer;transition:background .15s;white-space:nowrap;}
+  .sync-btn:hover{background:var(--teal-dark);}
+  .sync-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .vm-search-wrap{margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .vm-filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+  .vm-list{display:flex;flex-direction:column;}
+  .vm-row{background:var(--cream);border:1px solid var(--border);border-bottom:none;transition:border-color .15s;}
+  .vm-row:last-child{border-bottom:1px solid var(--border);}
+  .vm-row.has-both{border-left:3px solid var(--teal);}
+  .vm-row.has-one{border-left:3px solid var(--amber);}
+  .vm-row.has-none{border-left:3px solid var(--border);}
+  .vm-row-header{display:grid;grid-template-columns:1fr auto auto auto;
+                 align-items:center;gap:12px;padding:14px 18px;cursor:pointer;}
+  .vm-row-header:hover{background:rgba(107,158,154,.04);}
+  .vm-school-name{font-size:13.5px;font-weight:500;color:var(--dark);}
+  .vm-school-meta{font-size:11px;color:var(--stone);font-weight:300;}
+  .vm-badge{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;white-space:nowrap;}
+  .vm-badge-done{background:var(--teal-faint);color:var(--teal-dark);border:1px solid var(--teal-light);}
+  .vm-badge-partial{background:var(--amber-faint);color:#7a4f20;border:1px solid #e8c89a;}
+  .vm-badge-empty{background:#f2f2f0;color:var(--stone);border:1px solid var(--border);}
+  .vm-chevron{font-size:10px;color:var(--stone);transition:transform .2s;user-select:none;}
+  .vm-row.open .vm-chevron{transform:rotate(180deg);}
+  .vm-expand{display:none;padding:0 18px 18px;border-top:1px solid var(--border);background:var(--warm-white);}
+  .vm-row.open .vm-expand{display:block;}
+  .vm-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+  .vm-field label{font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:6px;}
+  .vm-field.meg label{color:var(--teal-dark);}
+  .vm-field.amanda label{color:#8a5f2a;}
+  .vm-input{font-family:'DM Sans',sans-serif;font-size:12px;width:100%;background:var(--cream);
+            border:1px solid var(--border);color:var(--dark);padding:8px 12px;outline:none;transition:border-color .15s;}
+  .vm-input:focus{border-color:var(--teal-light);}
+  .vm-input::placeholder{color:var(--stone);opacity:.6;}
+  .vm-actions{display:flex;gap:8px;margin-top:12px;align-items:center;}
+  .vm-save-btn{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:.05em;
+               padding:8px 18px;background:var(--teal);color:white;border:none;cursor:pointer;transition:background .15s;}
+  .vm-save-btn:hover{background:var(--teal-dark);}
+  .vm-clear-btn{font-family:'DM Sans',sans-serif;font-size:11px;padding:8px 14px;background:transparent;
+                color:var(--stone);border:1px solid var(--border);cursor:pointer;transition:all .15s;}
+  .vm-clear-btn:hover{border-color:var(--rose);color:var(--rose);}
+  .vm-saved-msg{font-size:11px;color:var(--teal-dark);opacity:0;transition:opacity .3s;}
+  .vm-preview{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+  .vm-preview-link{font-size:11px;font-weight:500;padding:5px 11px;text-decoration:none;
+                   display:inline-flex;align-items:center;gap:5px;border:1px solid var(--teal-light);
+                   color:var(--teal-dark);background:var(--teal-faint);}
+  .vm-preview-link:hover{background:var(--teal-light);color:white;}
+  .vm-preview-link.training{background:var(--amber-faint);border-color:#e8c89a;color:#7a4f20;}
+  .vm-preview-link.training:hover{background:var(--amber);color:white;}
+  @media(max-width:720px){
+    nav{padding:0 16px;}.page{padding:32px 20px 60px;}
+    .checklist-grid,.time-strip,.vm-stats,.video-panel{grid-template-columns:1fr;}
+    .school-card{grid-template-columns:1fr;}.video-links{align-items:flex-start;flex-direction:row;flex-wrap:wrap;}
+    .shared-tasks-grid,.vm-fields{grid-template-columns:1fr;}
+    .vm-row-header{grid-template-columns:1fr auto auto;}
+    .nav-link{padding:6px 10px;font-size:11px;}
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-brand">HFA Operations <span>Internal</span></div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showSection('checklist',event)">Checklist</button>
+    <button class="nav-link" onclick="showSection('directory',event)">School Directory</button>
+    <button class="nav-link" onclick="showSection('videos',event)">Video Manager</button>
+  </div>
+</nav>
+<div class="page">
+
+<!-- ══ CHECKLIST ══════════════════════════════════════════════════ -->
+<div id="section-checklist" class="section active">
+  <div class="section-header">
+    <div class="eyebrow">Homeschool Funding Accelerator &middot; Internal</div>
+    <h2>HFA Checklist &amp; <em>Roadmap</em></h2>
+    <p class="section-desc">Subject to change &nbsp;&middot;&nbsp; A = Amanda &nbsp;&middot;&nbsp; M = Meg &nbsp;&middot;&nbsp; AM = Either &nbsp;&middot;&nbsp; Time = Prep + Record hours</p>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">0 / 0</div>
+  </div>
+  <div class="time-strip">
+    <div class="time-card amanda">
+      <div class="time-card-label">Amanda &mdash; Hours Remaining</div>
+      <div class="time-nums"><div class="time-remaining" id="time-amanda">0</div><div class="time-unit">hrs</div></div>
+      <div class="time-sub" id="time-amanda-sub"></div>
+    </div>
+    <div class="time-card meg">
+      <div class="time-card-label">Meg &mdash; Hours Remaining</div>
+      <div class="time-nums"><div class="time-remaining" id="time-meg">0</div><div class="time-unit">hrs</div></div>
+      <div class="time-sub" id="time-meg-sub"></div>
+    </div>
+    <div class="time-card shared-card">
+      <div class="time-card-label">Shared &mdash; Hours Remaining</div>
+      <div class="time-nums"><div class="time-remaining" id="time-shared">0</div><div class="time-unit">hrs</div></div>
+      <div class="time-sub" id="time-shared-sub"></div>
+    </div>
+  </div>
+  <div class="video-panel">
+    <div class="video-panel-title">School &amp; ESA Video Workload</div>
+    <div class="video-stat">
+      <div class="video-stat-label">Meg &middot; Optimized Videos</div>
+      <div class="video-stat-num" id="vp-meg-remaining">56</div>
+      <div class="video-stat-sub" id="vp-meg-sub">videos remaining &middot; <span>~28 hrs</span> estimated</div>
+      <div class="video-bar-track"><div class="video-bar-fill" id="vp-meg-bar" style="width:0%"></div></div>
+    </div>
+    <div class="video-stat">
+      <div class="video-stat-label">Amanda &middot; Training Videos + Research</div>
+      <div class="video-stat-num" id="vp-amanda-remaining">56</div>
+      <div class="video-stat-sub" id="vp-amanda-sub">videos remaining &middot; <span>~56 hrs</span> estimated</div>
+      <div class="video-bar-track"><div class="video-bar-fill" id="vp-amanda-bar" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="checklist-grid">
+    <div class="checklist-col">
+      <div class="col-header">
+        <div class="col-title"><span class="owner-badge badge-amanda">Amanda</span><h3>Amanda's Tasks</h3></div>
+        <span class="col-count" id="count-amanda"></span>
+      </div>
+      <div id="tasks-amanda">
+        <div class="task-item done" data-owner="A" data-prep="0.5" data-record="0.25" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Add video re: Greg's question on Google Docs/Drive (May 14 Fathom)</div><div class="task-meta"><span class="task-tag tag-priority-3">Video</span><span class="task-tag tag-time">&#9201; 0.75 hrs</span></div></div></div>
+        <div class="task-item done" data-owner="A" data-prep="0.25" data-record="0.25" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Apply to ESAs we are part of</div><div class="task-meta"><span class="task-tag tag-priority-2">Priority 2</span><span class="task-tag tag-sensitive">Sensitive: EIN</span><span class="task-tag tag-time">&#9201; 0.5 hrs</span></div></div></div>
+        <div class="task-item" data-owner="A" data-prep="0.25" data-record="0.25" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Apply to ESAs we aren't part of</div><div class="task-meta"><span class="task-tag tag-priority-3">Priority 3</span><span class="task-tag tag-sensitive">Sensitive: EIN</span><span class="task-tag tag-time">&#9201; 0.5 hrs</span></div></div></div>
+        <div class="task-item done" data-owner="A" data-prep="0.33" data-record="0.25" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">COR Part 2: Fingerprints (CEO)</div><div class="task-meta"><span class="task-tag tag-sensitive">Sensitive: SSN / DL#</span><span class="task-tag tag-time">&#9201; 0.58 hrs</span></div></div></div>
+        <div class="task-item" data-owner="A" data-prep="0.33" data-record="0.25" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">COR Part 3: Team Fingerprints</div><div class="task-meta"><span class="task-tag tag-sensitive">Sensitive: Team SSN / DL#</span><span class="task-tag tag-time">&#9201; 0.58 hrs</span></div></div></div>
+        <div class="task-item" data-owner="A" data-prep="0.1" data-record="0.33" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Apply to Charters (add notes to Organize Now; save for later)</div><div class="task-meta"><span class="task-tag tag-priority-3">Priority 3</span><span class="task-tag tag-sensitive">Sensitive: EIN</span><span class="task-tag tag-time">&#9201; 0.43 hrs</span></div></div></div>
+        <div class="task-item done" data-owner="A" data-prep="0.33" data-record="0.25" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Mandated Reporter Training (CEO &amp; Team &mdash; quick video overview)</div><div class="task-meta"><span class="task-tag tag-priority-1">Priority 1</span><span class="task-tag tag-time">&#9201; 0.58 hrs</span></div></div></div>
+        <div class="task-item" data-owner="A" data-prep="0.33" data-record="0.33" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Registration Process</div><div class="task-meta"><span class="task-tag tag-wait">Wait for A2A</span><span class="task-tag tag-time">&#9201; 0.66 hrs</span></div></div></div>
+        <div class="task-item" data-owner="A" data-prep="0.75" data-record="0.33" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Annual Vendor Renewals (video: what to save to make this easy)</div><div class="task-meta"><span class="task-tag tag-priority-3">Priority 3</span><span class="task-tag tag-time">&#9201; 1.08 hrs</span></div></div></div>
+        <div class="task-item" data-owner="A" data-prep="0.5" data-record="0.33" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">School directory (prep + video)</div><div class="task-meta"><span class="task-tag tag-priority-2">Priority 2</span><span class="task-tag tag-time">&#9201; 0.83 hrs</span></div></div></div>
+        <div class="task-item" data-owner="A" data-prep="1" data-record="0.5" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">PO Overview: How students pay and how PO works (incl. exceptions)</div><div class="task-meta"><span class="task-tag tag-wait">Wait for A2A</span><span class="task-tag tag-time">&#9201; 1.5 hrs</span></div></div></div>
+        <div class="task-item" data-owner="A" data-prep="0.5" data-record="0.33" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Google Reviews: how to set up and how to get reviews</div><div class="task-meta"><span class="task-tag tag-priority-3">Priority 3</span><span class="task-tag tag-time">&#9201; 0.83 hrs</span></div></div></div>
+        <div class="task-item" data-owner="A" data-prep="0" data-record="0" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Invoicing</div><div class="task-meta"><span class="task-tag tag-wait">Wait for A2A</span><span class="task-tag tag-sensitive">Finances</span></div></div></div>
+        <div class="task-item" data-owner="A" data-prep="1" data-record="0" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Create Flyer</div><div class="task-meta"><span class="task-tag tag-wait">Wait for A2A</span><span class="task-tag tag-time">&#9201; 1 hr</span></div></div></div>
+        <div class="task-item" data-owner="A" data-prep="0" data-record="0" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Document of enrollment numbers (Excel)</div><div class="task-meta"><span class="task-tag tag-wait">Wait for A2A</span></div></div></div>
+      </div>
+    </div>
+    <div class="checklist-col">
+      <div class="col-header">
+        <div class="col-title"><span class="owner-badge badge-meg">Meg</span><h3>Meg's Tasks</h3></div>
+        <span class="col-count" id="count-meg"></span>
+      </div>
+      <div id="tasks-meg">
+        <div class="task-item" data-owner="M" data-prep="2" data-record="2" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Optimize vendor directory ESAs (and how to get students) &mdash; 15 videos</div><div class="task-meta"><span class="task-tag tag-priority-3">Priority 3</span><span class="task-tag tag-time">&#9201; 4 hrs</span></div></div></div>
+        <div class="task-item" data-owner="M" data-prep="0.25" data-record="0.5" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Get student requests for required schools (12&ndash;19 schools)</div><div class="task-meta"><span class="task-tag tag-priority-2">Priority 2</span><span class="task-tag tag-time">&#9201; 0.75 hrs</span></div></div></div>
+        <div class="task-item" data-owner="M" data-prep="0.2" data-record="0.2" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Join FB Groups (prep &mdash; add links to Vendor Directory)</div><div class="task-meta"><span class="task-tag tag-priority-2">Priority 2</span><span class="task-tag tag-time">&#9201; 0.4 hrs</span></div></div></div>
+        <div class="task-item" data-owner="M" data-prep="1" data-record="0.33" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Upselling Plan (email to students with other classes)</div><div class="task-meta"><span class="task-tag tag-priority-3">Priority 3</span><span class="task-tag tag-wait">Wait for A2A</span><span class="task-tag tag-time">&#9201; 1.33 hrs</span></div></div></div>
+        <div class="task-item done" data-owner="M" data-prep="1" data-record="0.33" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Website: revise existing site to accept charter and ESA students</div><div class="task-meta"><span class="task-tag tag-priority-1">Priority 1</span><span class="task-tag tag-time">&#9201; 1.33 hrs</span></div></div></div>
+        <div class="task-item" data-owner="M" data-prep="0.5" data-record="0.33" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Referral Plan</div><div class="task-meta"><span class="task-tag tag-priority-3">Priority 3</span><span class="task-tag tag-time">&#9201; 0.83 hrs</span></div></div></div>
+        <div class="task-item done" data-owner="M" data-prep="0" data-record="0.33" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Create Flex as you go (not ahead of time)</div><div class="task-meta"><span class="task-tag tag-priority-3">Priority 3</span><span class="task-tag tag-time">&#9201; 0.33 hrs</span></div></div></div>
+        <div class="task-item" data-owner="M" data-prep="0.5" data-record="0.33" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Networking within Charter Schools/Clients</div><div class="task-meta"><span class="task-tag tag-priority-3">Priority 3</span><span class="task-tag tag-time">&#9201; 0.83 hrs</span></div></div></div>
+        <div class="task-item" data-owner="M" data-prep="0.5" data-record="0.5" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Make promo video for site and schools (use OS Video)</div><div class="task-meta"><span class="task-tag tag-priority-2">Priority 2</span><span class="task-tag tag-time">&#9201; 1 hr</span></div></div></div>
+        <div class="task-item done" data-owner="M" data-prep="1" data-record="0.5" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Do some digging: how to get more students (excl. vendor directory)</div><div class="task-meta"><span class="task-tag tag-time">&#9201; 1.5 hrs</span></div></div></div>
+        <div class="task-item" data-owner="M" data-prep="0.5" data-record="0.33" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">How to offer summer classes (add to DLS/Scheduling Lesson)</div><div class="task-meta"><span class="task-tag tag-priority-2">Priority 2</span><span class="task-tag tag-time">&#9201; 0.83 hrs</span></div></div></div>
+        <div class="task-item" data-owner="M" data-prep="0.15" data-record="0.33" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Resume / Statement of Qualifications</div><div class="task-meta"><span class="task-tag tag-priority-2">Priority 2</span><span class="task-tag tag-time">&#9201; 0.48 hrs</span></div></div></div>
+        <div class="task-item done" data-owner="M" data-prep="0" data-record="0.33" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Market research (re-record)</div><div class="task-meta"><span class="task-tag tag-priority-1">Priority 1</span><span class="task-tag tag-time">&#9201; 0.33 hrs</span></div></div></div>
+        <div class="task-item" data-owner="M" data-prep="0" data-record="0" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Longer Vendor Description</div><div class="task-meta"><span class="task-tag tag-priority-2">Priority 2</span></div></div></div>
+        <div class="task-item done" data-owner="M" data-prep="0" data-record="0" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Intro to offer</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="shared-col">
+    <div class="col-header">
+      <div class="col-title"><span class="owner-badge badge-shared">Either</span><h3>Amanda or Meg</h3></div>
+      <span class="col-count" id="count-shared"></span>
+    </div>
+    <div class="shared-tasks-grid">
+      <div class="task-item done" data-owner="AM" data-prep="1" data-record="0.33" onclick="toggleTask(this)"><div class="task-cb"></div><div><div class="task-text">Student Retention Plan</div><div class="task-meta"><span class="task-tag tag-wait">Wait for A2A</span><span class="task-tag tag-time">&#9201; 1.33 hrs</span></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DIRECTORY ══════════════════════════════════════════════════ -->
+<div id="section-directory" class="section">
+  <div class="section-header">
+    <div class="eyebrow">Homeschool Funding Accelerator &middot; Internal</div>
+    <h2>School &amp; ESA <em>Directory</em></h2>
+    <p class="section-desc">Grouped by application method &nbsp;&middot;&nbsp; Meg = Optimized Video &nbsp;&middot;&nbsp; Amanda = Training Video + Research</p>
+  </div>
+  <div class="filter-bar">
+    <input class="search-input" type="text" placeholder="Search school name or state&hellip;" oninput="filterSchools(this.value)" />
+    <button class="filter-btn active" onclick="filterType('all',this)">All</button>
+    <button class="filter-btn" onclick="filterType('Charter School',this)">Charter Schools</button>
+    <button class="filter-btn" onclick="filterType('ESA',this)">ESAs</button>
+    <button class="filter-btn" onclick="filterType('priority',this)">P1 &amp; P2 Only</button>
+  </div>
+  <div class="school-group" data-group="Application"><div class="group-label">Application <span class="group-count" id="gc-Application"></span></div><div id="group-Application"></div></div>
+  <div class="school-group" data-group="By E-Mail Request"><div class="group-label">By E-Mail Request <span class="group-count" id="gc-By E-Mail Request"></span></div><div id="group-By E-Mail Request"></div></div>
+  <div class="school-group" data-group="By Family Request"><div class="group-label">By Family Request <span class="group-count" id="gc-By Family Request"></span></div><div id="group-By Family Request"></div></div>
+  <div class="school-group" data-group="By Phone Request"><div class="group-label">By Phone Request <span class="group-count" id="gc-By Phone Request"></span></div><div id="group-By Phone Request"></div></div>
+  <div class="school-group" data-group="Closed"><div class="group-label">Closed / On Hold <span class="group-count" id="gc-Closed"></span></div><div id="group-Closed"></div></div>
+</div>
+
+<!-- ══ VIDEO MANAGER ══════════════════════════════════════════════ -->
+<div id="section-videos" class="section">
+  <div class="section-header">
+    <div class="eyebrow">Homeschool Funding Accelerator &middot; Internal</div>
+    <h2>Video <em>Manager</em></h2>
+    <p class="section-desc">Paste Loom URLs below. Changes save to your Google Sheet so everyone stays in sync.</p>
+  </div>
+  <!-- SHEETS SYNC BANNER -->
+  <div class="sync-banner">
+    <div>
+      <div class="sync-info"><strong>Connected to Google Sheets</strong> &nbsp;&middot;&nbsp; Changes sync automatically when you hit Save on any row.</div>
+      <div class="sync-info" style="margin-top:4px;font-size:11px;color:var(--stone);">
+        Sheet URL: <span id="sheet-url-display" style="color:var(--teal-dark);"></span>
+        &nbsp;<button onclick="promptSheetUrl()" style="font-size:10px;background:none;border:none;color:var(--stone);cursor:pointer;text-decoration:underline;">change</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div class="sync-status"><div class="sync-dot" id="sync-dot"></div><span id="sync-msg" style="font-size:11px;color:var(--stone);">Not connected</span></div>
+      <button class="sync-btn" id="pull-btn" onclick="pullFromSheets()" disabled>&#8595; Pull from Sheet</button>
+    </div>
+  </div>
+  <div class="vm-stats">
+    <div class="vm-stat-card">
+      <div class="vm-stat-label">Meg &middot; Optimized Videos</div>
+      <div class="vm-stat-nums"><div class="vm-stat-big" id="vms-meg-done">0</div><div class="vm-stat-unit">/ <span id="vms-meg-total">56</span> done</div></div>
+      <div class="vm-stat-sub" id="vms-meg-sub"><span>0 hrs</span> of ~28 hrs recorded</div>
+      <div class="vm-bar-track"><div class="vm-bar-fill" id="vms-meg-bar" style="width:0%"></div></div>
+    </div>
+    <div class="vm-stat-card">
+      <div class="vm-stat-label">Amanda &middot; Training Videos + Research</div>
+      <div class="vm-stat-nums"><div class="vm-stat-big" id="vms-amanda-done">0</div><div class="vm-stat-unit">/ <span id="vms-amanda-total">56</span> done</div></div>
+      <div class="vm-stat-sub" id="vms-amanda-sub"><span>0 hrs</span> of ~56 hrs recorded</div>
+      <div class="vm-bar-track"><div class="vm-bar-fill" id="vms-amanda-bar" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="vm-search-wrap">
+    <input class="search-input" type="text" placeholder="Search school name or state&hellip;" oninput="vmFilter(this.value)" style="width:260px;" />
+    <span style="font-size:11px;color:var(--stone);" id="vm-count-label"></span>
+  </div>
+  <div class="vm-filter-row">
+    <button class="filter-btn active" onclick="vmFilterType('all',this)">All</button>
+    <button class="filter-btn" onclick="vmFilterType('Charter School',this)">Charter Schools</button>
+    <button class="filter-btn" onclick="vmFilterType('ESA',this)">ESAs</button>
+    <button class="filter-btn" onclick="vmFilterType('missing',this)">Missing Videos</button>
+    <button class="filter-btn" onclick="vmFilterType('partial',this)">Partial</button>
+    <button class="filter-btn" onclick="vmFilterType('complete',this)">Complete</button>
+  </div>
+  <div class="vm-list" id="vm-list"></div>
+</div>
+
+</div><!-- /.page -->
+<script>
+// ══════════════════════════════════════════════════════
+// SCHOOL DATA
+// Replace "#" with real URLs as you add them via Video Manager
+// ══════════════════════════════════════════════════════
+const SCHOOLS = [
+  {name:"Arete Charter Academy",appMethod:"Application",type:"Charter School",priority:"P3",state:"CA",website:"https://arete.prsd.us",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"BEST Academy",appMethod:"By E-Mail Request",type:"Charter School",priority:"P3",state:"CA",website:"https://www.bestacademycs.com",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Blue Ridge Academy",appMethod:"By Family Request",type:"Charter School",priority:"P2",state:"CA",website:"https://www.theblueridgeacademy.com",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Cabrillo Point Academy",appMethod:"By Family Request",type:"Charter School",priority:"P3",state:"CA",website:"https://www.cabrillopointacademy.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Clarksville Charter School",appMethod:"By Family Request",type:"Charter School",priority:"P4",state:"CA",website:"https://www.clarksvillecharter.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Compass Charter Schools",appMethod:"Application",type:"Charter School",priority:"P2",state:"CA",website:"https://www.compasscharters.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Cottonwood School",appMethod:"Application",type:"Charter School",priority:"P1",state:"CA",website:"https://cottonwoodk12.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Element Education",appMethod:"Application",type:"Charter School",priority:"P2",state:"CA",website:"https://www.myelement.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Elite Academic Academy",appMethod:"Application",type:"Charter School",priority:"P1",state:"CA",website:"https://www.eliteacademic.com",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Epic California Academy",appMethod:"Application",type:"Charter School",priority:"P4",state:"CA",website:"https://epiccalifornia.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Excel Academy Charter",appMethod:"By Family Request",type:"Charter School",priority:"P3",state:"CA",website:"https://excelacademy.education",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Feather River Charter School",appMethod:"By Family Request",type:"Charter School",priority:"P4",state:"CA",website:"https://www.featherrivercharter.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Gorman Learning Center",appMethod:"Application",type:"Charter School",priority:"P3",state:"CA",website:"https://www.gormanlc.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Granite Mountain Charter School",appMethod:"By E-Mail Request",type:"Charter School",priority:"P3",state:"CA",website:"https://granitemountainschool.com",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Harvest Ridge Cooperative",appMethod:"Application",type:"Charter School",priority:"P3",state:"CA",website:"https://www.harvestridgeschool.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Heartland Charter School",appMethod:"Application",type:"Charter School",priority:"P1",state:"CA",website:"https://heartlandcharterschool.com",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Heartwood Charter School",appMethod:"Application",type:"Charter School",priority:"P3",state:"CA",website:"https://heartwoodcharterschool.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Heritage Peak Charter School",appMethod:"Application",type:"Charter School",priority:"P3",state:"CA",website:"https://pacificcharters.org/schools/heritage-peak/",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Horizon Charter Schools",appMethod:"Closed/Hold",type:"Charter School",priority:"P3",state:"CA",website:"https://www.horizoncharterschools.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"iLEAD California",appMethod:"By Family Request",type:"Charter School",priority:"P2",state:"CA",website:"https://ileadcalifornia.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Lake View Charter School",appMethod:"By Family Request",type:"Charter School",priority:"P3",state:"CA",website:"https://www.lakeviewcharter.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Literacy First - Freedom Academy",appMethod:"By E-Mail Request",type:"Charter School",priority:"P3",state:"CA",website:"https://freedom.lfcsinc.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Mission Vista Academy",appMethod:"By Family Request",type:"Charter School",priority:"P2",state:"CA",website:"https://missionvistaacademy.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Monarch River Academy",appMethod:"By Family Request",type:"Charter School",priority:"P3",state:"CA",website:"https://monarchriveracademy.com",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Niles Virtual School",appMethod:"Closed/Hold",type:"Charter School",priority:"P4",state:"MI",website:"https://www.nilesvp.com",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Ocean Grove Charter School",appMethod:"Application",type:"Charter School",priority:"P3",state:"CA",website:"https://www.ogcs.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Pacific Coast Academy",appMethod:"By Family Request",type:"Charter School",priority:"P3",state:"CA",website:"https://pacificcoastacademy.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Peak Prep Pleasant Valley",appMethod:"By E-Mail Request",type:"Charter School",priority:"P3",state:"CA",website:"https://www.peak-prep.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Raven Homeschool / YKSD",appMethod:"Application",type:"Charter School",priority:"P3",state:"AK",website:"https://www.yksd.com/raven-homeschool",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Rio Valley Charter School",appMethod:"Application",type:"Charter School",priority:"P3",state:"CA",website:"https://pacificcharters.org/schools/rio-valley/",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Sage Oak Charter Schools",appMethod:"By E-Mail Request",type:"Charter School",priority:"P2",state:"CA",website:"https://www.sageoak.education",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"SCALE Leadership Academy",appMethod:"Closed/Hold",type:"Charter School",priority:"P3",state:"CA",website:"https://www.scaleacademy.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Silvies River Charter School",appMethod:"By E-Mail Request",type:"Charter School",priority:"P3",state:"OR",website:"https://www.silviesrcs.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Sky Mountain Charter School",appMethod:"Application",type:"Charter School",priority:"P3",state:"CA",website:"https://skymountaincs.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"South Sutter Charter School",appMethod:"Application",type:"Charter School",priority:"P2",state:"CA",website:"https://southsuttercs.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Springs Charter Schools",appMethod:"By Family Request",type:"Charter School",priority:"P3",state:"CA",website:"https://www.springscs.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Suncoast Preparatory Academy",appMethod:"Application",type:"Charter School",priority:"P3",state:"CA",website:"https://suncoastprep.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Sutter Peak Charter Academy",appMethod:"Application",type:"Charter School",priority:"P3",state:"CA",website:"https://sutterpeak.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Taylion Academy",appMethod:"By E-Mail Request",type:"Charter School",priority:"P3",state:"CA",website:"https://taylion.com",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Three Rivers Community Schools",appMethod:"By E-Mail Request",type:"Charter School",priority:"P3",state:"MI",website:"https://www.trschools.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Valley View Charter Prep",appMethod:"Application",type:"Charter School",priority:"P3",state:"CA",website:"https://pacificcharters.org/schools/valley-view/",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Visions In Education",appMethod:"Application",type:"Charter School",priority:"P1",state:"CA",website:"https://www.viedu.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"White Lake Area Community Ed",appMethod:"By Phone Request",type:"Charter School",priority:"P3",state:"MI",website:"https://wlace.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"Yosemite Valley Charter School",appMethod:"By Family Request",type:"Charter School",priority:"P3",state:"CA",website:"https://yosemitevalleycharter.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"AL ESA - CHOOSE Act / ClassWallet",appMethod:"Application",type:"ESA",priority:"P2",state:"AL",website:"https://www.revenue.alabama.gov/tax-policy/the-choose-act/",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"AR ESA - Education Freedom Account",appMethod:"Application",type:"ESA",priority:"P3",state:"AR",website:"https://dese.ade.arkansas.gov",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"AZ ESA - Arizona / ClassWallet",appMethod:"Application",type:"ESA",priority:"P3",state:"AZ",website:"https://www.azed.gov/esa",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"FL ESA - Step Up For Students / EMA",appMethod:"Application",type:"ESA",priority:"P2",state:"FL",website:"https://www.stepupforstudents.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"LA ESA - LA GATOR / Odyssey",appMethod:"Application",type:"ESA",priority:"P3",state:"LA",website:"https://doe.louisiana.gov/topic-pages/louisiana-school-choice/la-gator",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"MO ESA - MOScholars / ClassWallet",appMethod:"Application",type:"ESA",priority:"P3",state:"MO",website:"https://treasurer.mo.gov/moscholars/",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"NH ESA - Childrens Scholarship Fund",appMethod:"Application",type:"ESA",priority:"P3",state:"NH",website:"https://nh.scholarshipfund.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"NY ESA - CSF New York / ClassWallet",appMethod:"Application",type:"ESA",priority:"P3",state:"NY",website:"https://nyc.scholarshipfund.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"UT ESA - Utah Children First (CFEF)",appMethod:"Application",type:"ESA",priority:"P3",state:"UT",website:"https://cfe-fund.org",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"UT ESA - Utah Fits All / Odyssey",appMethod:"Application",type:"ESA",priority:"P2",state:"UT",website:"https://schools.utah.gov/utahfitsallscholarship.php",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"WV ESA - West Virginia HOPE",appMethod:"Application",type:"ESA",priority:"P2",state:"WV",website:"https://hopescholarshipwv.gov",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+  {name:"WY ESA - Wyoming DOE / Odyssey",appMethod:"Application",type:"ESA",priority:"P2",state:"WY",website:"https://edu.wyoming.gov/parents/education-savings-accounts/",appLink:"#",optimizedVideo:"#",trainingVideo:"#"},
+];
+
+const TOTAL_SCHOOLS = SCHOOLS.length;
+const OPT_HRS_EACH   = 0.5;  // Meg: ~30 min per optimized video
+const TRAIN_HRS_EACH = 1;    // Amanda: ~1 hr per training video + research
+
+// ══════════════════════════════════════════════════════
+// GOOGLE SHEETS INTEGRATION
+// Requires a deployed Apps Script Web App URL.
+// See the setup instructions doc delivered with this file.
+// ══════════════════════════════════════════════════════
+const SHEETS_KEY = 'hfa_sheets_url';
+
+function getSheetsUrl() {
+  return localStorage.getItem(SHEETS_KEY) || '';
+}
+function setSheetsUrl(url) {
+  localStorage.setItem(SHEETS_KEY, url);
+}
+
+function promptSheetUrl() {
+  const current = getSheetsUrl();
+  const url = window.prompt('Paste your Apps Script Web App URL here:', current || '');
+  if (url && url.trim()) {
+    setSheetsUrl(url.trim());
+    updateSyncUI();
+  }
+}
+
+function updateSyncUI() {
+  const url = getSheetsUrl();
+  const dot = document.getElementById('sync-dot');
+  const msg = document.getElementById('sync-msg');
+  const btn = document.getElementById('pull-btn');
+  const display = document.getElementById('sheet-url-display');
+  if (url) {
+    if (dot) { dot.className = 'sync-dot synced'; }
+    if (msg) msg.textContent = 'Connected';
+    if (btn) btn.disabled = false;
+    if (display) display.textContent = url.length > 48 ? url.slice(0,48) + '...' : url;
+  } else {
+    if (dot) dot.className = 'sync-dot';
+    if (msg) msg.textContent = 'Not connected — click to add URL';
+    if (btn) btn.disabled = true;
+    if (display) display.textContent = 'not set';
+  }
+}
+
+async function pushToSheets(schoolName, optimized, training) {
+  const url = getSheetsUrl();
+  if (!url) return false;
+  const dot = document.getElementById('sync-dot');
+  if (dot) dot.className = 'sync-dot syncing';
+  try {
+    await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'set', school: schoolName, optimized, training })
+    });
+    if (dot) dot.className = 'sync-dot synced';
+    const msgEl = document.getElementById('sync-msg');
+    if (msgEl) { msgEl.textContent = 'Saved to Sheet'; setTimeout(() => { msgEl.textContent = 'Connected'; }, 3000); }
+    return true;
+  } catch(e) {
+    if (dot) dot.className = 'sync-dot error';
+    const msgEl = document.getElementById('sync-msg');
+    if (msgEl) msgEl.textContent = 'Sync error — saved locally';
+    return false;
+  }
+}
+
+async function pullFromSheets() {
+  const url = getSheetsUrl();
+  if (!url) return;
+  const btn = document.getElementById('pull-btn');
+  const dot = document.getElementById('sync-dot');
+  if (btn) { btn.disabled = true; btn.textContent = 'Pulling...'; }
+  if (dot) dot.className = 'sync-dot syncing';
+  try {
+    const res = await fetch(url + '?action=getAll');
+    const data = await res.json();
+    // data expected: { "School Name": { optimized: "url", training: "url" }, ... }
+    if (data && typeof data === 'object') {
+      Object.entries(data).forEach(([name, urls]) => {
+        const s = SCHOOLS.find(s => s.name === name);
+        if (s) {
+          if (urls.optimized) s.optimizedVideo = urls.optimized;
+          if (urls.training)  s.trainingVideo  = urls.training;
+        }
+      });
+      if (dot) dot.className = 'sync-dot synced';
+      const msgEl = document.getElementById('sync-msg');
+      if (msgEl) { msgEl.textContent = 'Pulled from Sheet'; setTimeout(() => { msgEl.textContent = 'Connected'; }, 3000); }
+      vmRender();
+      renderDirectory();
+      updateVideoWorkload();
+    }
+  } catch(e) {
+    if (dot) dot.className = 'sync-dot error';
+    const msgEl = document.getElementById('sync-msg');
+    if (msgEl) msgEl.textContent = 'Could not reach Sheet';
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '\u2193 Pull from Sheet'; }
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// CHECKLIST LOGIC
+// ══════════════════════════════════════════════════════
+function fmtHrs(h) {
+  if (h === 0) return '0';
+  return h % 1 === 0 ? h.toString() : h.toFixed(1);
+}
+
+function toggleTask(el) {
+  el.classList.toggle('done');
+  updateProgress();
+}
+
+function updateProgress() {
+  const all  = document.querySelectorAll('.task-item');
+  const done = document.querySelectorAll('.task-item.done');
+  const pct  = all.length ? Math.round((done.length / all.length) * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = done.length + ' / ' + all.length;
+
+  ['A','M','AM'].forEach(owner => {
+    const colId = owner === 'A' ? 'amanda' : owner === 'M' ? 'meg' : 'shared';
+    const items = document.querySelectorAll('.task-item[data-owner="' + owner + '"]');
+    let total = 0, remain = 0, dc = 0;
+    items.forEach(item => {
+      const h = (parseFloat(item.dataset.prep) || 0) + (parseFloat(item.dataset.record) || 0);
+      total  += h;
+      if (!item.classList.contains('done')) remain += h; else dc++;
+    });
+    const el  = document.getElementById('time-' + colId);
+    const sub = document.getElementById('time-' + colId + '-sub');
+    const cnt = document.getElementById('count-' + colId);
+    if (el)  el.textContent = fmtHrs(remain);
+    if (sub) sub.innerHTML  = 'of <span>' + fmtHrs(total) + ' total hrs</span> &middot; ' + dc + '/' + items.length + ' tasks done';
+    if (cnt) cnt.textContent = dc + ' / ' + items.length + ' done';
+  });
+}
+
+function updateVideoWorkload() {
+  const total = TOTAL_SCHOOLS;
+  const megDone    = SCHOOLS.filter(s => s.optimizedVideo && s.optimizedVideo !== '#').length;
+  const amandaDone = SCHOOLS.filter(s => s.trainingVideo  && s.trainingVideo  !== '#').length;
+  const megR = total - megDone, amandaR = total - amandaDone;
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  const setH = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+  const setPct = (id, pct) => { const el = document.getElementById(id); if (el) el.style.width = pct + '%'; };
+
+  set('vp-meg-remaining', megR);
+  set('vp-amanda-remaining', amandaR);
+  setH('vp-meg-sub',    megR    + ' videos remaining &middot; <span>~' + fmtHrs(megR    * OPT_HRS_EACH)   + ' hrs</span> estimated');
+  setH('vp-amanda-sub', amandaR + ' videos remaining &middot; <span>~' + fmtHrs(amandaR * TRAIN_HRS_EACH) + ' hrs</span> estimated');
+  setPct('vp-meg-bar',    total ? Math.round((megDone    / total) * 100) : 0);
+  setPct('vp-amanda-bar', total ? Math.round((amandaDone / total) * 100) : 0);
+}
+
+// ══════════════════════════════════════════════════════
+// DIRECTORY RENDER
+// ══════════════════════════════════════════════════════
+const METHOD_CLASSES = {
+  "Application":"method-application","By E-Mail Request":"method-email",
+  "By Family Request":"method-family","By Phone Request":"method-phone","Closed/Hold":"method-closed"
+};
+const PRIORITY_CLASS = {P1:"p1",P2:"p2",P3:"p3",P4:"p4"};
+const GROUP_MAP = {
+  "Application":"Application","By E-Mail Request":"By E-Mail Request",
+  "By Family Request":"By Family Request","By Phone Request":"By Phone Request","Closed/Hold":"Closed"
+};
+
+function videoBtn(url, label, cls) {
+  const ph = !url || url === '#';
+  const icon = '<svg viewBox="0 0 16 16" fill="none"><path d="M6 4l6 4-6 4V4z" fill="currentColor"/><rect x="1" y="1" width="14" height="14" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>';
+  return ph
+    ? '<span class="video-link ' + cls + ' video-link-placeholder">' + icon + ' ' + label + '</span>'
+    : '<a class="video-link ' + cls + '" href="' + url + '" target="_blank" rel="noopener">' + icon + ' ' + label + '</a>';
+}
+
+let currentTypeFilter = 'all', currentSearch = '';
+
+function renderDirectory() {
+  ['Application','By E-Mail Request','By Family Request','By Phone Request','Closed'].forEach(g => {
+    const el = document.getElementById('group-' + g);
+    if (el) el.innerHTML = '';
+  });
+  const counts = {};
+  SCHOOLS.forEach(s => {
+    const tm = currentTypeFilter === 'all' ||
+      (currentTypeFilter === 'priority' ? (s.priority==='P1'||s.priority==='P2') : s.type === currentTypeFilter);
+    const sm = !currentSearch ||
+      s.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
+      s.state.toLowerCase().includes(currentSearch.toLowerCase());
+    if (!tm || !sm) return;
+    const gk = GROUP_MAP[s.appMethod] || 'Application';
+    const el = document.getElementById('group-' + gk);
+    if (!el) return;
+    counts[gk] = (counts[gk] || 0) + 1;
+    const mCls = METHOD_CLASSES[s.appMethod] || 'method-application';
+    const pCls = PRIORITY_CLASS[s.priority] || 'p3';
+    const appD = s.appLink && s.appLink !== '#'
+      ? '<a href="' + s.appLink + '" target="_blank" rel="noopener" class="app-method ' + mCls + '" style="text-decoration:none;">' + s.appMethod + ' &nearr;</a>'
+      : '<span class="app-method ' + mCls + '">' + s.appMethod + '</span>';
+    el.innerHTML += '<div class="school-card"><div>' +
+      '<div class="school-name"><span class="priority-dot ' + pCls + '" style="margin-right:6px;display:inline-block;vertical-align:middle;" title="' + s.priority + '"></span>' +
+      '<a href="' + s.website + '" target="_blank" rel="noopener" style="color:var(--dark);text-decoration:none;">' + s.name + '</a></div>' +
+      '<div class="school-sub"><span>' + s.type + '</span><span>' + s.state + '</span></div>' + appD +
+      '</div><div class="video-links">' +
+      videoBtn(s.optimizedVideo, 'Meg &middot; Optimized', 'video-link-optimized') +
+      videoBtn(s.trainingVideo,  'Amanda &middot; Training', 'video-link-training') +
+      '</div></div>';
+  });
+  ['Application','By E-Mail Request','By Family Request','By Phone Request','Closed'].forEach(g => {
+    const c = counts[g] || 0;
+    const cEl = document.getElementById('gc-' + g);
+    if (cEl) cEl.textContent = c ? '(' + c + ')' : '';
+    const gP = document.querySelector('[data-group="' + g + '"]');
+    if (gP) gP.style.display = c ? 'block' : 'none';
+  });
+}
+
+function filterType(type, btn) {
+  currentTypeFilter = type;
+  document.querySelectorAll('.filter-bar .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDirectory();
+}
+function filterSchools(val) { currentSearch = val; renderDirectory(); }
+
+// ══════════════════════════════════════════════════════
+// VIDEO MANAGER
+// ══════════════════════════════════════════════════════
+let vmSearch = '', vmTypeFilter = 'all';
+
+function vmStatus(s) {
+  const hasOpt   = s.optimizedVideo && s.optimizedVideo !== '#';
+  const hasTrain = s.trainingVideo  && s.trainingVideo  !== '#';
+  if (hasOpt && hasTrain) return 'complete';
+  if (hasOpt || hasTrain) return 'partial';
+  return 'missing';
+}
+
+function vmUpdateStats() {
+  const total      = TOTAL_SCHOOLS;
+  const megDone    = SCHOOLS.filter(s => s.optimizedVideo && s.optimizedVideo !== '#').length;
+  const amandaDone = SCHOOLS.filter(s => s.trainingVideo  && s.trainingVideo  !== '#').length;
+
+  const set  = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  const setH = (id, h) => { const el = document.getElementById(id); if (el) el.innerHTML  = h; };
+  const setPct = (id, p) => { const el = document.getElementById(id); if (el) el.style.width = p + '%'; };
+
+  set('vms-meg-done', megDone);
+  set('vms-amanda-done', amandaDone);
+  set('vms-meg-total', total);
+  set('vms-amanda-total', total);
+  setH('vms-meg-sub',    '<span>~' + fmtHrs(megDone    * OPT_HRS_EACH)   + ' hrs</span> of ~' + fmtHrs(total * OPT_HRS_EACH)   + ' hrs recorded');
+  setH('vms-amanda-sub', '<span>~' + fmtHrs(amandaDone * TRAIN_HRS_EACH) + ' hrs</span> of ~' + fmtHrs(total * TRAIN_HRS_EACH) + ' hrs recorded');
+  setPct('vms-meg-bar',    total ? Math.round((megDone    / total) * 100) : 0);
+  setPct('vms-amanda-bar', total ? Math.round((amandaDone / total) * 100) : 0);
+  updateVideoWorkload();
+}
+
+function vmRender() {
+  const list = document.getElementById('vm-list');
+  if (!list) return;
+
+  const filtered = SCHOOLS.filter(s => {
+    const typeOk = vmTypeFilter === 'all' ||
+      (vmTypeFilter === 'Charter School' || vmTypeFilter === 'ESA'
+        ? s.type === vmTypeFilter
+        : vmTypeFilter === vmStatus(s));
+    const searchOk = !vmSearch ||
+      s.name.toLowerCase().includes(vmSearch.toLowerCase()) ||
+      s.state.toLowerCase().includes(vmSearch.toLowerCase());
+    return typeOk && searchOk;
+  });
+
+  const countEl = document.getElementById('vm-count-label');
+  if (countEl) countEl.textContent = filtered.length + ' of ' + SCHOOLS.length + ' schools';
+
+  // Build HTML — store index on the element, avoid inline event strings with special chars
+  list.innerHTML = filtered.map((s, i) => {
+    const idx    = SCHOOLS.indexOf(s);
+    const status = vmStatus(s);
+    const lCls   = status === 'complete' ? 'has-both' : status === 'partial' ? 'has-one' : 'has-none';
+    const bCls   = status === 'complete' ? 'vm-badge-done' : status === 'partial' ? 'vm-badge-partial' : 'vm-badge-empty';
+    const bLabel = status === 'complete' ? 'Both done' : status === 'partial' ? 'Partial' : 'No videos';
+    const optUrl   = s.optimizedVideo !== '#' ? s.optimizedVideo : '';
+    const trainUrl = s.trainingVideo  !== '#' ? s.trainingVideo  : '';
+    const prevLinks = (optUrl   ? '<a class="vm-preview-link" href="' + optUrl   + '" target="_blank" rel="noopener">&#9654; Meg Optimized</a>' : '') +
+                      (trainUrl ? '<a class="vm-preview-link training" href="' + trainUrl + '" target="_blank" rel="noopener">&#9654; Amanda Training</a>' : '');
+    return '<div class="vm-row ' + lCls + '" data-idx="' + idx + '">' +
+      '<div class="vm-row-header" onclick="vmToggleByEl(this.parentElement)">' +
+        '<div><div class="vm-school-name">' + s.name + '</div>' +
+        '<div class="vm-school-meta">' + s.type + ' &middot; ' + s.state + '</div></div>' +
+        '<span class="vm-badge ' + bCls + '">' + bLabel + '</span>' +
+        '<span style="font-size:10px;color:var(--stone);">' + s.priority + '</span>' +
+        '<span class="vm-chevron">&#9660;</span>' +
+      '</div>' +
+      '<div class="vm-expand">' +
+        (prevLinks ? '<div class="vm-preview">' + prevLinks + '</div>' : '') +
+        '<div class="vm-fields">' +
+          '<div class="vm-field meg"><label>Meg &middot; Optimized Video URL</label>' +
+          '<input class="vm-input vm-opt" type="url" placeholder="https://www.loom.com/share/\u2026" value="' + (optUrl || '') + '" /></div>' +
+          '<div class="vm-field amanda"><label>Amanda &middot; Training Video URL</label>' +
+          '<input class="vm-input vm-train" type="url" placeholder="https://www.loom.com/share/\u2026" value="' + (trainUrl || '') + '" /></div>' +
+        '</div>' +
+        '<div class="vm-actions">' +
+          '<button class="vm-save-btn" onclick="vmSaveByEl(this.closest(\'.vm-row\'))">Save</button>' +
+          ((optUrl || trainUrl) ? '<button class="vm-clear-btn" onclick="vmClearByEl(this.closest(\'.vm-row\'))">Clear links</button>' : '') +
+          '<span class="vm-saved-msg"></span>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  vmUpdateStats();
+}
+
+function vmToggleByEl(row) { row.classList.toggle('open'); }
+
+function vmSaveByEl(row) {
+  const idx = parseInt(row.dataset.idx);
+  const s   = SCHOOLS[idx];
+  if (!s) return;
+  const optInput   = row.querySelector('.vm-opt');
+  const trainInput = row.querySelector('.vm-train');
+  const optVal   = optInput   ? optInput.value.trim()   : '';
+  const trainVal = trainInput ? trainInput.value.trim() : '';
+
+  s.optimizedVideo = optVal   || '#';
+  s.trainingVideo  = trainVal || '#';
+
+  // Update row style
+  const status = vmStatus(s);
+  row.className = 'vm-row ' + (status === 'complete' ? 'has-both' : status === 'partial' ? 'has-one' : 'has-none') + ' open';
+
+  // Show saved message
+  const msg = row.querySelector('.vm-saved-msg');
+  if (msg) { msg.textContent = 'Saved!'; msg.style.opacity = '1'; setTimeout(() => msg.style.opacity = '0', 2000); }
+
+  // Sync to Google Sheets
+  pushToSheets(s.name, optVal, trainVal);
+
+  vmUpdateStats();
+}
+
+function vmClearByEl(row) {
+  const idx = parseInt(row.dataset.idx);
+  const s   = SCHOOLS[idx];
+  if (!s) return;
+  s.optimizedVideo = '#';
+  s.trainingVideo  = '#';
+  pushToSheets(s.name, '', '');
+  vmRender();
+}
+
+function vmFilter(val) { vmSearch = val; vmRender(); }
+
+function vmFilterType(type, btn) {
+  vmTypeFilter = type;
+  document.querySelectorAll('.vm-filter-row .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  vmRender();
+}
+
+// ══════════════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════════════
+function showSection(id, evt) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  if (evt) evt.target.classList.add('active');
+  if (id === 'directory') renderDirectory();
+  if (id === 'videos') { updateSyncUI(); vmRender(); }
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  updateProgress();
+  updateVideoWorkload();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Your Google Reviews – HFA Lesson Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #5f8f8a;
+    --teal-light: #8fbfba;
+    --teal-faint: #e8f0ef;
+    --teal-mid: #c5dbd9;
+    --cream: #f7f5f1;
+    --warm-white: #fdfcfa;
+    --stone: #9c9790;
+    --charcoal: #3a3835;
+    --ink: #2a2826;
+    --divider: #e2ddd7;
+    --warn-bg: #fdf6ec;
+    --warn-border: #c4a882;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    padding: 36px 60px 32px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  .header-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    background: var(--teal-faint);
+    border: 1px solid var(--teal-mid);
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 4px;
+    display: inline-block;
+  }
+
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--charcoal);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--stone);
+    font-weight: 400;
+    margin-left: auto;
+    padding-bottom: 2px;
+    white-space: nowrap;
+  }
+
+  /* ── Progress bar ── */
+  .progress-bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 12px 60px;
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    flex-wrap: wrap;
+  }
+
+  .progress-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--stone);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--divider);
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .dot.active  { background: var(--teal); transform: scale(1.3); }
+  .dot.visited { background: var(--teal-light); }
+  .dot:hover   { background: var(--teal-light); transform: scale(1.2); }
+
+  /* ── Expand hint ── */
+  .expand-hint {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--stone);
+    padding: 18px 0 4px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Content ── */
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 40px 56px;
+  }
+
+  /* ── Cards ── */
+  .qa-card {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s forwards;
+  }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  .qa-card:nth-child(2)  { animation-delay: 0.05s; }
+  .qa-card:nth-child(3)  { animation-delay: 0.10s; }
+  .qa-card:nth-child(4)  { animation-delay: 0.15s; }
+  .qa-card:nth-child(5)  { animation-delay: 0.20s; }
+  .qa-card:nth-child(6)  { animation-delay: 0.25s; }
+  .qa-card:nth-child(7)  { animation-delay: 0.30s; }
+  .qa-card:nth-child(8)  { animation-delay: 0.35s; }
+  .qa-card:nth-child(9)  { animation-delay: 0.40s; }
+
+  .card-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--teal);
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    padding: 10px 28px 0;
+    opacity: 1;
+  }
+
+  .question-block {
+    padding: 18px 28px 18px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    cursor: pointer;
+    user-select: none;
+  }
+  .question-block:hover .question-text { color: var(--teal); }
+
+  .section-marker {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--teal);
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 20px;
+  }
+
+  .question-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--charcoal);
+    line-height: 1.5;
+    flex: 1;
+    transition: color 0.2s;
+  }
+
+  .toggle-icon {
+    color: var(--teal-light);
+    font-size: 22px;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+    font-weight: 300;
+    line-height: 1.2;
+  }
+  .qa-card.open .toggle-icon { transform: rotate(45deg); }
+
+  .answer-block {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .qa-card.open .answer-block { max-height: 4000px; }
+
+  .answer-inner {
+    padding: 20px 28px 28px 64px;
+    border-top: 1px solid var(--teal-faint);
+  }
+
+  .answer-inner p {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--charcoal);
+    line-height: 1.8;
+    margin-bottom: 14px;
+  }
+  .answer-inner p:last-child { margin-bottom: 0; }
+
+  /* ── Callouts ── */
+  .callout {
+    background: var(--teal-faint);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 3px 3px 0;
+    padding: 16px 18px;
+    margin: 16px 0;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.75;
+    color: var(--charcoal);
+  }
+
+  .note-callout {
+    background: var(--warn-bg);
+    border-left: 3px solid var(--warn-border);
+    border-radius: 0 3px 3px 0;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--charcoal);
+  }
+
+  /* ── Field list ── */
+  .field-list {
+    margin: 16px 0;
+    border: 1px solid var(--divider);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    border-bottom: 1px solid var(--divider);
+  }
+  .field-row:last-child { border-bottom: none; }
+
+  .field-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--teal);
+    background: var(--teal-faint);
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    letter-spacing: 0.01em;
+    line-height: 1.5;
+  }
+
+  .field-value {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--charcoal);
+    padding: 12px 14px;
+    line-height: 1.65;
+    background: var(--warm-white);
+  }
+
+  /* ── Step list ── */
+  .step-list {
+    margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--charcoal);
+  }
+
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--warm-white);
+    background: var(--teal);
+    width: 24px; height: 24px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .bullet-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--charcoal);
+  }
+
+  .bullet-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    flex-shrink: 0;
+    margin-top: 9px;
+  }
+
+  /* ── Tags / badges ── */
+  .badge-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+
+  .badge {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 6px 14px;
+    border-radius: 2px;
+    background: var(--teal-faint);
+    color: var(--teal);
+    border: 1px solid var(--teal-mid);
+  }
+
+  .badge.warn {
+    background: var(--warn-bg);
+    color: #a07840;
+    border-color: var(--warn-border);
+  }
+
+  /* ── Checklist ── */
+  .checklist-section {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    padding: 32px 36px;
+    margin-top: 8px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s 0.50s forwards;
+  }
+
+  .checklist-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+
+  .checklist-rule {
+    height: 1px;
+    background: var(--teal-mid);
+    margin-bottom: 22px;
+  }
+
+  .checklist-items { display: flex; flex-direction: column; gap: 12px; }
+
+  .checklist-item { display: flex; gap: 14px; align-items: flex-start; }
+
+  .check-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--warm-white);
+    background: var(--teal);
+    width: 28px; height: 28px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .check-text {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--charcoal);
+    line-height: 1.6;
+    padding-top: 4px;
+  }
+
+  /* ── Resource links ── */
+  .resource-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--teal);
+    text-decoration: none;
+    border-bottom: 1px solid var(--teal-mid);
+    padding-bottom: 2px;
+    letter-spacing: 0.02em;
+  }
+  .resource-link:hover { color: var(--charcoal); border-bottom-color: var(--charcoal); }
+
+  /* ── Footer ── */
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--stone);
+    margin-top: 48px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 640px) {
+    .header { padding: 24px 20px 20px; flex-wrap: wrap; }
+    .header-sub { margin-left: 0; }
+    .progress-bar { padding: 12px 20px; }
+    .content { padding: 28px 16px; }
+    .answer-inner { padding: 16px 18px 22px 18px; }
+    .field-row { grid-template-columns: 1fr; }
+    .card-num, .question-block { padding-left: 18px; padding-right: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-tag">Credibility &amp; Social Proof</div>
+    <div class="header-title">Build Your Google Reviews</div>
+  </div>
+  <div class="header-sub">Google Business Profile</div>
+</div>
+
+<div class="progress-bar" id="progressBar">
+  <span class="progress-label">Jump to →</span>
+</div>
+
+<div class="content">
+
+  <p class="expand-hint">Click any card below to open it.</p>
+
+  <!-- Card 1: Why this matters -->
+  <div class="qa-card open" data-index="0">
+    <div class="card-num">01 — Why This Matters</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Why do Google reviews matter for an online teacher?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Charter schools and ESA coordinators Google you. Parents Google you. When they do, a Google Business Profile with real reviews is one of the fastest signals that you're a real, established provider — not someone who just filled out a form.</p>
+        <div class="callout">
+          Reviews on Google live <em>outside</em> any single platform. Your Outschool reviews only show up on Outschool. Your Google reviews show up everywhere — in search results, on Maps, any time someone types your business name. They follow you no matter where you're teaching.
+        </div>
+        <p>This matters especially as you expand into charter school and ESA funding. The coordinators approving your services aren't browsing Outschool — they're Googling your business name. Give them something to find.</p>
+        <div class="callout">
+          <strong>What a good Google profile looks like:</strong><br><br>
+          — Your correct business name and a working website link<br>
+          — At least 5 reviews, all from real students or families<br>
+          — A profile photo (your logo or a photo of your work — not a stock image)<br>
+          — Responses from you on at least some of the reviews<br><br>
+          That's it. You don't need 100 reviews. Even 5–10 solid ones make a real difference.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Set up your GBP -->
+  <div class="qa-card" data-index="1">
+    <div class="card-num">02 — Getting Set Up</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">How do I set up a Google Business Profile if I don't have one yet?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Go to <a href="https://business.google.com" target="_blank" class="resource-link" style="display:inline; border-bottom: none; font-size: inherit; font-weight: 500;">business.google.com</a> and sign in with the Google account you use for your business. If you already have a profile listed there, you'll claim it. If not, you'll create one from scratch.</p>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div>Go to <a href="https://business.google.com" target="_blank" style="color: var(--teal); font-weight: 500;">business.google.com</a> and click "Manage now"</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div>Enter your business name — use the exact name you use everywhere else (on your website, your directory listings, etc.)</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div>Choose your business category — "Tutoring service," "Art school," or "Educational institution" are common fits for online teachers</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div>When asked for a location, choose <strong>"I serve customers at their location"</strong> — this lets you list your service area (like "United States") without giving out a home address</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">5</div>
+            <div>Complete Google's verification steps — they'll walk you through it. This part can take a few days, so do it now</div>
+          </div>
+        </div>
+        <div class="note-callout">⚠ <strong>You need to be verified before reviews will show up publicly on your profile.</strong> Don't skip this step — it's what makes everything else work.</div>
+        <div class="note-callout">⚠ <strong>Google may ask for a mailing address.</strong> You don't have to show it publicly — just enter it to satisfy the verification requirement, then choose to hide your address from your public profile once you're set up.</div>
+        <a class="resource-link" href="https://business.google.com" target="_blank">↗ Go to Google Business Profile</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Get your review link -->
+  <div class="qa-card" data-index="2">
+    <div class="card-num">03 — Your Review Link</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">How do I get a link to send people so they can leave a review?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Once your profile is verified, Google gives you a short direct link that takes people straight to the review box — no searching required. This is the link you'll share everywhere.</p>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div>Log into <a href="https://business.google.com" target="_blank" style="color: var(--teal); font-weight: 500;">business.google.com</a> and go to your profile dashboard</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div>Look for <strong>"Get more reviews"</strong> or <strong>"Share review form"</strong> — it's usually right on the Home tab of your dashboard</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div>Copy the link — it will look something like <strong>g.page/yourbusinessname/review</strong></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div>Save this link somewhere easy to find — in a notes doc, your email drafts, whatever works — because you'll use it over and over</div>
+          </div>
+        </div>
+        <div class="callout">
+          Put this link in your email signature, your welcome email to new students, and any post-class follow-up. The easier you make it for someone to click and leave a review, the more likely they actually will.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: Who to ask -->
+  <div class="qa-card" data-index="3">
+    <div class="card-num">04 — Who to Ask</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Who can I ask for a Google review — and who shouldn't I ask?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Anyone who works with you <em>outside</em> of Outschool is fair game. Anyone you're connected to only through Outschool is more complicated — the next card covers that in detail.</p>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">✓ Great to ask</div>
+            <div class="field-value">Current or past students from your own website, email list, or independent classes — anyone you have a direct relationship with outside of Outschool</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">✓ Great to ask</div>
+            <div class="field-value">Charter school or ESA families who enrolled with you through a funding program (not through Outschool)</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">✓ Great to ask</div>
+            <div class="field-value">Colleagues, collaborators, or community members who genuinely know your work and can speak to it honestly</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">⚠ See next card first</div>
+            <div class="field-value">Outschool students — read Card 05 before reaching out to anyone you met through that platform</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">✗ Don't ask</div>
+            <div class="field-value">Family members or close friends who haven't actually taken your classes — Google can detect and remove reviews that look fake</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: The Outschool situation -->
+  <div class="qa-card" data-index="4">
+    <div class="card-num">05 — The Outschool Situation</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Can I ask my Outschool students to leave a Google review?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>This is where you need to be careful. Outschool's policies require all communication with parents to stay on their platform. They explicitly prohibit using Outschool contacts to promote outside services or do outside business.</p>
+        <div class="note-callout">⚠ <strong>Sending Outschool families a message through Outschool asking for Google reviews is a policy violation risk.</strong> It is not worth risking your account over.</div>
+        <p>That said, here's what <em>can</em> work:</p>
+        <div class="callout">
+          <strong>If a family already follows you off-platform</strong> — they're on your email list, follow your social media, or signed up through your own website independently — they're not exclusively an Outschool contact anymore. You can reach them through those other channels.<br><br>
+          <strong>If a family has moved to working with you directly</strong> outside of Outschool, they're a direct client now. Totally fine to ask them.<br><br>
+          <strong>The goal going forward:</strong> as you grow your independent presence, get families onto your own email list before you ask for reviews. That way you're never relying on Outschool's messaging system to do it.
+        </div>
+        <div class="badge-row">
+          <span class="badge">Outside Outschool = fair game</span>
+          <span class="badge warn">Outschool messaging = policy risk</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: How to ask -->
+  <div class="qa-card" data-index="5">
+    <div class="card-num">06 — How to Ask</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What's the best way to actually ask someone for a review?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Ask right after a good moment — end of a class, when a student shares something they made, when a parent says something kind. Timing matters more than the perfect wording.</p>
+        <div class="callout">
+          Keep it short and personal. Something like this works great:<br><br>
+          <em>"Hey [name] — it would mean so much if you'd be willing to leave me a quick Google review. Honest feedback helps other families find me, and it only takes a minute. Here's the direct link: [your link]"</em><br><br>
+          That's really it. Don't overthink it. A short personal message almost always works better than a fancy template.
+        </div>
+        <p>A few places and formats that work well:</p>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="bullet-dot" style="margin-top: 10px; flex-shrink: 0;"></div>
+            <div><strong>Post-class email</strong> — send a follow-up after the last session of a course with your review link at the bottom</div>
+          </div>
+          <div class="step-item">
+            <div class="bullet-dot" style="margin-top: 10px; flex-shrink: 0;"></div>
+            <div><strong>Email signature</strong> — a simple line like "Enjoying your classes? Leave a review here →" with your link</div>
+          </div>
+          <div class="step-item">
+            <div class="bullet-dot" style="margin-top: 10px; flex-shrink: 0;"></div>
+            <div><strong>Welcome email to new students</strong> — mention upfront that you'd love a review once they've experienced your classes</div>
+          </div>
+          <div class="step-item">
+            <div class="bullet-dot" style="margin-top: 10px; flex-shrink: 0;"></div>
+            <div><strong>A direct personal message</strong> — for students you know well, a quick personal ask almost always outperforms anything automated</div>
+          </div>
+        </div>
+        <div class="note-callout">⚠ <strong>Never offer discounts, free classes, or gifts in exchange for a review.</strong> This violates Google's policies and can get your reviews removed — or your profile flagged.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 7: Responding to reviews -->
+  <div class="qa-card" data-index="6">
+    <div class="card-num">07 — Responding to Reviews</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Do I need to respond to reviews once I have them?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Yes — and it matters more than most people realize. When a charter coordinator or a new parent looks at your profile, they're not just reading the reviews. They're watching how you respond to them.</p>
+        <div class="callout">
+          <strong>For a positive review:</strong> Keep your response warm and short. Thank them by name if you can, reference something specific from what they wrote, and that's enough. You don't need a paragraph.<br><br>
+          <strong>For a negative review:</strong> Don't ignore it, don't get defensive, and don't argue publicly. Acknowledge it calmly, offer to connect directly to work it out, and move on. One critical review handled gracefully often looks better than a profile with zero negative reviews at all — it shows you're real and you care.
+        </div>
+        <p>A profile where the owner responds to reviews looks active and trustworthy. A profile with 20 reviews and zero responses from the owner looks abandoned — even if all the reviews are glowing.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="checklist-section">
+    <div class="checklist-title">Your Action Checklist</div>
+    <div class="checklist-rule"></div>
+    <div class="checklist-items">
+      <div class="checklist-item">
+        <div class="check-num">1</div>
+        <div class="check-text">Go to <a href="https://business.google.com" target="_blank" style="color: var(--teal); font-weight: 500;">business.google.com</a> — claim your existing profile or create a new one</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">2</div>
+        <div class="check-text">Complete Google's verification process — reviews won't show publicly until this is done (start here first, it takes the longest)</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">3</div>
+        <div class="check-text">Get your direct review link from your dashboard and save it somewhere easy to find</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">4</div>
+        <div class="check-text">Make a list of 5–10 people <em>outside of Outschool</em> who know your work and could leave an honest review</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">5</div>
+        <div class="check-text">Send each of them a short personal message with your review link — keep it simple and genuine</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">6</div>
+        <div class="check-text">Add your review link to your email signature and any post-class follow-up emails going forward</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">7</div>
+        <div class="check-text">When reviews come in, respond to them — positive and negative — so your profile looks active</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Google Business Profile · Credibility &amp; Social Proof<br>
+    © Megapixels, LLC · For enrolled clients only
+  </div>
+
+</div>
+
+<script>
+  const TOTAL = 7;
+
+  function buildDots() {
+    const bar = document.getElementById('progressBar');
+    const labels = [
+      'Why It Matters', 'Getting Set Up', 'Review Link',
+      'Who to Ask', 'Outschool', 'How to Ask', 'Responding'
+    ];
+    for (let i = 0; i < TOTAL; i++) {
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer;';
+      wrapper.dataset.index = i;
+      wrapper.addEventListener('click', () => scrollToCard(i));
+
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.dataset.index = i;
+
+      const lbl = document.createElement('span');
+      lbl.textContent = labels[i];
+      lbl.style.cssText = 'font-size:10px; font-weight:500; color: var(--stone); letter-spacing:0.04em; white-space:nowrap;';
+
+      wrapper.appendChild(d);
+      wrapper.appendChild(lbl);
+      bar.appendChild(wrapper);
+    }
+  }
+
+  function scrollToCard(i) {
+    const cards = document.querySelectorAll('.qa-card[data-index]');
+    if (cards[i]) {
+      cards[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (!cards[i].classList.contains('open')) {
+        cards[i].classList.add('open');
+      }
+    }
+  }
+
+  function updateDots() {
+    const cards = document.querySelectorAll('.qa-card[data-index]');
+    const dots  = document.querySelectorAll('.dot');
+    let active  = 0;
+    cards.forEach((card, i) => {
+      const rect = card.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.5) active = i;
+    });
+    dots.forEach((d, i) => {
+      d.classList.toggle('active',  i === active);
+      d.classList.toggle('visited', i < active);
+    });
+  }
+
+  function toggle(el) {
+    el.closest('.qa-card').classList.toggle('open');
+  }
+
+  buildDots();
+  window.addEventListener('scroll', updateDots, { passive: true });
+</script>
+</body>
+</html>

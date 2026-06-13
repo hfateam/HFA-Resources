@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Using Facebook Groups — HFA Vendor Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@400;500&family=DM+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root {
+    --teal: #6b9e9a;
+    --teal-light: #e1f2f1;
+    --teal-dark: #4a7a76;
+    --cream: #f8f6f2;
+    --warm-white: #ffffff;
+    --text-primary: #2c2c2a;
+    --text-secondary: #5f5e5a;
+    --text-muted: #888780;
+    --border: rgba(0,0,0,0.1);
+    --border-light: rgba(0,0,0,0.06);
+    --amber-light: #fdf8f0;
+    --amber: #BA7517;
+    --amber-dark: #854F0B;
+    --green-light: #e1f5ee;
+    --green: #0F6E56;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-primary);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  h1 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 42px;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+  .intro {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    max-width: 620px;
+    margin-bottom: 2.5rem;
+  }
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--border-light);
+    margin: 2rem 0;
+  }
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+  }
+  .strategy-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .strategy-card.accent {
+    border-left: 3px solid var(--teal);
+    border-radius: 0 12px 12px 0;
+  }
+  .strategy-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+  .strategy-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--teal-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .strategy-icon i { font-size: 17px; color: var(--teal-dark); }
+  .strategy-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+  }
+  .strategy-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge-rec { background: var(--green-light); color: var(--green); }
+  .badge-opt { background: #f1efe8; color: #5F5E5A; }
+  .strategy-body {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+  .strategy-body p { margin-bottom: 0.65rem; }
+  .strategy-body p:last-child { margin-bottom: 0; }
+  .callout {
+    border-radius: 0 8px 8px 0;
+    padding: 0.8rem 1rem;
+    margin-top: 0.85rem;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  .callout-teal { background: var(--teal-light); border-left: 3px solid var(--teal); color: var(--teal-dark); }
+  .callout-amber { background: var(--amber-light); border-left: 3px solid var(--amber); color: var(--amber-dark); }
+  .callout strong { font-weight: 500; }
+  .template-block {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-top: 0.85rem;
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--text-primary);
+    font-family: 'DM Mono', monospace;
+  }
+  .template-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  .ciara-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .ciara-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+  .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--green-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--green);
+    flex-shrink: 0;
+  }
+  .ciara-name { font-size: 15px; font-weight: 500; }
+  .ciara-role { font-size: 12px; color: var(--text-muted); }
+  .task-list { list-style: none; }
+  .task-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border-light);
+    line-height: 1.5;
+  }
+  .task-list li:last-child { border-bottom: none; }
+  .task-list li i { color: var(--teal); font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .accordion {
+    border-top: 1px solid var(--border-light);
+  }
+  .acc-btn {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--border-light);
+    cursor: pointer;
+    padding: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .acc-btn:hover { color: var(--teal-dark); }
+  .acc-btn i { font-size: 16px; color: var(--text-muted); transition: transform 0.2s; }
+  .acc-btn.open i { transform: rotate(180deg); }
+  .acc-content { display: none; padding: 1.25rem 0; }
+  .acc-content.open { display: block; }
+  .group-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .group-table th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+    background: var(--cream);
+  }
+  .group-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  .group-table tr:last-child td { border-bottom: none; }
+  .group-table td:first-child { color: var(--text-primary); font-weight: 500; }
+  .day-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    white-space: nowrap;
+  }
+  .rule-note { font-size: 12px; color: var(--text-muted); font-style: italic; }
+  .reminders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 10px;
+    margin-top: 0.75rem;
+  }
+  .reminder-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    padding: 1rem;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+  .reminder-card .r-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .reminder-card .r-title i { font-size: 14px; color: var(--teal); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="eyebrow">Getting students &amp; referrals</div>
+  <h1>Using Facebook Groups</h1>
+  <p class="intro">Facebook groups are still a real source of students and referrals — you just have to use them differently than you would have in 2020. This page walks you through what actually works right now, what Ciara handles on our end, and how you can jump in.</p>
+
+  <hr class="divider">
+
+  <div class="section-label">Why this matters</div>
+  <p style="font-size:14px; color:var(--text-secondary); line-height:1.75; margin-bottom:0.75rem;">Some charter schools require that a currently enrolled student <em>requests</em> you as a vendor before you can apply — which means you need to connect with families directly before you even start the application. Facebook groups, where homeschool parents ask each other for recommendations every single day, are one of the most practical places to make that happen.</p>
+  <p style="font-size:14px; color:var(--text-secondary); line-height:1.75; margin-bottom:2rem;">Even once you're already approved at several schools, staying present in these groups means you're there when a parent posts: <em>"Does anyone know a good Spanish tutor for my 4th grader?"</em> That's your moment. The goal isn't just visibility — it's being the person who actually shows up when someone's looking.</p>
+
+  <hr class="divider">
+
+  <div class="section-label">Three strategies — ranked by what works now</div>
+
+  <div class="strategy-card accent">
+    <div class="strategy-header">
+      <div class="strategy-icon"><i class="ti ti-message-circle" aria-hidden="true"></i></div>
+      <div>
+        <div class="strategy-title">Jump into conversations organically <span class="badge badge-rec">Best ROI</span></div>
+        <div class="strategy-sub">No risk of Facebook jail. Builds real relationships. Actually converts.</div>
+      </div>
+    </div>
+    <div class="strategy-body">
+      <p>Scroll the groups you've joined and look for posts where parents are asking for recommendations — "in search of art classes," "anyone know a good creative writing program," that kind of thing. If what you offer genuinely fits, reply.</p>
+      <p>The key is to not lead with an ad. Ask a clarifying question first if you can — "Are you looking for online or in-person?" — and share your info naturally once there's a real exchange. Parents respond to a conversation. They scroll past a flyer.</p>
+      <p>Also worth keeping an eye on: curriculum recommendation threads, calls for beta testers, and posts where parents are sharing what their kids are into. Those are soft openings that don't require you to pitch anything.</p>
+    </div>
+    <div class="callout callout-teal">
+      <strong>Worth trying:</strong> If a parent posts asking what their kid loves to draw (or read, or build), answer genuinely — then mention that you actually teach that. It's the difference between being helpful and being an ad, and parents notice.
+    </div>
+  </div>
+
+  <div class="strategy-card accent">
+    <div class="strategy-header">
+      <div class="strategy-icon"><i class="ti ti-user-plus" aria-hidden="true"></i></div>
+      <div>
+        <div class="strategy-title">Post a referral request <span class="badge badge-rec">Recommended</span></div>
+        <div class="strategy-sub">For schools that require a student to request you first.</div>
+      </div>
+    </div>
+    <div class="strategy-body">
+      <p>Some schools won't let you become a vendor until a currently enrolled student requests you. This post is how you get that request. Be direct about what you need, and make it genuinely worth their time — offer something valuable to the first person who helps you out.</p>
+      <p>You don't have to give away a full class. A bonus session, a free resource, or a discount works just as well. The point is to give them a real reason to say yes.</p>
+    </div>
+    <div class="template-block">
+      <div class="template-label">Template — adapt this for your business</div>
+Are you enrolled at [School Name]? I'm applying to become a vendor and I need one student to request me to get started. In exchange for the referral, I'd love to offer [your offer — e.g., a free session / first month at a discount / a free downloadable resource].
+
+You don't need to complete anything before referring me — the process is quick and easy. A little about me: [2–3 sentences about your experience, what you teach, and what makes your classes worth it]. Only the first person to reach out gets this — feel free to comment below or DM me!
+    </div>
+    <div class="callout callout-amber">
+      <strong>Watch out for Facebook jail:</strong> Don't copy-paste the same message into multiple groups back to back. Facebook flags repetitive posting and can lock you out of your account. Space out your posts, reword each one, and join groups gradually — one or two a day max.
+    </div>
+  </div>
+
+  <div class="strategy-card">
+    <div class="strategy-header">
+      <div class="strategy-icon"><i class="ti ti-layout-list" aria-hidden="true"></i></div>
+      <div>
+        <div class="strategy-title">Post a flyer or promotional ad <span class="badge badge-opt">Optional</span></div>
+        <div class="strategy-sub">Lower ROI than it used to be — but still an option in groups that allow it.</div>
+      </div>
+    </div>
+    <div class="strategy-body">
+      <p>Posting a flyer-style ad used to work really well — like, 25 comments in 20 minutes well. That's not the reality anymore. Most groups have tightened their rules, and even in the ones that still allow promotional posts, they tend to get ignored now.</p>
+      <p>That said, some groups actively welcome vendor posts, and some parents do find their vendors this way. If you want to try it: check each group's rules first (usually pinned or in the About section), follow their posting frequency limits exactly, and reword every post — don't copy-paste between groups.</p>
+      <p>Where it still gets traction: if you have a freebie, a free trial, or you're looking for beta testers. That framing gets real responses. A straightforward ad usually doesn't.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-label">What Ciara handles on our end</div>
+
+  <div class="ciara-card">
+    <div class="ciara-header">
+      <div class="avatar">C</div>
+      <div>
+        <div class="ciara-name">Ciara — Megapixels Facebook coverage</div>
+        <div class="ciara-role">Ongoing, monitored regularly</div>
+      </div>
+    </div>
+    <ul class="task-list">
+      <li><i class="ti ti-check" aria-hidden="true"></i>When a parent asks about art or photography classes in any group, replies with the Megapixels link and a short description of what we offer</li>
+      <li><i class="ti ti-check" aria-hidden="true"></i>Checks groups daily or every couple of days so parent questions don't go unanswered</li>
+      <li><i class="ti ti-check" aria-hidden="true"></i>Ramps up activity before each semester launches and when funding drops — that's the highest-intent window</li>
+      <li><i class="ti ti-check" aria-hidden="true"></i>Daily promotional posting is being phased out in favor of engagement-first replies</li>
+    </ul>
+    <div class="callout callout-teal" style="margin-top:1rem;">
+      <strong>Timing note:</strong> The window right before a new semester and before funding drops is when parents are actively searching. Being visible in groups during that window matters more than any other time of year.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-label">Facebook group directory</div>
+  <p style="font-size:14px; color:var(--text-secondary); line-height:1.65; margin-bottom:1.25rem;">The groups below are ones we've identified as active and relevant to CA charter school families. Each group has its own posting rules — read them before you post anything. Join <strong>one or two a day</strong>, not all at once.</p>
+
+  <div class="accordion">
+    <button class="acc-btn" id="btn-active" onclick="toggle('active')">
+      <span>Active groups <span style="font-size:12px; color:var(--text-muted); font-weight:400; margin-left:6px;">38 groups</span></span>
+      <i class="ti ti-chevron-down" aria-hidden="true"></i>
+    </button>
+    <div class="acc-content" id="acc-active">
+      <div style="overflow-x:auto;">
+        <table class="group-table">
+          <thead>
+            <tr><th>Group name</th><th>Post day</th><th>Region</th><th>Rules</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Central Valley Inspire Families</td><td><span class="day-tag">Wed + Sat</span></td><td>Bakersfield</td><td><span class="rule-note">Sat & Wed threads only</span></td></tr>
+            <tr><td>Charter Schools Work</td><td><span class="day-tag">Tue</span></td><td>All CA</td><td><span class="rule-note">Confirmed active — check rules</span></td></tr>
+            <tr><td>Homeschool Enrichment Classes – LA County</td><td><span class="day-tag">Thu</span></td><td>South</td><td><span class="rule-note">Once weekly. Begin every post by listing city/cities served.</span></td></tr>
+            <tr><td>Inspire Charter School – East County</td><td><span class="day-tag">Tue</span></td><td>San Diego</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>So Cal Homeschool Charter School Info Group</td><td><span class="day-tag">Wed</span></td><td>South</td><td><span class="rule-note">Be polite and disclose you're a vendor</span></td></tr>
+            <tr><td>California Charter School Connection</td><td><span class="day-tag">Mon</span></td><td>All CA</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>Sage Oak Charter Vendor Page</td><td><span class="day-tag">Mon</span></td><td>South LA / Inland</td><td><span class="rule-note">Posting encouraged</span></td></tr>
+            <tr><td>Springs Charter Parents</td><td><span class="day-tag">Mon</span></td><td>Springs</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>Granite Mountain Charter Schools – Redlands Community Connections</td><td><span class="day-tag">Mon</span></td><td>South of LA</td><td><span class="rule-note">No rules listed — page may be hard to find, verify first</span></td></tr>
+            <tr><td>Inspired Homeschool Families – Temecula</td><td><span class="day-tag">Wed</span></td><td>South</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>Ocean Grove Parents and Families</td><td><span class="day-tag">Mon</span></td><td>Bay Area</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>Heartland Families – Ridgecrest</td><td><span class="day-tag">Fri</span></td><td>Mid</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>Inspire Charter Schools – Rancho Cucamonga Enrichment Adventures</td><td><span class="day-tag">Fri</span></td><td>South LA</td><td><span class="rule-note">No rules listed — page may be hard to find, verify first</span></td></tr>
+            <tr><td>Homeschooling in the Inland Empire</td><td><span class="day-tag">Fri</span></td><td>South LA</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>Homeschooling in Orange County</td><td><span class="day-tag">Thu</span></td><td>South</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>Sage Oak Charter Schools Community</td><td><span class="day-tag">Tue</span></td><td>South LA / Inland</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>San Jose Homeschool</td><td><span class="day-tag">Tue</span></td><td>Bay Area</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>Unofficial Bakersfield Inspire Charter School</td><td><span class="day-tag">Tue</span></td><td>Mid</td><td><span class="rule-note">Posting encouraged</span></td></tr>
+            <tr><td>Homeschooling Southern California</td><td><span class="day-tag">Fri</span></td><td>South</td><td><span class="rule-note">Read rules carefully before posting</span></td></tr>
+            <tr><td>Inspire Charter Schools – High Desert & Mountain</td><td><span class="day-tag">Fri</span></td><td>South</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>Inspire Community Connections – Long Beach</td><td><span class="day-tag">Fri</span></td><td>LA South</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>Heartland & Monarch River Charters – Kern, Tulare, Kings & Inyo Counties</td><td><span class="day-tag">Mon</span></td><td>Mid South</td><td><span class="rule-note">Be polite — previous posts still pending, verify before posting</span></td></tr>
+            <tr><td>Inspire Charter Schools – Orange County Community</td><td><span class="day-tag">Wed</span></td><td>South</td><td><span class="rule-note">Moderated. No duplicate posts.</span></td></tr>
+            <tr><td>Blue Ridge Academy – South Bay, LA Families</td><td><span class="day-tag">Wed</span></td><td>Bay + LA</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>Heartland Charter School – Santa Barbara County</td><td><span class="day-tag">Wed</span></td><td>Mid Coast</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>Granite Mountain Charter School Community</td><td><span class="day-tag">Fri</span></td><td>Mid Inland</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>Heartland Charter School – Santa Maria & Lompoc</td><td><span class="day-tag">Fri</span></td><td>Mid Coast</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>Central Valley Inspire Charter Schools Homeschool Vendors</td><td><span class="day-tag">Thu</span></td><td>Bakersfield</td><td><span class="rule-note">No rules listed</span></td></tr>
+            <tr><td>South Sutter Homeschoolers</td><td><span class="day-tag">Tue</span></td><td>South Sutter</td><td><span class="rule-note">No rules listed — low activity, but worth maintaining presence</span></td></tr>
+            <tr><td>South Bay Homeschoolers Vendor Share (SBHVS)</td><td>—</td><td>Bay Area</td><td><span class="rule-note">2 posts per week</span></td></tr>
+            <tr><td>Parents of ILEAD Exploration</td><td><span class="day-tag">Wed</span></td><td>—</td><td><span class="rule-note">Once per month only</span></td></tr>
+            <tr><td>SLO County Inspire Charter School</td><td><span class="day-tag">Wed</span></td><td>All CA</td><td><span class="rule-note">One promo post/month. May respond to posts specifically requesting your service.</span></td></tr>
+            <tr><td>Online Classes for KIDS USA Group</td><td>—</td><td>—</td><td><span class="rule-note">Can post daily. No religious content.</span></td></tr>
+            <tr><td>Contra Costa Homeschool Vendors</td><td><span class="day-tag">Mon</span></td><td>Bay Area</td><td><span class="rule-note">Up to twice a day</span></td></tr>
+            <tr><td>Blue Ridge Academy – LA and Ventura County</td><td><span class="day-tag">Tue</span></td><td>South</td><td><span class="rule-note">Posts must be 2 weeks apart. No more than 2 posts/month.</span></td></tr>
+            <tr><td>Homeschooling in Southern California</td><td><span class="day-tag">Tue</span></td><td>South</td><td><span class="rule-note">Two ads per month max</span></td></tr>
+            <tr><td>IEM Schools – Families</td><td><span class="day-tag">Sat</span></td><td>—</td><td><span class="rule-note">Solicitation Saturdays only</span></td></tr>
+            <tr><td>South Sutter Charter School Families</td><td><span class="day-tag">Sat</span></td><td>South Sutter</td><td><span class="rule-note">Solicitation Saturdays only</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <button class="acc-btn" id="btn-seasonal" onclick="toggle('seasonal')">
+      <span>Paused — check back in fall <span style="font-size:12px; color:var(--text-muted); font-weight:400; margin-left:6px;">Temporarily not posting</span></span>
+      <i class="ti ti-chevron-down" aria-hidden="true"></i>
+    </button>
+    <div class="acc-content" id="acc-seasonal">
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:0.85rem; line-height:1.65;">These groups are active but we've paused posting for now. Resume when the fall semester ramps up.</p>
+      <div style="overflow-x:auto;">
+        <table class="group-table">
+          <thead><tr><th>Group name</th><th>Region</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Inspire Community Connections – Burbank</td><td>South</td><td><span class="rule-note">No rules listed — holding off until fall before posting again</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <button class="acc-btn" id="btn-verify" onclick="toggle('verify')">
+      <span>Groups to verify first <span style="font-size:12px; color:var(--text-muted); font-weight:400; margin-left:6px;">Status unclear or possibly inactive</span></span>
+      <i class="ti ti-chevron-down" aria-hidden="true"></i>
+    </button>
+    <div class="acc-content" id="acc-verify">
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:0.85rem; line-height:1.65;">These groups may have changed their rules, gone private, or become inactive. Check before posting or joining.</p>
+      <div style="overflow-x:auto;">
+        <table class="group-table">
+          <thead><tr><th>Group name</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Inspire Charter Schools Riverside County Families</td><td><span class="rule-note">Archived — may be closed. Do not use the word "camp" in posts.</span></td></tr>
+            <tr><td>Inspire Charter Schools Community</td><td><span class="rule-note">Archived. Flyers must include: offering, city/online, contact, website, age range.</span></td></tr>
+            <tr><td>Inspire Charter Schools – San Diego Community</td><td><span class="rule-note">Archived. Ads approved Tuesdays and Fridays.</span></td></tr>
+            <tr><td>Inspire Charter School North – Teen Group</td><td><span class="rule-note">Now on Instagram instead of Facebook.</span></td></tr>
+            <tr><td>Inspire Charter Schools North – Butte County</td><td><span class="rule-note">Possibly closed.</span></td></tr>
+            <tr><td>Inspire Community Connections – Glendora</td><td><span class="rule-note">Previous posts still pending — status unclear.</span></td></tr>
+            <tr><td>Inspire Charter Schools – Monterey and San Benito Counties</td><td><span class="rule-note">Previous posts still pending — check before joining.</span></td></tr>
+            <tr><td>Blue Ridge Academy – Vendors</td><td><span class="rule-note">Vendor-only group — check access requirements first.</span></td></tr>
+            <tr><td>Epic Charter (Oklahoma)</td><td><span class="rule-note">Not currently a vendor — do not post yet.</span></td></tr>
+            <tr><td>SoCal Homeschool Vendors</td><td><span class="rule-note">May be a duplicate in original data — verify before joining.</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <button class="acc-btn" id="btn-inactive" onclick="toggle('inactive')">
+      <span>No longer available <span style="font-size:12px; color:var(--text-muted); font-weight:400; margin-left:6px;">Closed, removed, or vendors no longer allowed</span></span>
+      <i class="ti ti-chevron-down" aria-hidden="true"></i>
+    </button>
+    <div class="acc-content" id="acc-inactive">
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:0.85rem; line-height:1.65;">These groups are confirmed unavailable — either the group no longer exists or vendors have been removed. Kept here for reference so we're not re-trying them.</p>
+      <div style="overflow-x:auto;">
+        <table class="group-table">
+          <thead><tr><th>Group name</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Three Rivers Partnership Parents Group</td><td><span class="rule-note">Group no longer available as of 3/31</span></td></tr>
+            <tr><td>Orange County Tutoring & Youth Programs</td><td><span class="rule-note">Group no longer available</span></td></tr>
+            <tr><td>Ocean Grove Charter School Parents</td><td><span class="rule-note">Group no longer available</span></td></tr>
+            <tr><td>Cottonwood Homeschool Community Group</td><td><span class="rule-note">Now exclusively for students, teachers, and staff — vendors not allowed</span></td></tr>
+            <tr><td>Unofficial Heartland Charter School</td><td><span class="rule-note">Admin removed vendors from the group</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-label">Quick reminders</div>
+  <div class="reminders-grid">
+    <div class="reminder-card">
+      <div class="r-title"><i class="ti ti-clock" aria-hidden="true"></i> Join gradually</div>
+      One or two groups per day. Joining too many at once triggers Facebook's spam filters.
+    </div>
+    <div class="reminder-card">
+      <div class="r-title"><i class="ti ti-file-description" aria-hidden="true"></i> Check the rules</div>
+      Groups update their rules often. Read the pinned posts and About section before you post anything.
+    </div>
+    <div class="reminder-card">
+      <div class="r-title"><i class="ti ti-lock" aria-hidden="true"></i> Make your profile private</div>
+      Keeps competitors from seeing which groups you're active in. Find it under your profile settings.
+    </div>
+    <div class="reminder-card">
+      <div class="r-title"><i class="ti ti-refresh" aria-hidden="true"></i> Vary your wording</div>
+      Reword every post. Repetitive copy across groups gets flagged — even if the message is similar.
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggle(id) {
+  const content = document.getElementById('acc-' + id);
+  const btn = document.getElementById('btn-' + id);
+  const isOpen = content.classList.contains('open');
+  content.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
+</script>
+</body>
+</html>

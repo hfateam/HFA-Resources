@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>After Your COR Preliminary Approval — Fingerprinting Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #5f8f8a;
+    --teal-light: #8fbfba;
+    --teal-faint: #e8f0ef;
+    --teal-mid: #c5dbd9;
+    --cream: #f7f5f1;
+    --warm-white: #fdfcfa;
+    --stone: #9c9790;
+    --charcoal: #3a3835;
+    --ink: #2a2826;
+    --divider: #e2ddd7;
+    --warn-bg: #fdf6ec;
+    --warn-border: #c4a882;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  .header {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    padding: 36px 60px 32px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  .header-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    background: var(--teal-faint);
+    border: 1px solid var(--teal-mid);
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 4px;
+    display: inline-block;
+  }
+
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 500;
+    color: var(--charcoal);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--stone);
+    font-weight: 400;
+    margin-left: auto;
+    padding-bottom: 2px;
+    white-space: nowrap;
+  }
+
+  .progress-bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 12px 60px;
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    flex-wrap: wrap;
+  }
+
+  .progress-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--stone);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--divider);
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .dot.active  { background: var(--teal); transform: scale(1.3); }
+  .dot.visited { background: var(--teal-light); }
+  .dot:hover   { background: var(--teal-light); transform: scale(1.2); }
+
+  .expand-hint {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--stone);
+    padding: 18px 0 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 40px 56px;
+  }
+
+  .qa-card {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s forwards;
+  }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  .qa-card:nth-child(2) { animation-delay: 0.05s; }
+  .qa-card:nth-child(3) { animation-delay: 0.10s; }
+  .qa-card:nth-child(4) { animation-delay: 0.15s; }
+  .qa-card:nth-child(5) { animation-delay: 0.20s; }
+  .qa-card:nth-child(6) { animation-delay: 0.25s; }
+  .qa-card:nth-child(7) { animation-delay: 0.30s; }
+
+  .card-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--teal);
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    padding: 10px 28px 0;
+  }
+
+  .question-block {
+    padding: 18px 28px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    cursor: pointer;
+    user-select: none;
+  }
+  .question-block:hover .question-text { color: var(--teal); }
+
+  .section-marker {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--teal);
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 20px;
+  }
+
+  .question-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--charcoal);
+    line-height: 1.5;
+    flex: 1;
+    transition: color 0.2s;
+  }
+
+  .toggle-icon {
+    color: var(--teal-light);
+    font-size: 22px;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+    font-weight: 300;
+    line-height: 1.2;
+  }
+  .qa-card.open .toggle-icon { transform: rotate(45deg); }
+
+  .answer-block {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .qa-card.open .answer-block { max-height: 4000px; }
+
+  .answer-inner {
+    padding: 20px 28px 28px 64px;
+    border-top: 1px solid var(--teal-faint);
+  }
+
+  .answer-inner p {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--charcoal);
+    line-height: 1.8;
+    margin-bottom: 14px;
+  }
+  .answer-inner p:last-child { margin-bottom: 0; }
+
+  .callout {
+    background: var(--teal-faint);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 3px 3px 0;
+    padding: 16px 18px;
+    margin: 16px 0;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.75;
+    color: var(--charcoal);
+  }
+
+  .note-callout {
+    background: var(--warn-bg);
+    border-left: 3px solid var(--warn-border);
+    border-radius: 0 3px 3px 0;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--charcoal);
+  }
+
+  .field-list {
+    margin: 16px 0;
+    border: 1px solid var(--divider);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    border-bottom: 1px solid var(--divider);
+  }
+  .field-row:last-child { border-bottom: none; }
+
+  .field-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--teal);
+    background: var(--teal-faint);
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    letter-spacing: 0.01em;
+    line-height: 1.5;
+  }
+
+  .field-value {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--charcoal);
+    padding: 12px 14px;
+    line-height: 1.65;
+    background: var(--warm-white);
+  }
+
+  .step-list {
+    margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--charcoal);
+  }
+
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--warm-white);
+    background: var(--teal);
+    width: 24px; height: 24px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .bullet-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    flex-shrink: 0;
+    margin-top: 10px;
+  }
+
+  .badge-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+
+  .badge {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 6px 14px;
+    border-radius: 2px;
+    background: var(--teal-faint);
+    color: var(--teal);
+    border: 1px solid var(--teal-mid);
+  }
+
+  .badge.warn {
+    background: var(--warn-bg);
+    color: #a07840;
+    border-color: var(--warn-border);
+  }
+
+  .checklist-section {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    padding: 32px 36px;
+    margin-top: 8px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s 0.45s forwards;
+  }
+
+  .checklist-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+
+  .checklist-rule {
+    height: 1px;
+    background: var(--teal-mid);
+    margin-bottom: 22px;
+  }
+
+  .checklist-items { display: flex; flex-direction: column; gap: 12px; }
+  .checklist-item { display: flex; gap: 14px; align-items: flex-start; }
+
+  .check-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--warm-white);
+    background: var(--teal);
+    width: 28px; height: 28px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .check-text {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--charcoal);
+    line-height: 1.6;
+    padding-top: 4px;
+  }
+
+  .resource-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--teal);
+    text-decoration: none;
+    border-bottom: 1px solid var(--teal-mid);
+    padding-bottom: 2px;
+    letter-spacing: 0.02em;
+  }
+  .resource-link:hover { color: var(--charcoal); border-bottom-color: var(--charcoal); }
+
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--stone);
+    margin-top: 48px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    line-height: 1.8;
+  }
+
+  /* ── Date Calculator ── */
+  .date-calc {
+    background: var(--warm-white);
+    border: 1px solid var(--teal-mid);
+    border-radius: 4px;
+    padding: 20px 20px 18px;
+    margin: 16px 0;
+  }
+
+  .date-calc-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--teal);
+    letter-spacing: 0.03em;
+    margin-bottom: 12px;
+  }
+
+  .date-calc-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .date-input {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--charcoal);
+    background: var(--cream);
+    border: 1px solid var(--divider);
+    border-radius: 3px;
+    padding: 9px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    flex: 1;
+    min-width: 150px;
+  }
+  .date-input:focus { border-color: var(--teal); }
+
+  .calc-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--warm-white);
+    background: var(--teal);
+    border: none;
+    border-radius: 3px;
+    padding: 10px 20px;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .calc-btn:hover { background: var(--charcoal); }
+
+  .date-results {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border: 1px solid var(--divider);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .date-result-row {
+    display: grid;
+    grid-template-columns: 180px 130px 1fr;
+    align-items: center;
+    gap: 0;
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    padding: 0;
+  }
+  .date-result-row:last-of-type { border-bottom: none; }
+  .date-result-row.urgent { background: var(--warn-bg); }
+
+  .date-result-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--teal);
+    background: var(--teal-faint);
+    padding: 11px 14px;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    line-height: 1.4;
+  }
+  .date-result-row.urgent .date-result-label {
+    background: var(--warn-bg);
+    color: #a07840;
+  }
+
+  .date-result-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--charcoal);
+    padding: 11px 14px;
+    white-space: nowrap;
+  }
+  .date-result-row.urgent .date-result-value { color: #a07840; }
+
+  .date-result-note {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--stone);
+    padding: 11px 14px;
+    line-height: 1.5;
+    border-left: 1px solid var(--divider);
+  }
+
+  .date-result-days {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 14px;
+    background: var(--cream);
+    border-top: 1px solid var(--divider);
+    color: var(--charcoal);
+    text-align: center;
+    letter-spacing: 0.01em;
+  }
+
+  @media (max-width: 640px) {
+    .header { padding: 24px 20px 20px; flex-wrap: wrap; }
+    .header-sub { margin-left: 0; }
+    .progress-bar { padding: 12px 20px; }
+    .content { padding: 28px 16px; }
+    .answer-inner { padding: 16px 18px 22px 18px; }
+    .field-row { grid-template-columns: 1fr; }
+    .card-num, .question-block { padding-left: 18px; padding-right: 18px; }
+    .date-result-row { grid-template-columns: 1fr; }
+    .date-result-note { border-left: none; border-top: 1px solid var(--divider); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-tag">Custodian of Records</div>
+    <div class="header-title">After Your COR Preliminary Approval Fingerprinting</div>
+  </div>
+  <div class="header-sub">COR Next Steps &amp; Responsibilities</div>
+</div>
+
+<div class="progress-bar" id="progressBar">
+  <span class="progress-label">Jump to →</span>
+</div>
+
+<div class="content">
+
+  <p class="expand-hint">Click any card below to open it.</p>
+
+  <!-- Card 1: Finding fingerprinting near you -->
+  <div class="qa-card open" data-index="0">
+    <div class="card-num">01 — Finding Fingerprinting Near You</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">How do I find somewhere to get fingerprinted?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <div class="note-callout">⚠ <strong>You have 14 calendar days from the date on your preliminary approval letter to get your fingerprint cards to CA DOJ.</strong> That clock starts the day the letter is dated — not the day you receive it. Mail takes 2–3 days, so aim to be fingerprinted and mailing within the first week. Don't sit on this one.</div>
+
+        <!-- Date Calculator -->
+        <div class="date-calc" id="dateCalc">
+          <div class="date-calc-label">Enter your letter date to see your deadlines</div>
+          <div class="date-calc-row">
+            <input type="date" id="letterDate" class="date-input" />
+            <button onclick="calcDates()" class="calc-btn">Calculate</button>
+          </div>
+          <div class="date-results" id="dateResults" style="display:none;">
+            <div class="date-result-row" id="row-fingerprint">
+              <div class="date-result-label">Get fingerprinted by</div>
+              <div class="date-result-value" id="val-fingerprint"></div>
+              <div class="date-result-note">Aim for this — gives you buffer to mail in time</div>
+            </div>
+            <div class="date-result-row" id="row-mail">
+              <div class="date-result-label">Mail cards by</div>
+              <div class="date-result-value" id="val-mail"></div>
+              <div class="date-result-note">Absolute latest to drop in USPS — Priority or Certified only</div>
+            </div>
+            <div class="date-result-row urgent" id="row-deadline">
+              <div class="date-result-label">CA DOJ must receive by</div>
+              <div class="date-result-value" id="val-deadline"></div>
+              <div class="date-result-note">Hard deadline from your letter — no extensions</div>
+            </div>
+            <div class="date-result-days" id="daysLeft"></div>
+          </div>
+        </div>
+
+        <p>Because you're outside of California, you need a location that will roll your fingerprints onto physical FD-258 hard cards — ink on paper. California's Live Scan system is only available to California residents, and other states' digital fingerprinting systems are not compatible with it. Physical hard cards are the only option for out-of-state applicants.</p>
+        <div class="callout">
+          <strong>How to search:</strong> Google <em>"FD-258 fingerprint cards near me"</em> or <em>"ink fingerprint cards [your city]."</em> You can also try <em>"hard card fingerprinting California DOJ [your city]."</em><br><br>
+          Good places to look: local police department, sheriff's office, UPS Store locations (many offer this), and private fingerprinting companies.
+        </div>
+        <p><strong>Before you book, check the location's website for two things:</strong></p>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="bullet-dot"></div>
+            <div>They offer <strong>FD-258 ink hard card fingerprinting</strong> for out-of-state California DOJ submission</div>
+          </div>
+          <div class="step-item">
+            <div class="bullet-dot"></div>
+            <div>You can <strong>leave with your completed cards the same day</strong> — same-day is strongly preferred (see below)</div>
+          </div>
+        </div>
+        <div class="note-callout">⚠ <strong>Same-day cards vs. mailed cards — this matters.</strong> Some locations roll your prints and then mail the completed cards to you a few days later. Others hand them to you right there at the appointment. Choose same-day whenever possible — it keeps your timeline on track and removes a variable you don't need.</div>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">✓ What you want</div>
+            <div class="field-value">FD-258 ink hard cards, completed and handed to you same day at the appointment</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">✓ Also works</div>
+            <div class="field-value">A location that mails completed cards to you — factor in 2–3 extra days before you can mail to CA DOJ</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">✗ Not what you need</div>
+            <div class="field-value">Digital fingerprinting only — this will not work for out-of-state CA DOJ submissions. You must have physical FD-258 hard cards.</div>
+          </div>
+        </div>
+        <p>Once you have both completed cards in hand, you're ready to mail to CA DOJ.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: After mailing -->
+  <div class="qa-card" data-index="1">
+    <div class="card-num">02 — After You Mail</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">I mailed my fingerprint cards to CA DOJ. What happens now?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Now you wait. CA DOJ processes hard card submissions manually, so it takes longer than a digital submission — but it's a normal, well-established process and you don't need to do anything while it's in motion.</p>
+        <div class="callout">
+          <strong>Expected timeline:</strong> CA DOJ typically processes hard cards within 2–4 weeks of receipt. Allow a little extra buffer on top of that for mail transit time getting to Sacramento.
+        </div>
+        <p>Two things to do right after mailing:</p>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div><strong>Save your tracking number</strong> and send it to your HFA program contact so we can confirm DOJ received your envelope.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div><strong>Keep your preliminary approval letter from CA DOJ.</strong> That letter has your Agency REF number on it — you'll need it for reference if any questions come up.</div>
+          </div>
+        </div>
+        <div class="note-callout">⚠ There is no online status tracker for out-of-state hard card submissions. Your tracking number confirming DOJ received the envelope is the best confirmation you'll have while you wait.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: If you haven't heard anything -->
+  <div class="qa-card" data-index="2">
+    <div class="card-num">03 — If You Haven't Heard Anything</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">It's been a few weeks and I haven't heard anything. Is that normal?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>If it's been fewer than 4 weeks since DOJ confirmed receipt of your cards — yes, totally normal. No news is not bad news here.</p>
+        <p>If it's been more than 4–6 weeks and you still haven't heard anything:</p>
+        <div class="callout">
+          <strong>Let your HFA program contact know.</strong> We'll reach out to CA DOJ on your behalf to check the status. You don't need to contact DOJ directly — just flag it to us and we'll handle the follow-up.
+        </div>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">Under 4 weeks</div>
+            <div class="field-value">Normal — no action needed. Just wait.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">4–6 weeks, no word</div>
+            <div class="field-value">Message your HFA program contact. We'll follow up with DOJ.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Got a rejection notice</div>
+            <div class="field-value">Message your HFA program contact right away. This is rare but completely solvable — don't panic.</div>
+          </div>
+        </div>
+        <p>CA DOJ's COR contact is <strong>COR@doj.ca.gov</strong> — but reach out to your HFA program contact first and we'll coordinate from there.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: Once approved -->
+  <div class="qa-card" data-index="3">
+    <div class="card-num">04 — Once You're Approved</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What does COR approval mean — and what's my ORI/COI number?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Your <strong>ORI/COI number</strong> — your unique agency identifier — is already on the preliminary approval letter CA DOJ sent at the start of this process. That's the letter that triggered your fingerprinting. Hold onto it.</p>
+        <div class="callout">
+          When charter schools and ESA programs ask whether you've been background checked, or ask for your COI number — your answer comes from that letter. That's the document that proves your COR status.
+        </div>
+        <p>Practically, here's what COR approval means for you day-to-day:</p>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="bullet-dot"></div>
+            <div>Your HFA program team handles background check submissions on your behalf — you don't need to run them yourself</div>
+          </div>
+          <div class="step-item">
+            <div class="bullet-dot"></div>
+            <div>When charter schools or ESA coordinators ask for your COI/ORI number — reference your preliminary approval letter</div>
+          </div>
+          <div class="step-item">
+            <div class="bullet-dot"></div>
+            <div>You are the named Custodian of Records for your agency — meaning CA DOJ recognizes you as the designated contact for all related matters</div>
+          </div>
+          <div class="step-item">
+            <div class="bullet-dot"></div>
+            <div>COR approval does not expire — once confirmed, you're confirmed</div>
+          </div>
+        </div>
+        <div class="note-callout">⚠ If your name, address, phone, or email ever changes — you are required to notify CA DOJ. See Card 05 for the full list of your ongoing COR responsibilities.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: COR responsibilities -->
+  <div class="qa-card" data-index="4">
+    <div class="card-num">05 — Your COR Responsibilities</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What are my ongoing responsibilities as Custodian of Records?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>As COR, you agreed to a set of responsibilities with CA DOJ when you were confirmed. Here's the official list in plain language:</p>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">Keep records confidential</div>
+            <div class="field-value">Criminal record information (CORI) from DOJ is confidential. You cannot share it with anyone not authorized by law. Violations are a misdemeanor under Penal Code section 11142.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Secure storage</div>
+            <div class="field-value">Any CORI your agency holds must be kept in a secured, locked area — separate from regular personnel files.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Use only as intended</div>
+            <div class="field-value">Criminal record information can only be used for the purpose it was requested. It cannot be repurposed for anything else.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Written access policy</div>
+            <div class="field-value">Your agency should have a written policy covering who can access CORI, how it's stored, and how it's destroyed when no longer needed.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Staff training</div>
+            <div class="field-value">Anyone with access to CORI must be trained in its secure handling, storage, and destruction.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Notify DOJ of changes</div>
+            <div class="field-value">If your agency name, address, phone, or COR contact information changes — you must notify CA DOJ. Don't let your contact info go stale.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">DOJ audits</div>
+            <div class="field-value">DOJ may audit agencies using CORI to confirm compliance. This is rare but worth knowing about.</div>
+          </div>
+        </div>
+        <div class="note-callout">⚠ These are CA DOJ's official COR duties. If you have questions about what any of these require in practice, reach out to your HFA program contact or CA DOJ directly at <strong>COR@doj.ca.gov</strong>.</div>
+        <a class="resource-link" href="https://www.oag.ca.gov/fingerprints/custodian" target="_blank">↗ CA DOJ Custodian of Records — Official Page</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: Who to contact -->
+  <div class="qa-card" data-index="5">
+    <div class="card-num">06 — Who to Contact</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Who do I reach out to if something comes up?</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>For almost everything — start with your HFA program contact. We'll route from there or reach out to DOJ on your behalf if needed.</p>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">HFA Program Contact</div>
+            <div class="field-value">Your first stop for any questions about the process, timeline, charter school approvals, or anything COR-related. Message us before contacting DOJ directly.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">CA DOJ — COR Unit</div>
+            <div class="field-value">COR@doj.ca.gov — for submission-specific questions once your cards are mailed</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">CA DOJ — General</div>
+            <div class="field-value">AuthorizationQuestions@doj.ca.gov — for general authorization questions</div>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>Quick guide to who to contact:</strong><br><br>
+          → Processing past 4–6 weeks with no word → <strong>HFA contact first</strong><br>
+          → Got a rejection or resubmission notice → <strong>HFA contact first</strong><br>
+          → Charter school asking for your COI/ORI → <strong>reference your prelim approval letter</strong><br>
+          → Your address or contact info changed → <strong>notify both HFA contact AND CA DOJ</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="checklist-section">
+    <div class="checklist-title">Your Post-Mailing Checklist</div>
+    <div class="checklist-rule"></div>
+    <div class="checklist-items">
+      <div class="checklist-item">
+        <div class="check-num">1</div>
+        <div class="check-text"><strong>Check the date on your preliminary approval letter — you have 14 calendar days from that date</strong> to get your cards to CA DOJ. Mail takes 2–3 days, so aim to be fingerprinted and mailing within the first week.</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">2</div>
+        <div class="check-text">Cards mailed via Priority or Certified Mail — tracking number saved</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">3</div>
+        <div class="check-text">Tracking number shared with your HFA program contact</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">4</div>
+        <div class="check-text">Preliminary approval letter from CA DOJ saved somewhere safe — your ORI/COI number is on it</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">5</div>
+        <div class="check-text">Expect 2–4 weeks for processing — no news before then is completely normal</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">6</div>
+        <div class="check-text">If 4–6 weeks pass with no word, message your HFA program contact — don't contact DOJ directly yet</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">7</div>
+        <div class="check-text">Once approved: when charter schools ask about background checks or your COI/ORI number — reference your preliminary approval letter</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">8</div>
+        <div class="check-text">If your address, name, or contact info ever changes — notify your HFA contact AND CA DOJ</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Custodian of Records · COR Fingerprinting &amp; Next Steps<br>
+    © Megapixels, LLC · For enrolled clients only
+  </div>
+
+</div>
+
+<script>
+  const TOTAL = 6;
+
+  function calcDates() {
+    const input = document.getElementById('letterDate').value;
+    if (!input) return;
+
+    const letterDate = new Date(input + 'T12:00:00');
+    const today = new Date();
+    today.setHours(12, 0, 0, 0);
+
+    const deadline   = new Date(letterDate); deadline.setDate(deadline.getDate() + 14);
+    const mailBy     = new Date(letterDate); mailBy.setDate(mailBy.getDate() + 11);
+    const printBy    = new Date(letterDate); printBy.setDate(printBy.getDate() + 7);
+
+    const fmt = d => d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+
+    document.getElementById('val-fingerprint').textContent = fmt(printBy);
+    document.getElementById('val-mail').textContent        = fmt(mailBy);
+    document.getElementById('val-deadline').textContent    = fmt(deadline);
+
+    const msLeft = deadline - today;
+    const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
+    const daysEl = document.getElementById('daysLeft');
+
+    if (daysLeft < 0) {
+      daysEl.textContent = '⚠ This deadline has passed. Contact your HFA program contact immediately.';
+      daysEl.style.color = '#a07840';
+    } else if (daysLeft === 0) {
+      daysEl.textContent = '⚠ Today is the deadline. Mail immediately if you haven\'t already.';
+      daysEl.style.color = '#a07840';
+    } else if (daysLeft <= 3) {
+      daysEl.textContent = `⚠ ${daysLeft} day${daysLeft === 1 ? '' : 's'} until the CA DOJ deadline — act today.`;
+      daysEl.style.color = '#a07840';
+    } else {
+      daysEl.textContent = `${daysLeft} days remaining until the CA DOJ deadline.`;
+      daysEl.style.color = 'var(--teal)';
+    }
+
+    document.getElementById('dateResults').style.display = 'flex';
+    document.getElementById('dateResults').style.flexDirection = 'column';
+  }
+
+  function buildDots() {
+    const bar = document.getElementById('progressBar');
+    const labels = [
+      'Find Fingerprinting', 'After Mailing', 'No News Yet',
+      'Once Approved', 'COR Duties', 'Who to Contact'
+    ];
+    for (let i = 0; i < TOTAL; i++) {
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer;';
+      wrapper.dataset.index = i;
+      wrapper.addEventListener('click', () => scrollToCard(i));
+
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+
+      const lbl = document.createElement('span');
+      lbl.textContent = labels[i];
+      lbl.style.cssText = 'font-size:10px; font-weight:500; color: var(--stone); letter-spacing:0.04em; white-space:nowrap;';
+
+      wrapper.appendChild(d);
+      wrapper.appendChild(lbl);
+      bar.appendChild(wrapper);
+    }
+  }
+
+  function scrollToCard(i) {
+    const cards = document.querySelectorAll('.qa-card[data-index]');
+    if (cards[i]) {
+      cards[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (!cards[i].classList.contains('open')) cards[i].classList.add('open');
+    }
+  }
+
+  function updateDots() {
+    const cards = document.querySelectorAll('.qa-card[data-index]');
+    const dots  = document.querySelectorAll('.dot');
+    let active  = 0;
+    cards.forEach((card, i) => {
+      const rect = card.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.5) active = i;
+    });
+    dots.forEach((d, i) => {
+      d.classList.toggle('active',  i === active);
+      d.classList.toggle('visited', i < active);
+    });
+  }
+
+  function toggle(el) {
+    el.closest('.qa-card').classList.toggle('open');
+  }
+
+  buildDots();
+  window.addEventListener('scroll', updateDots, { passive: true });
+</script>
+</body>
+</html>

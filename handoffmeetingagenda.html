@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CEO Handoff — Meeting Agenda</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #5f8f8a;
+    --teal-light: #8fbfba;
+    --teal-faint: #e8f0ef;
+    --teal-mid: #c5dbd9;
+    --cream: #f7f5f1;
+    --warm-white: #fdfcfa;
+    --stone: #9c9790;
+    --charcoal: #3a3835;
+    --ink: #2a2826;
+    --divider: #e2ddd7;
+    --warn-bg: #fdf6ec;
+    --warn-border: #c4a882;
+    --urgent-bg: #fdf0f0;
+    --urgent-border: #c48282;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; padding: 0 0 80px; }
+
+  .header { background: var(--warm-white); border-bottom: 1px solid var(--divider); padding: 36px 60px 32px; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(8px); }
+  .header-top { display: flex; align-items: flex-end; gap: 24px; }
+  .header-tag { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal); background: var(--teal-faint); border: 1px solid var(--teal-mid); padding: 5px 12px; border-radius: 2px; margin-bottom: 6px; display: inline-block; }
+  .header-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 500; color: var(--charcoal); letter-spacing: -0.01em; line-height: 1; }
+  .header-meta { margin-left: auto; text-align: right; padding-bottom: 2px; }
+  .header-sub { font-size: 13px; color: var(--stone); font-weight: 300; white-space: nowrap; }
+  .time-total { font-size: 11px; font-weight: 500; color: var(--teal); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
+
+  .toc { display: flex; gap: 6px; flex-wrap: wrap; padding: 12px 60px; background: var(--warm-white); border-bottom: 1px solid var(--divider); }
+  .toc-pill { font-size: 11px; font-weight: 500; color: var(--teal); background: var(--teal-faint); border: 1px solid var(--teal-mid); padding: 4px 10px; border-radius: 2px; cursor: pointer; letter-spacing: 0.04em; transition: all 0.15s; text-decoration: none; white-space: nowrap; }
+  .toc-pill:hover { background: var(--teal-mid); }
+
+  .content { max-width: 860px; margin: 0 auto; padding: 56px 40px; display: flex; flex-direction: column; gap: 28px; }
+
+  .premeet-banner { background: var(--urgent-bg); border: 1px solid var(--urgent-border); border-radius: 4px; padding: 20px 24px; opacity: 0; animation: fadeUp 0.4s 0.05s forwards; }
+  .premeet-banner h3 { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; color: #8b3a3a; margin-bottom: 10px; }
+  .premeet-banner ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .premeet-banner li { font-size: 13px; font-weight: 300; color: var(--charcoal); line-height: 1.6; padding-left: 16px; position: relative; }
+  .premeet-banner li::before { content: '→'; position: absolute; left: 0; color: #c48282; font-size: 11px; top: 2px; }
+
+  .premeet-questions { background: #f0f4fd; border: 1px solid #b0c4e8; border-radius: 4px; padding: 20px 24px; opacity: 0; animation: fadeUp 0.4s 0.08s forwards; }
+  .premeet-questions h3 { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; color: #2a4a7a; margin-bottom: 6px; }
+  .premeet-questions .pq-sub { font-size: 12px; font-weight: 300; color: #6080aa; font-style: italic; margin-bottom: 14px; }
+  .premeet-questions ol { list-style: none; display: flex; flex-direction: column; gap: 10px; counter-reset: pq; }
+  .premeet-questions li { font-size: 13px; font-weight: 300; color: var(--charcoal); line-height: 1.65; padding-left: 26px; position: relative; counter-increment: pq; }
+  .premeet-questions li::before { content: counter(pq); position: absolute; left: 0; top: 1px; font-family: 'Cormorant Garamond', serif; font-size: 12px; font-weight: 600; color: var(--warm-white); background: #4a6fa8; width: 18px; height: 18px; border-radius: 2px; display: flex; align-items: center; justify-content: center; }
+
+  .section-card { background: var(--warm-white); border: 1px solid var(--divider); border-radius: 4px; overflow: hidden; opacity: 0; transform: translateY(16px); animation: fadeUp 0.5s forwards; }
+  .section-card:nth-child(3) { animation-delay: 0.10s; }
+  .section-card:nth-child(4) { animation-delay: 0.14s; }
+  .section-card:nth-child(5) { animation-delay: 0.18s; }
+  .section-card:nth-child(6) { animation-delay: 0.22s; }
+  .section-card:nth-child(7) { animation-delay: 0.26s; }
+  .section-card:nth-child(8) { animation-delay: 0.30s; }
+  .section-card:nth-child(9) { animation-delay: 0.34s; }
+  .section-card:nth-child(10) { animation-delay: 0.38s; }
+  .section-card:nth-child(11) { animation-delay: 0.42s; }
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  .section-header { padding: 20px 28px 18px; display: flex; align-items: flex-start; gap: 18px; cursor: pointer; user-select: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+  .section-card.open .section-header { border-bottom-color: var(--teal-faint); }
+  .section-num { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: var(--teal-mid); line-height: 1; flex-shrink: 0; width: 32px; margin-top: 2px; }
+  .section-heading-group { flex: 1; }
+  .section-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--stone); margin-bottom: 4px; }
+  .section-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--charcoal); line-height: 1.2; }
+  .section-meta { display: flex; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+  .time-badge { font-size: 11px; font-weight: 500; color: var(--stone); background: var(--cream); border: 1px solid var(--divider); padding: 3px 8px; border-radius: 2px; }
+  .priority-badge { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; }
+  .priority-badge.high { background: var(--urgent-bg); color: #8b3a3a; border: 1px solid var(--urgent-border); }
+  .priority-badge.medium { background: var(--warn-bg); color: #a07840; border: 1px solid var(--warn-border); }
+  .priority-badge.context { background: var(--teal-faint); color: var(--teal); border: 1px solid var(--teal-mid); }
+  .toggle-icon { color: var(--teal-light); font-size: 22px; flex-shrink: 0; transition: transform 0.3s; font-weight: 300; line-height: 1.2; margin-top: 4px; }
+  .section-card.open .toggle-icon { transform: rotate(45deg); }
+  .section-body { max-height: 0; overflow: hidden; transition: max-height 0.45s ease; }
+  .section-card.open .section-body { max-height: 6000px; }
+  .section-inner { padding: 24px 28px 28px 78px; }
+
+  .context-note { font-size: 13px; font-weight: 300; color: var(--stone); line-height: 1.7; font-style: italic; margin-bottom: 18px; }
+
+  .sub-label { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 10px; margin-top: 20px; }
+  .sub-label:first-child { margin-top: 0; }
+
+  .question-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
+  .question-item { display: flex; gap: 12px; align-items: flex-start; font-size: 13.5px; font-weight: 300; color: var(--charcoal); line-height: 1.65; }
+  .q-bullet { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 600; color: var(--teal); flex-shrink: 0; margin-top: 1px; }
+
+  .src { display: inline-block; font-size: 9px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 6px; border-radius: 2px; margin-left: 6px; vertical-align: middle; white-space: nowrap; position: relative; top: -1px; }
+  .src.vm { background: #eef4f8; color: #4a7a9b; border: 1px solid #b8d4e8; }
+  .src.sl { background: #f0eef8; color: #6a4a9b; border: 1px solid #c8b8e8; }
+  .src.an { background: var(--teal-faint); color: var(--teal); border: 1px solid var(--teal-mid); }
+
+  .src-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; padding: 10px 14px; background: var(--cream); border: 1px solid var(--divider); border-radius: 3px; }
+  .src-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 300; color: var(--stone); }
+
+  .megs-words { background: #f5f0fb; border-left: 3px solid #9b7ec8; border-radius: 0 3px 3px 0; padding: 14px 16px; margin: 14px 0; }
+  .megs-words-label { font-size: 9px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #7a5aa8; margin-bottom: 8px; }
+  .megs-words-item { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; font-weight: 300; color: var(--charcoal); line-height: 1.65; font-style: italic; margin-bottom: 6px; }
+  .megs-words-item:last-child { margin-bottom: 0; }
+  .megs-words-item .src { font-style: normal; }
+  .megs-marker { color: #9b7ec8; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+
+  .amanda-notes { background: var(--teal-faint); border-left: 3px solid var(--teal); border-radius: 0 3px 3px 0; padding: 14px 16px; margin: 14px 0; }
+  .amanda-notes-label { font-size: 9px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
+  .amanda-notes-item { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; font-weight: 300; color: var(--charcoal); line-height: 1.65; margin-bottom: 6px; }
+  .amanda-notes-item:last-child { margin-bottom: 0; }
+  .amanda-marker { color: var(--teal); font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+
+  .flag-list { display: flex; flex-direction: column; gap: 8px; }
+  .flag-item { display: flex; gap: 12px; align-items: flex-start; font-size: 13px; font-weight: 300; color: var(--charcoal); line-height: 1.6; background: var(--warn-bg); border-left: 3px solid var(--warn-border); padding: 10px 14px; border-radius: 0 3px 3px 0; }
+  .flag-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+
+  .action-list { display: flex; flex-direction: column; gap: 8px; }
+  .action-item { display: flex; gap: 12px; align-items: flex-start; font-size: 13px; font-weight: 300; color: var(--charcoal); line-height: 1.6; background: var(--teal-faint); border-left: 3px solid var(--teal); padding: 10px 14px; border-radius: 0 3px 3px 0; }
+  .action-owner { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); background: var(--warm-white); border: 1px solid var(--teal-mid); padding: 2px 7px; border-radius: 2px; white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
+
+  .analysis-block { background: var(--cream); border: 1px solid var(--divider); border-radius: 3px; padding: 18px 20px; margin-bottom: 14px; }
+  .analysis-block h4 { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; color: var(--charcoal); margin-bottom: 10px; }
+  .analysis-item { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; font-weight: 300; color: var(--charcoal); line-height: 1.6; padding: 5px 0; border-bottom: 1px solid var(--divider); }
+  .analysis-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .analysis-dash { color: var(--stone); flex-shrink: 0; }
+
+  .resource-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 12px; font-weight: 500; color: var(--teal); text-decoration: none; border-bottom: 1px solid var(--teal-mid); padding-bottom: 1px; letter-spacing: 0.03em; }
+  .resource-link:hover { color: var(--teal-light); }
+
+  .divider { height: 1px; background: var(--teal-faint); margin: 18px 0; }
+  .footer-note { text-align: center; font-size: 12px; color: var(--stone); margin-top: 20px; font-weight: 300; letter-spacing: 0.04em; line-height: 1.8; }
+
+  @media (max-width: 640px) {
+    .header { padding: 24px 20px 20px; }
+    .header-top { flex-wrap: wrap; }
+    .header-meta { margin-left: 0; text-align: left; }
+    .toc { padding: 10px 20px; }
+    .content { padding: 28px 16px; }
+    .section-inner { padding: 18px 18px 22px 18px; }
+    .section-num { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-tag">CEO Transition · First Formal Session</div>
+      <div class="header-title">Maternity Leave Handoff Agenda</div>
+    </div>
+    <div class="header-meta">
+      <div class="header-sub">Meg &amp; Amanda · Session 1</div>
+      <div class="time-total">⏱ 75–90 min total</div>
+    </div>
+  </div>
+</div>
+
+<div class="toc">
+  <a class="toc-pill" href="#s0">Pre-Meeting</a>
+  <a class="toc-pill" href="#sq">Top Questions for Meg</a>
+  <a class="toc-pill" href="#s1">Phase 1 Analysis</a>
+  <a class="toc-pill" href="#s2">COR &amp; DOJ</a>
+  <a class="toc-pill" href="#s3">HFA Promises &amp; Calls</a>
+  <a class="toc-pill" href="#s4">Decision Authority</a>
+  <a class="toc-pill" href="#s5">Hiring &amp; Team</a>
+  <a class="toc-pill" href="#s6">HFA Videos &amp; Dashboard</a>
+  <a class="toc-pill" href="#s7">Communications</a>
+  <a class="toc-pill" href="#s8">Megapixels Operations</a>
+  <a class="toc-pill" href="#s9">Emergency Protocol</a>
+  <a class="toc-pill" href="#s10">Re-entry</a>
+</div>
+
+<div class="content">
+
+  <!-- Pre-meeting -->
+  <div class="premeet-banner" id="s0">
+    <h3>⚑ Before Thursday — Things to Have Ready</h3>
+    <ul>
+      <li>Pull together the COR submission history for each client — how many times submitted and what the DOJ rejection reason was each time</li>
+      <li>List all 6 current HFA clients and their stage (approved, pending, rejected, stalled)</li>
+      <li>Ask Meg to send the full ChatGPT Slack support draft — the screenshot cut off partway through</li>
+      <li>Ask Meg to share the Claude thread she started for the client success system</li>
+      <li>Have the HFA Operations Dashboard ready to show Meg: hfateam.github.io/HFA-Resources/checklist.html</li>
+    </ul>
+  </div>
+
+  <!-- Top 7 Questions -->
+  <div class="premeet-questions" id="sq">
+    <h3>📋 Top Questions for Meg — Send Before Thursday if She Has a Chance</h3>
+    <p class="pq-sub">These are the things that would be most helpful to have Meg thinking about ahead of time. Feel free to drop these in Slack so she can come prepared — no pressure, just whenever!</p>
+    <ol>
+      <li><strong>COR / DOJ situation:</strong> Hey, so we've been hitting a wall with the DOJ — they keep rejecting submissions because we're not California-registered and don't have a formal contract. I've resubmitted multiple times for most people and I really don't want them stuck in a denial loop. Would you be open to pivoting to having clients pay for a background check through a charter school? And if so, could we offer that to our current clients too — not just future ones?</li>
+      <li><strong>HFA client promises:</strong> Would it be possible to get access to a Fathom recording from one of your sales calls, or maybe do a quick recorded walkthrough of what was promised? I'd love to build a solid "here's what's included" doc so we're all on the same page. And going forward, I'd love to sit in on new sales calls when you have them!</li>
+      <li><strong>New HFA clients:</strong> Are we taking on 2 more before you go out? If yes, I'd love to nail down what exactly we're offering, at what price, and what we're not including this time around. Anything else you want to call out for how we're positioning this?</li>
+      <li><strong>Tiffany &amp; Charity:</strong> I haven't heard back from Tiffany about setting up a meeting with you — is that still something you'd like to do? Also, just so you know, Charity is looking for 35–40 hours a week. I'm not sure we can get her there even with MP tasks added — what do you think? What's the plan if we can't?</li>
+      <li><strong>Megapixels school direction:</strong> Do you still want to grow the school? How many live classes are you thinking for fall and spring — and would you want multiple sections per class depending on demand? This really affects everything downstream with Charity, Cheyenne, and scheduling, so any direction would be so helpful!</li>
+      <li><strong>Videos:</strong> Are there any HFA or Megapixels videos you feel like only you can make — things that really need to come from you? Everything else I'm happy to plan around delegating or reformatting so we're not stuck waiting.</li>
+      <li><strong>Retention &amp; marketing:</strong> Do you have a retention plan for Megapixels, or would you like me to put one together? Same with the newsletter — if you could send me even one rough example of the format and vibe you're going for, I can run with it from there!</li>
+    </ol>
+  </div>
+
+  <!-- Phase 1 -->
+  <div class="section-card open" id="s1">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num">—</div>
+      <div class="section-heading-group">
+        <div class="section-eyebrow">Before the Agenda</div>
+        <div class="section-title">Phase 1 — Everything Meg Has Already Raised</div>
+        <div class="section-meta">
+          <span class="time-badge">Reference only · no meeting time needed</span>
+          <span class="priority-badge context">Context</span>
+        </div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <p class="context-note">Every question, task, and concern surfaced from the source materials — organized by category with source tags. Amanda's current-state notes are layered in where relevant.</p>
+        <div class="src-legend">
+          <div class="src-legend-item"><span class="src vm">VM</span> Voice memo</div>
+          <div class="src-legend-item"><span class="src sl">SL</span> Slack message</div>
+          <div class="src-legend-item"><span class="src an">AN</span> Amanda's notes</div>
+        </div>
+
+        <div class="analysis-block">
+          <h4>COR &amp; Client Status Tracking</h4>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Weekly update system for HFA clients — email, Google Doc, or dashboard? <span class="src vm">VM</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>COR submissions: Amanda has a tracking system but DOJ keeps rejecting — structural problem (no CA registration, no formal contract), not a process gap <span class="src vm">VM</span> <span class="src an">AN</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Next step for COR needs Meg's decision — financially facing and was a core program promise <span class="src an">AN</span></span></div>
+        </div>
+
+        <div class="analysis-block">
+          <h4>Hiring &amp; Team Capacity</h4>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Possible admin assistant for Amanda — candidates: Ciara, Camille, Hunter, Alison <span class="src vm">VM</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Charity is looking for 35–40 hrs/week; unclear if we can get her there even with MP tasks added <span class="src vm">VM</span> <span class="src an">AN</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Alison has CEO-level executive assistant background — strongest named candidate <span class="src vm">VM</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Hunter: inconsistent availability, may not be the right fit <span class="src vm">VM</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Backup plan if Charity quits — Cheyenne is also background checked <span class="src sl">SL</span> <span class="src an">AN</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Goal: hire assistant so Amanda can delegate execution and focus on building new systems + A2A <span class="src sl">SL</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Open questions: how many hours does Meg want Amanda at max, what should stay with Amanda vs. go to an assistant, anything not yet discussed she wants Amanda to own? <span class="src an">AN</span></span></div>
+        </div>
+
+        <div class="analysis-block">
+          <h4>HFA Client Management</h4>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>New clients: open to 2 more, but scope and pricing must be defined upfront this time <span class="src sl">SL</span> <span class="src an">AN</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Live calls outstanding: Paige (makeup 1:1), Greg (one more), Tina (reschedule), Cait (once COR approved) <span class="src an">AN</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Shift to monthly calls — June + July with Meg, then Amanda takes over or pauses until re-entry <span class="src an">AN</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Client success coach role (Amanda or Alison) — weekly accountability check-ins, format TBD <span class="src sl">SL</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Are clients using their roadmaps? If not, a cost analysis within A2A may make sense <span class="src an">AN</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Slack cohorts recommended — clients shouldn't see each other's messages <span class="src an">AN</span></span></div>
+        </div>
+
+        <div class="analysis-block">
+          <h4>Video Content</h4>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Tiffany possibly making new Megapixels videos: Portraits, Foundations for Kids, easy Foundations for Teens — Amanda hasn't heard back about setting up the meeting with Meg <span class="src sl">SL</span> <span class="src an">AN</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>HFA video proposal: category-based guide format instead of per-school videos, plus a running FAQ from Slack questions <span class="src an">AN</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Meg is not committing to making videos given health — but open if there are ones only she can do <span class="src vm">VM</span></span></div>
+        </div>
+
+        <div class="analysis-block">
+          <h4>Megapixels Operations</h4>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Fix Megapixels vendor directories — NH update sent to Meg, waiting on feedback <span class="src sl">SL</span> <span class="src an">AN</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Megapixels retention plan — no confirmed plan exists; Amanda will draft if needed <span class="src sl">SL</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Fall/spring classes: how many, live or pre-recorded, multiple sections? Tiffany or Charity or Cheyenne teaching? <span class="src an">AN</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>School direction: grow, hold, or move students to Megapixels? Affects all teaching/staffing decisions <span class="src an">AN</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Newsletter: Amanda needs one example from Meg — format, tone, content direction <span class="src an">AN</span></span></div>
+        </div>
+
+        <div class="analysis-block">
+          <h4>Systems &amp; A2A</h4>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>Slack escalation model drafted in ChatGPT — screenshot received but cut off; full version needed <span class="src vm">VM</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>HFA client-facing dashboard: Amanda open to building one for all clients similar to the operations dashboard <span class="src an">AN</span></span></div>
+          <div class="analysis-item"><span class="analysis-dash">–</span><span>More A2A time for Amanda — delegation is the path to getting there <span class="src sl">SL</span></span></div>
+        </div>
+
+        <div class="sub-label" style="margin-top:22px;">Flags — Needs a Decision Before Meg Goes Out</div>
+        <div class="flag-list">
+          <div class="flag-item"><span class="flag-icon">⚑</span><span><strong>COR is a structural blocker.</strong> Multiple rejections, same reason every time. Needs Meg's direction on whether to pivot to school-paid background checks — for current clients, not just future ones.</span></div>
+          <div class="flag-item"><span class="flag-icon">⚑</span><span><strong>No written record of what was promised to HFA clients.</strong> Fathom recordings are the closest thing. Amanda needs access before she can build onboarding documentation.</span></div>
+          <div class="flag-item"><span class="flag-icon">⚑</span><span><strong>Tiffany's availability is unknown.</strong> Getting married this summer, historically hard to pin down. Entire fall teaching plan hinges on her answer.</span></div>
+          <div class="flag-item"><span class="flag-icon">⚑</span><span><strong>Charity retention risk.</strong> Needs 35–40 hours. May not be achievable. No backup plan locked in yet.</span></div>
+          <div class="flag-item"><span class="flag-icon">⚑</span><span><strong>No escalation contact named.</strong> Who does Amanda reach if something's above her authority and Meg isn't reachable?</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 1: COR / DOJ -->
+  <div class="section-card" id="s2">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num">1</div>
+      <div class="section-heading-group">
+        <div class="section-eyebrow">COR Process</div>
+        <div class="section-title">DOJ Blocker — Time to Think About a New Approach</div>
+        <div class="section-meta">
+          <span class="time-badge">⏱ 15 min</span>
+          <span class="priority-badge high">Highest Priority</span>
+        </div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <p class="context-note">The current COR submission approach isn't working — not because of anything on our end, but because the DOJ requires California registration and a formal contract that we just don't have. Amanda has a system and has been resubmitting diligently, but we really don't want clients stuck in a denial loop. This one needs Meg's call.</p>
+
+        <div class="sub-label">Where We Are</div>
+        <div class="amanda-notes">
+          <div class="amanda-notes-label">Current State</div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Most clients have been submitted 2–3 times. The DOJ keeps rejecting because we're not California-registered and don't have a formal contract — the volunteer letter alone isn't clearing it.</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Meg previously mentioned that future clients would pay for a background check through a charter school (which comes with a real contract). Open question: could we offer that to current clients too?</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Fastest school is an unknown — smaller schools may move quicker. Windy or CR might have insight, especially if CR has onboarded with newer schools recently.</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Amanda is also open to building a COR tracking dashboard for all clients, similar to the HFA operations dashboard, if that would be helpful for visibility.</span></div>
+        </div>
+
+        <div class="sub-label">Questions to Ask Meg</div>
+        <div class="question-list">
+          <div class="question-item"><span class="q-bullet">Q</span><span>We've resubmitted multiple times and keep hitting the same DOJ wall — I really don't want anyone stuck in a denial loop. Would you be open to pivoting to having clients pay for a background check through a charter school?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>If yes, can we extend that option to our current clients too, not just future ones? And how would you want to pitch the added cost to someone who was already promised COR as part of the program?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Is there anyone you'd want me to loop in on this — like Windy or CR — who might know which schools approve the fastest?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>For the pending resubmission — should I wait for the result before making any moves, or start working the school route in parallel now?</span></div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="sub-label">Implied Action Items</div>
+        <div class="action-list">
+          <div class="action-item"><span class="action-owner">Meg</span><span>Decide: pivot to school-paid background checks for current clients, or hold for one more DOJ attempt?</span></div>
+          <div class="action-item"><span class="action-owner">Meg</span><span>Provide talking points for how to pitch added cost to existing clients if we pivot</span></div>
+          <div class="action-item"><span class="action-owner">Amanda</span><span>Once direction is confirmed, research which charter schools approve fastest and build a shortlist</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: HFA Promises & Calls -->
+  <div class="section-card" id="s3">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num">2</div>
+      <div class="section-heading-group">
+        <div class="section-eyebrow">HFA Program</div>
+        <div class="section-title">What Was Promised, Who Needs Calls, and New Clients</div>
+        <div class="section-meta">
+          <span class="time-badge">⏱ 15 min</span>
+          <span class="priority-badge high">Highest Priority</span>
+        </div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <p class="context-note">Two connected things: getting a clear record of what was sold so nothing slips, and cleaning up the current call schedule before Meg steps back.</p>
+
+        <div class="sub-label">Meg's Exact Words</div>
+        <div class="megs-words">
+          <div class="megs-words-label">From Slack &amp; Notes</div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>Plan for making sure HFA clients finish and succeed. Maybe you or Allison could be a client success coach and meet with clients once per week for accountability calls. You could design the system using the Claude thread that I started to create." <span class="src sl">SL</span></span></div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>Accept new HFA clients? [listed as open question]" <span class="src sl">SL</span></span></div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>Possibly I can meet one on one with Paige to make up for it if we did make a mistake — no big deal, I don't mind." <span class="src an">AN</span></span></div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>After that, I think we should switch to monthly calls... one could be in June and one could be in July. And then you could do one per month until Tina's access is done." <span class="src an">AN</span></span></div>
+        </div>
+
+        <div class="sub-label">Amanda's Notes</div>
+        <div class="amanda-notes">
+          <div class="amanda-notes-label">Current State + Recommendations</div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Clients who likely need calls right now: Greg (one more), Paige (makeup 1:1), Tina (reschedule), Cait (once fingerprinted and COR approved).</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Open to group or 1:1 format for accountability check-ins — just need Meg's preference on format and medium (call, Zoom, Slack, email).</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Recommends splitting HFA clients into separate Slack cohorts so clients aren't seeing each other's messages.</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>New clients: open to 2 more, but new clients should pay for their own background check upfront, and scope needs to be locked down this time — clear on what's in, what's out, and what costs extra.</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Would love to sit in on a new sales call, or get permission to review a Fathom recording, so she can build proper onboarding docs that give everyone a clear picture.</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Are clients actually using their roadmaps? If not, it may be worth doing a cost analysis within A2A to figure out the best way to build this out properly.</span></div>
+        </div>
+
+        <div class="sub-label">Questions to Ask Meg</div>
+        <div class="question-list">
+          <div class="question-item"><span class="q-bullet">Q</span><span>Could I get access to a Fathom sales call recording, or would you be open to doing a quick recorded walkthrough of what was promised? It would really help me build out solid onboarding docs!</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>What does "done" actually look like for each client — what's the real finish line?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>When does Tina's program access end — do we have a hard date on that?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>For new clients — are we a yes? If so, what are we offering, at what price, and what are we explicitly not including this time? Anything else you want to call out for how we're positioning it?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>For accountability check-ins — group or 1:1? Calls, Zoom, Slack, email? Should Amanda run these, or wait for Alison?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Do you know if clients are actually using their roadmaps? And could you share the Claude thread you started for the client success system?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Would separate Slack cohorts work for you — so clients aren't in the same channels seeing each other's questions?</span></div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="sub-label">Implied Action Items</div>
+        <div class="action-list">
+          <div class="action-item"><span class="action-owner">Amanda</span><span>Build a "program promises" doc from Fathom recording or Meg's walkthrough</span></div>
+          <div class="action-item"><span class="action-owner">Amanda</span><span>Build client status tracker: all 6 clients, stage, outstanding tasks, risk level, next step</span></div>
+          <div class="action-item"><span class="action-owner">Amanda</span><span>Schedule outstanding calls — Paige, Greg, Tina, Cait — and confirm June/July monthly call dates with Meg</span></div>
+          <div class="action-item"><span class="action-owner">Meg</span><span>Decide yes/no on 2 new clients and confirm scope, pricing, and what's excluded</span></div>
+          <div class="action-item"><span class="action-owner">Meg</span><span>Share the Claude client success thread</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Decision Authority -->
+  <div class="section-card" id="s4">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num">3</div>
+      <div class="section-heading-group">
+        <div class="section-eyebrow">Authority &amp; Escalation</div>
+        <div class="section-title">What I Can Decide vs. What Goes to You</div>
+        <div class="section-meta">
+          <span class="time-badge">⏱ 10 min</span>
+          <span class="priority-badge high">Highest Priority</span>
+        </div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <p class="context-note">Amanda already has broad day-to-day authority. What's still missing is knowing how Meg wants to stay in the loop, and what to do if something genuinely needs her eyes on it.</p>
+
+        <div class="sub-label">Questions to Ask Meg</div>
+        <div class="question-list">
+          <div class="question-item"><span class="q-bullet">Q</span><span>Outside of raises, are there other decisions you'd want to stay in the loop on — refunds, new vendor contracts, anything legal?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>What's the best way to reach you once you're on leave, and what's a realistic response window? Just so I know what to expect!</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Would you like a regular update from me — daily, weekly? Or would you prefer I only reach out when something actually needs a decision?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>If a client is unhappy or pushing back, is that something you'd want to handle, or should I take the lead on that?</span></div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="sub-label">Implied Action Items</div>
+        <div class="action-list">
+          <div class="action-item"><span class="action-owner">Both</span><span>Document a one-page authority matrix: what Amanda owns, what goes to Meg, and what to do if Meg isn't reachable</span></div>
+          <div class="action-item"><span class="action-owner">Meg</span><span>Name at least one backup contact for genuine emergencies</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Hiring & Team -->
+  <div class="section-card" id="s5">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num">4</div>
+      <div class="section-heading-group">
+        <div class="section-eyebrow">Capacity &amp; Team</div>
+        <div class="section-title">Hiring, Tiffany, Charity, and Teaching Coverage</div>
+        <div class="section-meta">
+          <span class="time-badge">⏱ 15 min</span>
+          <span class="priority-badge high">Highest Priority</span>
+        </div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <p class="context-note">A few interconnected people questions that all affect each other — Tiffany's availability affects Charity's hours, Charity's hours affect whether she stays, whether she stays affects the school. Ideally we get some clarity on all of these before Meg goes out.</p>
+
+        <div class="sub-label">Meg's Exact Words</div>
+        <div class="megs-words">
+          <div class="megs-words-label">From Voice Memo &amp; Slack</div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>Maybe hiring another person who could be like your assistant — ideally Ciara, but I know with skill sets it might not be in her wheelhouse." <span class="src vm">VM</span></span></div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>Charity's looking for more hours. I think she might have more of an analytical personality... I don't love the idea of cross-training teachers in business stuff." <span class="src vm">VM</span></span></div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>Alison was an executive assistant to a CEO of a pretty large company for many years." <span class="src vm">VM</span></span></div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>Backup plan if Charity quits." <span class="src sl">SL</span></span></div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>Tiffany making new videos? (Portraits, Foundations for Kids, easy version Foundations for Teens — possibly the same class)" <span class="src sl">SL</span></span></div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>Possibly we can hire an assistant for you so that as you create systems, you can delegate more of your tasks and then do new projects and create new systems, including A2A." <span class="src sl">SL</span></span></div>
+        </div>
+
+        <div class="sub-label">Amanda's Notes</div>
+        <div class="amanda-notes">
+          <div class="amanda-notes-label">Current State</div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Tiffany: hasn't confirmed availability, getting married this summer, historically touch-and-go. Amanda hasn't been able to get a meeting set up with Meg — is that still something Meg wants to do?</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Charity is looking for 35–40 hours/week. Even adding Megapixels tasks, it's unclear if we can get her there. If Tiffany steps back from live classes, could Charity absorb those hours?</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Cheyenne is also background checked and could potentially teach classes as a backup if needed.</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Alison's availability and interest in an assistant role are still unknown.</span></div>
+        </div>
+
+        <div class="sub-label">Questions to Ask Meg</div>
+        <div class="question-list">
+          <div class="question-item"><span class="q-bullet">Q</span><span>Would you want to revisit hours and compensation given how the role has grown? And how many hours would you ideally want Amanda at max — what would you want an assistant to take off her plate?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Is there anything we haven't talked about yet that you'd definitely want Amanda to own while you're out?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Of the candidates — Camille, Alison, Hunter, Ciara — who feels like the strongest fit for admin and delegation support?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Have you heard anything from Tiffany about fall? I wasn't able to get a meeting set up — is that still something you'd want to make happen?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Charity needs 35–40 hours. If Tiffany steps back from live classes, could Charity absorb those hours? If not, do you want to start a conversation with Cheyenne now?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>What's the longer-term plan for the school — grow it, hold steady, or move students over to Megapixels? This really affects all the teaching and staffing decisions downstream.</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>If Tiffany does the new Megapixels videos (Portraits, Foundations for Kids, Foundations for Teens) — would those be for fall marketing? Should we try to get a title from her in the meantime?</span></div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="sub-label">Implied Action Items</div>
+        <div class="action-list">
+          <div class="action-item"><span class="action-owner">Meg</span><span>Confirm Tiffany's status — reach out directly if needed before leave</span></div>
+          <div class="action-item"><span class="action-owner">Meg</span><span>Address Charity's hours situation — more hours, or start Cheyenne contingency plan</span></div>
+          <div class="action-item"><span class="action-owner">Meg</span><span>Confirm direction on hours/compensation for Amanda and assistant budget</span></div>
+          <div class="action-item"><span class="action-owner">Amanda</span><span>Report back after Camille meeting with an assessment of fit</span></div>
+          <div class="action-item"><span class="action-owner">Amanda</span><span>Once direction is set, draft a task list for whoever comes in as assistant</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: HFA Videos & Dashboard -->
+  <div class="section-card" id="s6">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num">5</div>
+      <div class="section-heading-group">
+        <div class="section-eyebrow">HFA Content &amp; Tools</div>
+        <div class="section-title">HFA Videos, Dashboard, and a Smarter Format</div>
+        <div class="section-meta">
+          <span class="time-badge">⏱ 10 min</span>
+          <span class="priority-badge medium">Medium Priority</span>
+        </div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <p class="context-note">Amanda has a proposal for streamlining HFA video production that could save a lot of time — just needs Meg's reaction. Also wants Meg's eyes on the existing dashboard before building a client-facing version.</p>
+
+        <div class="sub-label">Meg's Exact Words</div>
+        <div class="megs-words">
+          <div class="megs-words-label">From Slack &amp; Voice Memo</div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>Can you make the remaining HFA videos faster if you're not using real client information? What could we delegate off your plate to give you more time?" <span class="src sl">SL</span></span></div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>I don't think I should commit to making videos right now — with my health, unless it's absolutely necessary, I'd rather hire somebody." <span class="src vm">VM</span></span></div>
+        </div>
+
+        <div class="sub-label">Amanda's Proposal — Simplified HFA Format</div>
+        <div class="amanda-notes">
+          <div class="amanda-notes-label">Recommendation</div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Instead of a video per school, create category-based guides: schools that want an email (here's what they ask for), schools with applications (here's what they look like), schools currently closed (we'll update you).</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Build a running FAQ page from Slack questions — already started in Claude, currently being fed manually on a weekly basis. This could move faster than individual school videos.</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Amanda is also open to building a client-facing HFA dashboard for everyone — similar to the operations dashboard — if Meg thinks that would work better than a Google Doc.</span></div>
+        </div>
+
+        <div class="sub-label">HFA Operations Dashboard</div>
+        <div class="amanda-notes">
+          <div class="amanda-notes-label">Needs Meg's Feedback</div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Amanda built an HFA Operations Dashboard with checklist, school directory, and video manager synced to Supabase/Google Sheet. Meg hasn't reviewed it yet.</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>If Meg likes it, Amanda would build a client-facing version after the meeting.</span></div>
+        </div>
+        <a class="resource-link" href="https://hfateam.github.io/HFA-Resources/checklist.html" target="_blank">↗ View HFA Operations Dashboard</a>
+
+        <div class="sub-label">Questions to Ask Meg</div>
+        <div class="question-list">
+          <div class="question-item"><span class="q-bullet">Q</span><span>Does the simplified category-based guide format work for HFA instead of per-school videos? Or are there specific schools you feel really need their own video?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Are there any HFA videos you feel strongly about making yourself — things that really need to come from you specifically?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Could you take a look at the operations dashboard and let me know what you think? If it looks good, I'd love to build a client-facing version!</span></div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="sub-label">Implied Action Items</div>
+        <div class="action-list">
+          <div class="action-item"><span class="action-owner">Meg</span><span>Review HFA Operations Dashboard and give Amanda feedback</span></div>
+          <div class="action-item"><span class="action-owner">Amanda</span><span>Build client-facing HFA dashboard once Meg approves the format</span></div>
+          <div class="action-item"><span class="action-owner">Amanda</span><span>Build HFA video priority list — what's blocking clients vs. nice-to-have — once format decision is made</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: Communications -->
+  <div class="section-card" id="s7">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num">6</div>
+      <div class="section-heading-group">
+        <div class="section-eyebrow">Communications Management</div>
+        <div class="section-title">Slack Escalation, Client Updates, and Email Coverage</div>
+        <div class="section-meta">
+          <span class="time-badge">⏱ 10 min</span>
+          <span class="priority-badge medium">Medium Priority</span>
+        </div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <p class="context-note">Meg has a Slack escalation model drafted — the goal here is to finalize it and fill the gaps. Email and the HFA inbox are already handled by Amanda and Ciara, so the main open questions are around client update format and response time expectations.</p>
+
+        <div class="sub-label">Meg's Exact Words</div>
+        <div class="megs-words">
+          <div class="megs-words-label">From Voice Memo</div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>We need a system for keeping track of responding to client messages. I did start to brainstorm this with ChatGPT — I don't think it's a complete plan, so maybe we can flesh it out together." <span class="src vm">VM</span></span></div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>Maybe you can give each client a weekly update — once per week." <span class="src vm">VM</span></span></div>
+          <div class="megs-words-item"><span class="megs-marker">"</span><span>You could maybe keep a quick summary in a Google Doc that they can go peek at the status anytime — or in addition to weekly updates." <span class="src vm">VM</span></span></div>
+        </div>
+
+        <div class="sub-label">What the ChatGPT Draft Already Covers</div>
+        <div class="megs-words">
+          <div class="megs-words-label">Slack Escalation Model (screenshot confirmed, cut off)</div>
+          <div class="megs-words-item"><span class="megs-marker">→</span><span><strong>Team answers first.</strong> If fully handled → green checkmark. If founder input needed → tag Meg. Meg checks once/day, notifications off.</span></div>
+          <div class="megs-words-item"><span class="megs-marker">→</span><span><strong>Client side:</strong> team response counts as support. Client can tag Meg directly if they specifically want her.</span></div>
+          <div class="megs-words-item"><span class="megs-marker">→</span><span><strong>Goal:</strong> reduce interruptions without reducing support quality.</span></div>
+          <div class="megs-words-item"><span class="megs-marker">⚠</span><span style="font-style:normal;font-size:12px;color:var(--stone);">Screenshot cut off — more content below. Would love the full version when you get a chance!</span></div>
+        </div>
+
+        <div class="sub-label">Questions to Ask Meg</div>
+        <div class="question-list">
+          <div class="question-item"><span class="q-bullet">Q</span><span>Could you send the full ChatGPT draft when you get a chance? The screenshot cut off and I want to make sure I'm not missing anything!</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Does the Slack escalation model apply to both HFA and Megapixels clients, or just HFA?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>For the weekly client update — what exactly are you envisioning? Is this different from the accountability check-in, or the same thing? And what would you want on a Google Doc vs. a dashboard — I could build something if that's easier!</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Is there a response time you promised clients — like 24 or 48 hours? Just want to make sure we're honoring whatever was committed to.</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Is there budget approval needed for anything on the communications side before you go out?</span></div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="sub-label">Implied Action Items</div>
+        <div class="action-list">
+          <div class="action-item"><span class="action-owner">Meg</span><span>Send full ChatGPT Slack draft before or during the meeting</span></div>
+          <div class="action-item"><span class="action-owner">Amanda</span><span>Finalize the Slack escalation model and fill any remaining gaps</span></div>
+          <div class="action-item"><span class="action-owner">Amanda</span><span>Set up client update system in whatever format Meg approves — email, doc, or dashboard</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: Megapixels Operations -->
+  <div class="section-card" id="s8">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num">7</div>
+      <div class="section-heading-group">
+        <div class="section-eyebrow">Megapixels Operations</div>
+        <div class="section-title">Directories, Classes, Retention, and Marketing</div>
+        <div class="section-meta">
+          <span class="time-badge">⏱ 10 min</span>
+          <span class="priority-badge medium">Medium Priority</span>
+        </div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <p class="context-note">Megapixels is the core revenue engine. A few of these are Amanda just waiting on Meg's input — once she has it, she can move quickly.</p>
+
+        <div class="sub-label">Amanda's Notes</div>
+        <div class="amanda-notes">
+          <div class="amanda-notes-label">Where Things Stand</div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Vendor directories: NH update was sent to Meg — waiting on her feedback before updating others. Great task to delegate once direction is set.</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Retention plan: no confirmed plan exists. Amanda will draft one if Meg doesn't have something started.</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Newsletter: Amanda needs one example from Meg — format, tone, content direction. Even rough is fine. References the beauty/fascia newsletter Meg liked before.</span></div>
+          <div class="amanda-notes-item"><span class="amanda-marker">→</span><span>Fall classes: Ciara is not available to teach. We need Tiffany's answer first — if she can't, the decision is Charity or Cheyenne.</span></div>
+        </div>
+
+        <div class="sub-label">Questions to Ask Meg</div>
+        <div class="question-list">
+          <div class="question-item"><span class="q-bullet">Q</span><span>Could you take a look at the New Hampshire vendor directory update I sent? Once I have your feedback I can apply the same approach across the rest and potentially delegate it out!</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Do you have a retention plan for Megapixels started, or would you like Amanda to put one together for your review?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>For the newsletter — could you send one example of the format and vibe you're going for? Even super rough is helpful. I can run with it from there!</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>For fall and spring classes: how many do you want to offer? Live, pre-recorded, or both? Multiple sections per class based on demand? And if Tiffany can't teach — Charity or Cheyenne?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>What's the longer-term direction for the school — grow it, hold steady, or gradually move students to Megapixels?</span></div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="sub-label">Implied Action Items</div>
+        <div class="action-list">
+          <div class="action-item"><span class="action-owner">Meg</span><span>Review and respond to the New Hampshire vendor directory update — Amanda is waiting on this</span></div>
+          <div class="action-item"><span class="action-owner">Meg</span><span>Send one newsletter example so Amanda has a direction to work from</span></div>
+          <div class="action-item"><span class="action-owner">Amanda</span><span>Draft Megapixels retention plan for Meg's review once school strategy is confirmed</span></div>
+          <div class="action-item"><span class="action-owner">Amanda</span><span>After meeting: go through the full checklist and identify what else can be delegated</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 8: Emergency Protocol -->
+  <div class="section-card" id="s9">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num">8</div>
+      <div class="section-heading-group">
+        <div class="section-eyebrow">Emergency &amp; Escalation</div>
+        <div class="section-title">When to Reach Out vs. When to Just Handle It</div>
+        <div class="section-meta">
+          <span class="time-badge">⏱ 5 min</span>
+          <span class="priority-badge medium">Medium Priority</span>
+        </div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <p class="context-note">Quick one — just helpful to have some shared understanding of when to ping Meg vs. when to just take care of it and fill her in later.</p>
+        <div class="sub-label">Questions to Ask Meg</div>
+        <div class="question-list">
+          <div class="question-item"><span class="q-bullet">Q</span><span>When you get a chance — what kinds of things would you want me to reach out about right away, vs. handle and just let you know after?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Is there anything that could cause real legal or financial risk if handled wrong? Would love to have those flagged ahead of time so I know to pause on those specifically.</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>And just in case — is there a backup person you'd want me to loop in if you're truly not reachable for something time-sensitive?</span></div>
+        </div>
+        <div class="divider"></div>
+        <div class="sub-label">Implied Action Items</div>
+        <div class="action-list">
+          <div class="action-item"><span class="action-owner">Both</span><span>Build a simple 3-tier framework: Amanda handles it / Amanda handles and informs Meg / Amanda pauses and reaches out to Meg first</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 9: Re-entry -->
+  <div class="section-card" id="s10">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num">9</div>
+      <div class="section-heading-group">
+        <div class="section-eyebrow">Return Planning</div>
+        <div class="section-title">Re-entry — and What the Next Few Months Actually Look Like</div>
+        <div class="section-meta">
+          <span class="time-badge">⏱ 5 min</span>
+          <span class="priority-badge context">Planning Ahead</span>
+        </div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="section-body">
+      <div class="section-inner">
+        <p class="context-note">November is a soft guess and could easily be longer. Any visibility into Meg's plan between now and then helps Amanda figure out what to own vs. what to hold.</p>
+        <div class="sub-label">Questions to Ask Meg</div>
+        <div class="question-list">
+          <div class="question-item"><span class="q-bullet">Q</span><span>When you come back, would you prefer a full written briefing doc or just a sync call to catch up?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Are there any decisions you'd want held for when you're back — things you'd rather make yourself vs. have Amanda call?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>What would make you feel like you came back to a business that was really well taken care of?</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>In terms of the next few months — are you still planning to taper hours between now and your due date in August? How available do you expect to be after that? Even a rough sense of the vibe would help so much with planning!</span></div>
+          <div class="question-item"><span class="q-bullet">Q</span><span>Is there anything specific you'd want to see built or finished by the time you return?</span></div>
+        </div>
+        <div class="divider"></div>
+        <div class="sub-label">Implied Action Items</div>
+        <div class="action-list">
+          <div class="action-item"><span class="action-owner">Amanda</span><span>Keep a running "state of the business" doc updated monthly — so the re-entry briefing is already done when Meg returns</span></div>
+          <div class="action-item"><span class="action-owner">Both</span><span>Agree on what "success" looks like for this period — gives Amanda a north star and Meg something to come back to</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Megapixels School of the Arts · CEO Transition Planning<br>
+    Prepared for Meg &amp; Amanda · Session 1 of Handoff Series<br>
+    © Megapixels, LLC · Internal use only
+  </div>
+
+</div>
+
+<script>
+  function toggle(headerEl) {
+    headerEl.closest('.section-card').classList.toggle('open');
+  }
+</script>
+</body>
+</html>

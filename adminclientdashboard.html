@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HFA Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal:#6b9e9a; --teal-dark:#4a7a76; --teal-faint:#e8f2f1;
+  --cream:#f8f6f2; --warm-white:#fdfcfa; --amber:#c9965a;
+  --amber-faint:#fdf3e8; --rose:#b07070; --dark:#2d2b28;
+  --border:#e0ddd8; --success:#7aab7a; --success-faint:#eef5ee;
+  --font-head:'Cormorant Garamond',Georgia,serif;
+  --font-body:'DM Sans',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-body);background:var(--cream);color:var(--dark);font-size:14px;line-height:1.6;}
+
+/* HEADER */
+.site-header{background:var(--teal-dark);color:white;padding:24px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.site-header h1{font-family:var(--font-head);font-size:2rem;font-weight:600;}
+.badge{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.18);padding:4px 12px;border-radius:20px;}
+.sync-status{font-size:12px;color:rgba(255,255,255,.7);margin-top:4px;display:flex;align-items:center;gap:6px;}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#7aab7a;display:inline-block;}
+.sync-dot.syncing{background:var(--amber);animation:pulse 1s infinite;}
+.sync-dot.error{background:var(--rose);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* MAIN */
+.main{max-width:1200px;margin:0 auto;padding:36px 24px 60px;}
+
+/* SECTION LABEL */
+.section-label{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-dark);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* STATS */
+.stats-row{display:flex;gap:14px;margin-bottom:32px;flex-wrap:wrap;}
+.stat-card{background:var(--warm-white);border:1px solid var(--border);border-radius:10px;padding:16px 22px;flex:1;min-width:130px;}
+.stat-num{font-family:var(--font-head);font-size:2.2rem;color:var(--teal-dark);line-height:1;margin-bottom:4px;}
+.stat-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#aaa;}
+
+/* NEW CLIENT CARD */
+.new-client-card{background:var(--warm-white);border:1.5px dashed var(--teal);border-radius:12px;padding:28px 32px;margin-bottom:40px;}
+.new-client-card h2{font-family:var(--font-head);font-size:1.4rem;color:var(--teal-dark);margin-bottom:20px;}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:16px;}
+.form-field label{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--teal-dark);margin-bottom:5px;}
+.form-field input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-family:var(--font-body);font-size:13px;color:var(--dark);background:white;transition:border-color .15s;}
+.form-field input:focus{outline:none;border-color:var(--teal);}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:8px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;}
+.btn-primary{background:var(--teal-dark);color:white;}
+.btn-primary:hover{background:var(--teal);}
+
+/* CLIENT CARDS */
+.client-card{background:var(--warm-white);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;transition:box-shadow .2s;}
+.client-card:hover{box-shadow:0 4px 20px rgba(107,158,154,.12);}
+.client-card-header{display:flex;align-items:center;gap:16px;padding:18px 24px;cursor:pointer;user-select:none;}
+.client-avatar{width:42px;height:42px;border-radius:50%;background:var(--teal-faint);color:var(--teal-dark);font-family:var(--font-head);font-size:1.1rem;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.client-meta{flex:1;}
+.client-name{font-family:var(--font-head);font-size:1.25rem;font-weight:600;color:var(--dark);}
+.client-sub{font-size:12px;color:#aaa;margin-top:1px;}
+.client-sub a{color:var(--teal-dark);text-decoration:none;}
+.progress-wrap{display:flex;align-items:center;gap:10px;min-width:160px;}
+.progress-bar-bg{flex:1;height:6px;background:var(--teal-faint);border-radius:3px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:var(--teal);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;font-weight:500;color:var(--teal-dark);white-space:nowrap;}
+.expand-arrow{color:var(--teal);font-size:11px;transition:transform .2s;margin-left:8px;}
+.client-card.expanded .expand-arrow{transform:rotate(180deg);}
+
+/* CARD BODY */
+.client-card-body{display:none;border-top:1px solid var(--border);}
+.client-card.expanded .client-card-body{display:block;}
+
+/* CARD TABS */
+.card-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 24px;}
+.card-tab{padding:11px 14px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#bbb;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;}
+.card-tab.active{color:var(--teal-dark);border-bottom-color:var(--teal);}
+.tab-panel{display:none;padding:20px 24px;}
+.tab-panel.active{display:block;}
+
+/* TIMELINE */
+.timeline-section{margin-bottom:18px;}
+.timeline-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--teal-dark);margin-bottom:10px;}
+.timeline-chips{display:flex;gap:7px;flex-wrap:wrap;}
+.chip{font-size:12px;font-weight:500;padding:4px 12px;border-radius:16px;border:1px solid var(--teal);background:var(--teal-faint);color:var(--teal-dark);}
+.chip.monthly{border-color:var(--amber);background:var(--amber-faint);color:#8a5e2a;}
+.chip.past{opacity:.45;}
+.timeline-end{font-size:11px;color:#aaa;margin-top:6px;}
+.timeline-end span{color:var(--teal-dark);font-weight:500;}
+
+/* INFO */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.info-item label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#bbb;display:block;margin-bottom:3px;}
+.info-item span,.info-item a{font-size:13px;color:var(--dark);text-decoration:none;}
+.info-item a{color:var(--teal-dark);}
+
+/* NOTES */
+.notes-block{margin-bottom:16px;}
+.notes-block label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px;}
+.notes-block.admin-notes label{color:var(--teal-dark);}
+.notes-block.client-notes label{color:var(--amber);}
+.notes-textarea{width:100%;min-height:72px;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-family:var(--font-body);font-size:13px;color:var(--dark);background:white;resize:vertical;transition:border-color .15s;}
+.notes-textarea:focus{outline:none;border-color:var(--teal);}
+.client-notes-display{background:var(--amber-faint);border:1px solid #e8c898;border-radius:7px;padding:9px 12px;font-size:13px;color:var(--dark);min-height:40px;line-height:1.6;}
+.client-notes-display.empty{color:#ccc;font-style:italic;}
+.save-hint{font-size:11px;color:#aaa;margin-top:5px;display:block;}
+.save-hint.saved{color:var(--success);}
+
+/* CHECKLIST */
+.checklist-group-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal-dark);margin:12px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--teal-faint);}
+.checklist-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+@media(max-width:700px){.checklist-grid{grid-template-columns:1fr;}}
+.check-item{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:6px;cursor:pointer;transition:background .12s;border:1px solid transparent;}
+.check-item:hover{background:var(--teal-faint);}
+.check-item.done{background:var(--success-faint);border-color:#d0e8d0;}
+.check-item input[type="checkbox"]{width:14px;height:14px;accent-color:var(--teal-dark);cursor:pointer;flex-shrink:0;}
+.check-step-num{font-size:10px;color:#ccc;min-width:16px;font-weight:600;}
+.check-item.done .check-step-num{color:var(--success);}
+.check-item-label{font-size:12px;color:var(--dark);}
+.check-item.done .check-item-label{text-decoration:line-through;color:#bbb;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--dark);color:white;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transform:translateY(10px);transition:all .25s;z-index:1000;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <h1>HFA Admin Dashboard</h1>
+    <div class="sync-status">
+      <span class="sync-dot" id="syncDot"></span>
+      <span id="syncLabel">Connecting…</span>
+    </div>
+  </div>
+  <span class="badge">Admin Only</span>
+</header>
+
+<main class="main">
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Active Clients</div></div>
+    <div class="stat-card"><div class="stat-num" id="statWeekly">—</div><div class="stat-label">In Weekly Calls</div></div>
+    <div class="stat-card"><div class="stat-num" id="statMonthly">—</div><div class="stat-label">In Monthly Calls</div></div>
+    <div class="stat-card"><div class="stat-num" id="statAvg">—</div><div class="stat-label">Avg. Progress</div></div>
+  </div>
+
+  <div class="section-label">Add New Client</div>
+  <div class="new-client-card">
+    <h2>New Client Intake</h2>
+    <div class="form-grid">
+      <div class="form-field"><label>Client Name</label><input type="text" id="nc_name" placeholder="First Last"></div>
+      <div class="form-field"><label>Email</label><input type="email" id="nc_email" placeholder="client@email.com"></div>
+      <div class="form-field"><label>Start Date</label><input type="date" id="nc_start"></div>
+      <div class="form-field"><label>Company Name</label><input type="text" id="nc_company" placeholder="Business Name"></div>
+      <div class="form-field"><label>Website</label><input type="url" id="nc_website" placeholder="https://..."></div>
+    </div>
+    <button class="btn btn-primary" onclick="addClient()">+ Add Client</button>
+  </div>
+
+  <div class="section-label">Current Clients</div>
+  <div id="clientRoster"><div style="text-align:center;padding:40px;color:#bbb;">Loading…</div></div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SB_URL='https://uizsneneirbwphurgxcb.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpenNuZW5laXJid3BodXJneGNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwOTEyMTAsImV4cCI6MjA5NjY2NzIxMH0.JYd-ev4HyLFbO6p1daFr5YVHbONbrY5Uw2mMpvMD03c';
+const HDR={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
+const HDR_W={...HDR,'Prefer':'resolution=merge-duplicates'};
+
+// ── STEP GROUPS (mirrors jackson-pearce.html exactly) ─────
+const STEP_GROUPS=[
+  {title:'Business Foundation',steps:[
+    {id:0,title:'Create an LLC'},
+    {id:1,title:'Apply for an EIN'},
+    {id:2,title:'Business License / City Tax Registration'},
+    {id:3,title:'Custodian of Records (COR)'},
+    {id:4,title:'Organize Now, Save Yourself Time Later'},
+  ]},
+  {title:'Your Offer',steps:[
+    {id:5,title:'Write Your Vendor Description'},
+    {id:6,title:'Schedule Your Live Classes'},
+    {id:7,title:'Create Your Detailed List of Services (DLS)'},
+    {id:8,title:'Build Your Student Registration Form'},
+  ]},
+  {title:'Operations',steps:[
+    {id:9,title:'Get Business Insurance'},
+    {id:10,title:'Set Up Your Website for Charter & ESA Students'},
+    {id:11,title:'Set Up Pre-Recorded Classes'},
+    {id:12,title:'Set Up Student Grading'},
+    {id:13,title:'Understand How Students Pay You'},
+    {id:14,title:'How Meg Gets Students on Autopilot'},
+  ]},
+  {title:'Applying to Schools',steps:[
+    {id:15,title:'Apply to ESAs'},
+    {id:16,title:'Apply to Charter Schools'},
+  ]},
+  {title:'Growth',steps:[
+    {id:17,title:'Offer Building Overview'},
+    {id:18,title:'How to Do Market Research'},
+    {id:19,title:'Building Google Reviews'},
+    {id:20,title:'Using Facebook to Get Referrals'},
+    {id:21,title:'Annual Vendor Renewals'},
+  ]},
+];
+
+const TOTAL_STEPS = STEP_GROUPS.reduce((a,g)=>a+g.steps.length,0);
+
+const SEED_CLIENTS=[
+  {name:'Jackson Pearce',email:'jackson@wordplaywriting.co',start_date:'2026-04-03',company:'Wordplay Writing',website:'https://wordplaywriting.co',slug:'jackson-pearce',notes:'',client_notes:''},
+  {name:'Paige Howell',email:'paigechowell@gmail.com',start_date:'2026-04-22',company:'Achieve Learning Partners',website:'https://achievelearningpartners.com',slug:'paige-howell',notes:'',client_notes:''},
+  {name:'Tina Houston',email:'teachertinakaye@gmail.com',start_date:'2026-05-18',company:'Kindred Minds LLC',website:'https://kindredmindsllc.com',slug:'tina-houston',notes:'',client_notes:''},
+  {name:'Greg Flanders',email:'gregflanders7@gmail.com',start_date:'2026-05-06',company:'Silly School with Teacher Greg',website:'https://www.sillyschoolwithteachergreg.com',slug:'greg-flanders',notes:'',client_notes:''},
+  {name:'Elizabeth Green',email:'elizabethgreencommunications@gmail.com',start_date:'2026-04-24',company:'My Speech & Debate Coach',website:'https://www.myspeechanddebatecoach.com',slug:'elizabeth-green',notes:'',client_notes:''},
+  {name:'Caitlin Townsley',email:'cpc8502@gmail.com',start_date:'2026-04-09',company:'Language First Academy',website:'https://languagefirstacademy.org',slug:'caitlin-townsley',notes:'',client_notes:''},
+  {name:'Matt Trammell',email:'mtram24@gmail.com',start_date:'2026-04-07',company:'Dragons Academy',website:'https://dragonsacademy.com',slug:'matt-trammell',notes:'',client_notes:''},
+];
+
+let clientsData=[], progressData={}, notesDebounce={};
+
+// ── SUPABASE ──────────────────────────────────────────────
+async function sb(path,opts={}){
+  const res=await fetch(SB_URL+path,{...opts,headers:opts.write?HDR_W:HDR});
+  if(!res.ok) throw new Error(await res.text());
+  const t=await res.text(); return t?JSON.parse(t):null;
+}
+
+// ── DATE HELPERS ──────────────────────────────────────────
+function addDays(d,n){const x=new Date(d+'T12:00:00Z');x.setUTCDate(x.getUTCDate()+n);return x.toISOString().split('T')[0];}
+function addMonths(d,n){const x=new Date(d+'T12:00:00Z');x.setUTCMonth(x.getUTCMonth()+n);return x.toISOString().split('T')[0];}
+function fmtDate(d){return new Date(d+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'UTC'});}
+function fmtFull(d){return new Date(d+'T12:00:00Z').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'});}
+function isPast(d){return new Date(d+'T12:00:00Z')<new Date();}
+function initials(n){return n.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);}
+function slugify(n){return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+
+function getCallDates(start){
+  const w4=addDays(start,21);
+  const m1=addMonths(w4,1);
+  return {
+    weekly:[start,addDays(start,7),addDays(start,14),w4],
+    monthly:[m1,addMonths(m1,1),addMonths(m1,2),addMonths(m1,3),addMonths(m1,4),addMonths(m1,5)]
+  };
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function renderDashboard(){
+  const roster=document.getElementById('clientRoster');
+  const today=new Date();
+  let weeklyActive=0,monthlyActive=0,totalPct=0;
+
+  if(!clientsData.length){
+    roster.innerHTML='<div style="text-align:center;padding:40px;color:#bbb;">No clients yet.</div>';
+    return;
+  }
+
+  roster.innerHTML='';
+
+  clientsData.forEach(client=>{
+    const calls=getCallDates(client.start_date);
+    const lastW=new Date(calls.weekly[3]+'T12:00:00Z');
+    const lastM=new Date(calls.monthly[5]+'T12:00:00Z');
+    const inWeekly=today<=lastW, inMonthly=!inWeekly&&today<=lastM;
+    if(inWeekly)weeklyActive++; if(inMonthly)monthlyActive++;
+
+    const prog=progressData[client.slug]||{};
+    const completed=STEP_GROUPS.reduce((a,g)=>a+g.steps.filter(s=>prog[s.id]).length,0);
+    const pct=Math.round((completed/TOTAL_STEPS)*100);
+    totalPct+=pct;
+
+    const slug=client.slug;
+    const card=document.createElement('div');
+    card.className='client-card';
+    card.id=`card-${slug}`;
+
+    // Timeline chips
+    const wChips=calls.weekly.map((d,i)=>`<span class="chip${isPast(d)?' past':''}">`+`W${i+1}: ${fmtDate(d)}</span>`).join('');
+    const mChips=calls.monthly.map((d,i)=>`<span class="chip monthly${isPast(d)?' past':''}">`+`M${i+1}: ${fmtDate(d)}</span>`).join('');
+
+    // Checklist HTML grouped
+    const checklistHTML=STEP_GROUPS.map(group=>{
+      const items=group.steps.map(step=>{
+        const checked=prog[step.id]?'checked':'';
+        return `<label class="check-item${prog[step.id]?' done':''}" id="ci-${slug}-${step.id}">
+          <input type="checkbox" ${checked} onchange="toggleStep('${slug}',${step.id},this.checked)">
+          <span class="check-step-num">${String(step.id).padStart(2,'0')}</span>
+          <span class="check-item-label">${step.title}</span>
+        </label>`;
+      }).join('');
+      return `<div class="checklist-group-title">${group.title}</div><div class="checklist-grid">${items}</div>`;
+    }).join('');
+
+    card.innerHTML=`
+      <div class="client-card-header" onclick="toggleCard('${slug}')">
+        <div class="client-avatar">${initials(client.name)}</div>
+        <div class="client-meta">
+          <div class="client-name">${client.name}</div>
+          <div class="client-sub">${client.company} · <a href="mailto:${client.email}" onclick="event.stopPropagation()">${client.email}</a></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+          <span class="progress-label">${completed}/${TOTAL_STEPS}</span>
+        </div>
+        <span class="expand-arrow">▼</span>
+      </div>
+
+      <div class="client-card-body">
+        <div class="card-tabs">
+          <div class="card-tab active" onclick="switchTab('${slug}','timeline',this)">Timeline</div>
+          <div class="card-tab" onclick="switchTab('${slug}','info',this)">Info & Notes</div>
+          <div class="card-tab" onclick="switchTab('${slug}','checklist',this)">Checklist</div>
+        </div>
+
+        <div class="tab-panel active" id="tab-${slug}-timeline">
+          <div class="timeline-section">
+            <div class="timeline-title">📞 Weekly Calls</div>
+            <div class="timeline-chips">${wChips}</div>
+            <div class="timeline-end">Last weekly call: <span>${fmtFull(calls.weekly[3])}</span></div>
+          </div>
+          <div class="timeline-section">
+            <div class="timeline-title">📅 Monthly Calls</div>
+            <div class="timeline-chips">${mChips}</div>
+            <div class="timeline-end">Calls end: <span>${fmtFull(calls.monthly[5])}</span></div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-${slug}-info">
+          <div class="info-grid">
+            <div class="info-item"><label>Start Date</label><span>${fmtFull(client.start_date)}</span></div>
+            <div class="info-item"><label>Website</label><a href="${client.website}" target="_blank">${client.website}</a></div>
+            <div class="info-item"><label>Email</label><a href="mailto:${client.email}">${client.email}</a></div>
+            <div class="info-item"><label>Client Page</label><a href="https://hfateam.github.io/clients/${slug}" target="_blank">hfateam.github.io/clients/${slug}</a></div>
+          </div>
+
+          <div class="notes-block admin-notes">
+            <label>Admin Notes <span style="font-size:10px;color:#bbb;font-weight:400;text-transform:none;letter-spacing:0">(shown to client)</span></label>
+            <textarea class="notes-textarea" id="notes-${slug}" oninput="scheduleNotesSave('${slug}')" placeholder="Leave an update for ${client.name.split(' ')[0]}…">${client.notes||''}</textarea>
+            <span class="save-hint" id="notes-hint-${slug}">Changes auto-save</span>
+          </div>
+
+          <div class="notes-block client-notes">
+            <label>From ${client.name.split(' ')[0]}</label>
+            <div class="client-notes-display${(client.client_notes&&client.client_notes.trim())?'':' empty'}" id="cn-${slug}">
+              ${(client.client_notes&&client.client_notes.trim())||'Nothing yet.'}
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-${slug}-checklist">
+          <div style="font-size:12px;color:#aaa;margin-bottom:14px;">${completed} of ${TOTAL_STEPS} steps · ${pct}% complete</div>
+          ${checklistHTML}
+        </div>
+      </div>`;
+
+    roster.appendChild(card);
+  });
+
+  document.getElementById('statTotal').textContent=clientsData.length;
+  document.getElementById('statWeekly').textContent=weeklyActive;
+  document.getElementById('statMonthly').textContent=monthlyActive;
+  document.getElementById('statAvg').textContent=clientsData.length?Math.round(totalPct/clientsData.length)+'%':'—';
+}
+
+// ── INTERACTIONS ──────────────────────────────────────────
+function toggleCard(slug){document.getElementById(`card-${slug}`).classList.toggle('expanded');}
+
+function switchTab(slug,name,el){
+  const card=document.getElementById(`card-${slug}`);
+  card.querySelectorAll('.card-tab').forEach(t=>t.classList.remove('active'));
+  card.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(`tab-${slug}-${name}`).classList.add('active');
+}
+
+function toggleStep(slug,stepId,checked){
+  if(!progressData[slug])progressData[slug]={};
+  progressData[slug][stepId]=checked;
+  const item=document.getElementById(`ci-${slug}-${stepId}`);
+  item.classList.toggle('done',checked);
+  // update progress bar
+  const prog=progressData[slug];
+  const completed=STEP_GROUPS.reduce((a,g)=>a+g.steps.filter(s=>prog[s.id]).length,0);
+  const pct=Math.round((completed/TOTAL_STEPS)*100);
+  const card=document.getElementById(`card-${slug}`);
+  card.querySelector('.progress-bar-fill').style.width=pct+'%';
+  card.querySelector('.progress-label').textContent=`${completed}/${TOTAL_STEPS}`;
+  card.querySelector(`#tab-${slug}-checklist div`).textContent=`${completed} of ${TOTAL_STEPS} steps · ${pct}% complete`;
+  setSyncStatus('syncing','Saving…');
+  sb('/rest/v1/hfa_checklist_progress',{method:'POST',write:true,body:JSON.stringify({client_slug:slug,step_id:stepId,completed:checked})})
+    .then(()=>setSyncStatus('ok','Saved'))
+    .catch(()=>setSyncStatus('error','Save failed'));
+}
+
+function scheduleNotesSave(slug){
+  const hint=document.getElementById(`notes-hint-${slug}`);
+  hint.textContent='Unsaved…'; hint.className='save-hint';
+  clearTimeout(notesDebounce[slug]);
+  notesDebounce[slug]=setTimeout(async()=>{
+    const val=document.getElementById(`notes-${slug}`).value;
+    const c=clientsData.find(c=>c.slug===slug); if(c)c.notes=val;
+    setSyncStatus('syncing','Saving…');
+    try{
+      await sb(`/rest/v1/hfa_clients?slug=eq.${slug}`,{method:'PATCH',write:true,body:JSON.stringify({notes:val})});
+      setSyncStatus('ok','Saved'); hint.textContent='Saved ✓'; hint.className='save-hint saved';
+    }catch(e){setSyncStatus('error','Save failed');}
+  },1200);
+}
+
+async function addClient(){
+  const name=document.getElementById('nc_name').value.trim();
+  const email=document.getElementById('nc_email').value.trim();
+  const start=document.getElementById('nc_start').value;
+  const company=document.getElementById('nc_company').value.trim();
+  const website=document.getElementById('nc_website').value.trim();
+  if(!name||!email||!start){showToast('Name, email, and start date are required.');return;}
+  const slug=slugify(name);
+  const client={name,email,start_date:start,company,website,slug,notes:'',client_notes:''};
+  setSyncStatus('syncing','Saving…');
+  try{
+    await sb('/rest/v1/hfa_clients',{method:'POST',write:true,body:JSON.stringify(client)});
+    setSyncStatus('ok','Saved');
+  }catch(e){setSyncStatus('error','Saved locally only');}
+  clientsData.push(client);
+  renderDashboard();
+  showToast(`${name} added!`);
+  ['nc_name','nc_email','nc_start','nc_company','nc_website'].forEach(id=>document.getElementById(id).value='');
+}
+
+// ── SYNC / TOAST ──────────────────────────────────────────
+function setSyncStatus(state,label){
+  document.getElementById('syncDot').className='sync-dot'+(state==='syncing'?' syncing':state==='error'?' error':'');
+  document.getElementById('syncLabel').textContent=label;
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── INIT ──────────────────────────────────────────────────
+async function init(){
+  setSyncStatus('syncing','Connecting…');
+  try{
+    const [clients,prog]=await Promise.all([
+      sb('/rest/v1/hfa_clients?select=*&order=start_date.asc'),
+      sb('/rest/v1/hfa_checklist_progress?select=*'),
+    ]);
+
+    if(clients&&clients.length){
+      clientsData=clients;
+    } else {
+      // seed on first load
+      for(const c of SEED_CLIENTS) await sb('/rest/v1/hfa_clients',{method:'POST',write:true,body:JSON.stringify(c)}).catch(()=>{});
+      const refetch=await sb('/rest/v1/hfa_clients?select=*&order=start_date.asc');
+      clientsData=refetch&&refetch.length?refetch:SEED_CLIENTS;
+    }
+
+    progressData={};
+    (prog||[]).forEach(r=>{
+      if(!progressData[r.client_slug])progressData[r.client_slug]={};
+      progressData[r.client_slug][r.step_id]=r.completed;
+    });
+
+    renderDashboard();
+    setSyncStatus('ok','Live — changes sync automatically');
+  }catch(e){
+    clientsData=SEED_CLIENTS;
+    renderDashboard();
+    setSyncStatus('error','Offline — changes may not save');
+  }
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odyssey & Vendor FAQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#6b9e9a;
+    --teal-dark:#4a7a76;
+    --cream:#faf6ec;
+    --cream-card:#fffdf8;
+    --ink:#2f3a39;
+    --ink-soft:#5a6766;
+    --line:#e4ddcd;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'DM Sans',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:56px 24px 80px;
+  }
+  header{
+    border-bottom:2px solid var(--teal);
+    padding-bottom:24px;
+    margin-bottom:36px;
+  }
+  .eyebrow{
+    font-size:13px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--teal-dark);
+    font-weight:600;
+    margin:0 0 8px;
+  }
+  h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700;
+    font-size:46px;
+    line-height:1.05;
+    margin:0 0 10px;
+    color:var(--ink);
+  }
+  .sub{
+    margin:0;
+    color:var(--ink-soft);
+    font-size:16px;
+    max-width:52ch;
+  }
+  details{
+    background:var(--cream-card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    margin-bottom:14px;
+    overflow:hidden;
+    transition:border-color .15s ease;
+  }
+  details[open]{border-color:var(--teal);}
+  summary{
+    cursor:pointer;
+    list-style:none;
+    padding:20px 22px;
+    font-family:'Cormorant Garamond',serif;
+    font-size:23px;
+    font-weight:600;
+    color:var(--teal-dark);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+  summary::-webkit-details-marker{display:none;}
+  .chev{
+    flex-shrink:0;
+    width:22px;height:22px;
+    border-radius:50%;
+    background:var(--teal);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'DM Sans',sans-serif;
+    font-size:15px;font-weight:600;
+    transition:transform .2s ease;
+  }
+  details[open] .chev{transform:rotate(45deg);}
+  .body{
+    padding:0 22px 22px;
+    color:var(--ink);
+    font-size:16px;
+  }
+  .body p{margin:0 0 12px;}
+  .body p:last-child{margin-bottom:0;}
+  a{color:var(--teal-dark);text-decoration:underline;text-underline-offset:2px;}
+  a:hover{color:var(--teal);}
+  .links{
+    list-style:none;
+    padding:0;margin:14px 0;
+  }
+  .links li{
+    padding:10px 14px;
+    background:var(--cream);
+    border-radius:8px;
+    margin-bottom:8px;
+    font-size:15px;
+  }
+  .links li b{color:var(--ink);}
+  code{
+    background:var(--cream);
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:1px 6px;
+    font-size:14px;
+    font-family:ui-monospace,Menlo,monospace;
+    color:var(--teal-dark);
+  }
+  .train{
+    list-style:none;padding:0;margin:14px 0;
+  }
+  .train li{
+    padding-left:18px;position:relative;margin-bottom:10px;
+  }
+  .train li::before{
+    content:"";position:absolute;left:0;top:11px;
+    width:7px;height:7px;border-radius:50%;background:var(--teal);
+  }
+  .train .meta{color:var(--ink-soft);font-size:14px;}
+  footer{
+    margin-top:44px;text-align:center;
+    color:var(--ink-soft);font-size:13px;
+  }
+  @media print{
+    body{background:#fff;}
+    details{break-inside:avoid;border-color:var(--line)!important;}
+    details .body{display:block!important;}
+    summary{cursor:default;}
+    .chev{display:none;}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">Homeschool Funding Accelerator</p>
+      <h1>Odyssey &amp; Vendor FAQ</h1>
+      <p class="sub">Quick answers to the questions that come up most often around logins, uploads, training, and insurance.</p>
+    </header>
+
+    <details open>
+      <summary>Is there a different login for each Odyssey school?<span class="chev">+</span></summary>
+      <div class="body">
+        <p>Yes. Each school has its own separate Odyssey portal with its own login, and you'll see the state or school name right in the URL.</p>
+        <ul class="links">
+          <li><b>Wyoming ESA:</b> <a href="https://wyoming-vendors.withodyssey.com/login/" target="_blank" rel="noopener">wyoming-vendors.withodyssey.com/login</a></li>
+          <li><b>Louisiana GATOR:</b> <a href="https://lagator-vendors.withodyssey.com/login/" target="_blank" rel="noopener">lagator-vendors.withodyssey.com/login</a></li>
+          <li><b>Utah Fits All:</b> <a href="https://ufa-vendors.withodyssey.com/login/" target="_blank" rel="noopener">ufa-vendors.withodyssey.com/login</a></li>
+        </ul>
+        <p>These links also live inside <a href="https://www.skool.com/homeschool-funding-accelerator-6842/classroom/ab7dd831?md=e41451f54d97469ba7be476cd85e94a3" target="_blank" rel="noopener">this lesson</a> and in the <a href="https://docs.google.com/spreadsheets/d/1NO5UbXTFzSQaI0pPpFq_WxMFzbjeXlCHDPZcMQ2xfec/edit?usp=sharing" target="_blank" rel="noopener">School Directory</a>.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>I keep getting an "invalid username or password" error on Odyssey. What should I do?<span class="chev">+</span></summary>
+      <div class="body">
+        <p>First, double-check you're using the correct Odyssey link for the school you're trying to reach. Each school has a different URL, and the wrong link is the most common cause of login errors.</p>
+        <p>Next, make sure you're logged out of every other Odyssey account before logging into a different one.</p>
+        <p>If it's still not working, try a fresh Chrome window or clear your cache, then reach out to Odyssey Support.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>I'm getting an error when uploading my CSV to Odyssey. What's wrong?<span class="chev">+</span></summary>
+      <div class="body">
+        <p>Check that your category matches exactly what the portal has listed. The category text has to be an exact match to the portal's existing options, right down to the singular vs. plural.</p>
+        <p>For example, <code>Online Class</code> (singular) may throw an error, while <code>Online Classes</code> (plural) is the correct category.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>What specific Mandated Reporter Trainings do vendors need to complete?<span class="chev">+</span></summary>
+      <div class="body">
+        <p>If you're completing the training through the California Department of Social Services (CDSS) portal, you'll need both of these:</p>
+        <ul class="train">
+          <li>School Personnel | CA<br><span class="meta">Approx. 3.5 hours &middot; certificate costs $8.99</span></li>
+          <li>Child Abuse Prevention Training for School Personnel (SB 848)<br><span class="meta">Approx. 36 minutes &middot; certificate is free</span></li>
+        </ul>
+        <p>Here's the <a href="https://app.tango.us/app/workflow/How-To-Complete-Mandated-Reporter-and-Abuse-Prevention-Training-4501e91ac8c640c4a51605c5ede9266f" target="_blank" rel="noopener">step-by-step guide</a> to walk you through it.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Does the same general liability insurance that IEM requires apply to other charter schools?<span class="chev">+</span></summary>
+      <div class="body">
+        <p>Yes. The same general liability insurance should also apply to other schools.</p>
+      </div>
+    </details>
+
+    <footer>Homeschool Funding Accelerator &middot; Vendor Resources</footer>
+  </div>
+</body>
+</html>

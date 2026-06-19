@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Family-Requested Schools — HFA</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #5f8f8a;
+    --teal-light: #8fbfba;
+    --teal-faint: #e8f0ef;
+    --teal-mid: #c5dbd9;
+    --cream: #f7f5f1;
+    --warm-white: #fdfcfa;
+    --stone: #9c9790;
+    --charcoal: #3a3835;
+    --ink: #2a2826;
+    --divider: #e2ddd7;
+    --warn-bg: #fdf6ec;
+    --warn-border: #c4a882;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  .header {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    padding: 36px 60px 32px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  .header-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    background: var(--teal-faint);
+    border: 1px solid var(--teal-mid);
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 4px;
+    display: inline-block;
+  }
+
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--charcoal);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--stone);
+    font-weight: 300;
+    margin-left: auto;
+    padding-bottom: 2px;
+    white-space: nowrap;
+  }
+
+  .progress-bar {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 14px 60px;
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    flex-wrap: wrap;
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--divider);
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .dot.active  { background: var(--teal); transform: scale(1.3); }
+  .dot.visited { background: var(--teal-light); }
+
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 40px;
+  }
+
+  .qa-card {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s forwards;
+  }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  .qa-card:nth-child(1)  { animation-delay: 0.05s; }
+  .qa-card:nth-child(2)  { animation-delay: 0.10s; }
+  .qa-card:nth-child(3)  { animation-delay: 0.15s; }
+  .qa-card:nth-child(4)  { animation-delay: 0.20s; }
+  .qa-card:nth-child(5)  { animation-delay: 0.25s; }
+  .qa-card:nth-child(6)  { animation-delay: 0.30s; }
+  .qa-card:nth-child(7)  { animation-delay: 0.35s; }
+
+  .card-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--stone);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 28px 0;
+    opacity: 0.7;
+  }
+
+  .question-block {
+    padding: 24px 28px 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .section-marker {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--teal);
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 20px;
+  }
+
+  .question-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--charcoal);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .toggle-icon {
+    color: var(--teal-light);
+    font-size: 20px;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+    font-weight: 300;
+    line-height: 1.3;
+  }
+  .qa-card.open .toggle-icon { transform: rotate(45deg); }
+
+  .answer-block {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .qa-card.open .answer-block { max-height: 4000px; }
+
+  .answer-inner {
+    padding: 20px 28px 26px 64px;
+    border-top: 1px solid var(--teal-faint);
+  }
+
+  .answer-inner p {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--charcoal);
+    line-height: 1.75;
+    margin-bottom: 12px;
+  }
+  .answer-inner p:last-child { margin-bottom: 0; }
+
+  .callout {
+    background: var(--teal-faint);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 3px 3px 0;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 13.5px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--charcoal);
+  }
+
+  .note-callout {
+    background: var(--warn-bg);
+    border-left: 3px solid var(--warn-border);
+    border-radius: 0 3px 3px 0;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 13px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.65;
+    color: var(--charcoal);
+  }
+
+  /* Copy-ready template block */
+  .template {
+    background: var(--cream);
+    border: 1px dashed var(--teal-mid);
+    border-radius: 4px;
+    padding: 20px 22px;
+    margin: 16px 0;
+    font-size: 13.5px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--charcoal);
+  }
+  .template .tmpl-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--teal);
+    display: block;
+    margin-bottom: 12px;
+  }
+  .template .ph {
+    background: var(--warn-bg);
+    border-bottom: 1px solid var(--warn-border);
+    color: #a07840;
+    font-weight: 500;
+    padding: 0 3px;
+    border-radius: 2px;
+  }
+  .template p { margin-bottom: 12px; }
+  .template p:last-child { margin-bottom: 0; }
+  .template ol { margin: 10px 0 12px 20px; }
+  .template li { margin-bottom: 6px; }
+
+  .field-list {
+    margin: 14px 0;
+    border: 1px solid var(--divider);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    border-bottom: 1px solid var(--divider);
+  }
+  .field-row:last-child { border-bottom: none; }
+
+  .field-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--teal);
+    background: var(--teal-faint);
+    padding: 10px 14px;
+    display: flex;
+    align-items: flex-start;
+    letter-spacing: 0.02em;
+  }
+
+  .field-value {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--charcoal);
+    padding: 10px 14px;
+    line-height: 1.6;
+    background: var(--warm-white);
+  }
+
+  .checklist-section {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    padding: 32px 36px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s 0.45s forwards;
+  }
+
+  .checklist-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+
+  .checklist-sub {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--stone);
+    margin-bottom: 18px;
+    line-height: 1.6;
+  }
+
+  .checklist-rule {
+    height: 1px;
+    background: var(--teal-mid);
+    margin-bottom: 20px;
+  }
+
+  .checklist-items { display: flex; flex-direction: column; gap: 10px; }
+
+  .checklist-item { display: flex; gap: 14px; align-items: center; }
+
+  .check-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--warm-white);
+    background: var(--teal);
+    width: 26px; height: 26px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .check-text {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--charcoal);
+    line-height: 1.5;
+  }
+
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--stone);
+    margin-top: 48px;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 640px) {
+    .header { padding: 24px 20px 20px; flex-wrap: wrap; }
+    .header-sub { margin-left: 0; }
+    .progress-bar { padding: 12px 20px; }
+    .content { padding: 32px 16px; }
+    .answer-inner { padding: 16px 18px 20px 18px; }
+    .field-row { grid-template-columns: 1fr; }
+    .card-num, .question-block { padding-left: 18px; padding-right: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-tag">Funding &amp; Application Prep</div>
+    <div class="header-title">Family-Requested Schools</div>
+  </div>
+  <div class="header-sub">Coordinator-Led</div>
+</div>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- Card 1: Start here -->
+  <div class="qa-card open" data-index="0">
+    <div class="card-num">01 — Start Here</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Why these schools work differently (and why that's good news)</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>For most schools, you go find the application and fill it out. For this group, you can't — and that's actually fine, because the school does most of the work for you.</p>
+        <p>These schools only add a vendor <strong>when a family asks for one</strong>. So the request starts with a parent, goes to the school's vendor coordinator, and the coordinator comes to you. Your part is small: get a family to make the ask, then be ready when the coordinator reaches out.</p>
+        <div class="note-callout">⚠ Every client offers something different, so treat this as a starting point, not a script to copy line for line. Use your own judgment about what fits your niche, and anywhere you see something <span style="background:var(--warn-bg);border-bottom:1px solid var(--warn-border);color:#a07840;padding:0 3px;border-radius:2px;">like this</span> in the templates below, it's a placeholder — swap in your own details before you send anything. Questions? Reach out anytime.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: How the flow works -->
+  <div class="qa-card" data-index="1">
+    <div class="card-num">02 — The Flow</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">How the request actually works, start to finish</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Here's the whole sequence so you know what to expect:</p>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">1. The family asks</div>
+            <div class="field-value">A parent at the school contacts their vendor coordinator and says they'd like to work with you.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">2. The coordinator reaches out</div>
+            <div class="field-value">The school's coordinator contacts your business, letting you know a family wants to use you.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">3. You get started</div>
+            <div class="field-value">From there you begin the vendor process — but the coordinator leads it and tells you exactly what they need.</div>
+          </div>
+        </div>
+        <p>So unlike the email or application schools, you're not chasing anything down. The catch is the opposite problem: nothing happens until a family kicks it off. Which is why the rest of this guide is about gently making that happen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Be ready -->
+  <div class="qa-card" data-index="2">
+    <div class="card-num">03 — Be Ready</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What the coordinator will ask for</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>When the coordinator contacts you, they'll most likely ask for the same core documents every other school wants — which is exactly why building your standard packet first pays off here. If it's ready, you can respond the same day instead of scrambling.</p>
+        <div class="callout">
+          Have these on hand before any of this starts:<br><br>
+          — W-9<br>
+          — Certificate of Insurance<br>
+          — Proof of business legitimacy<br>
+          — Background check / COR status sorted<br>
+          — Your services description<br><br>
+          (That's your standard packet — the first lesson on this page. If you haven't built it yet, start there.)
+        </div>
+        <div class="note-callout">⚠ One thing worth knowing: each of these schools is its own separate approval. Some of them belong to the same alliance — Sequoia Grove, Central Valley, South Schools — but being approved at one does <strong>not</strong> automatically get you into its sister schools. Each one needs its own family to start the request.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: Email your families -->
+  <div class="qa-card" data-index="3">
+    <div class="card-num">04 — Make the First Move</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Tell your families (email / newsletter)</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>If you've worked with families before, or you have an email list, this is your single highest-leverage move. A lot of parents have no idea they can request a specific vendor — so just tell them, and tell them how.</p>
+        <div class="template">
+          <span class="tmpl-label">Email / Newsletter Template</span>
+          <p><strong>Subject:</strong> Want to take my classes through your charter school?</p>
+          <p>Hi <span class="ph">[everyone]</span>,</p>
+          <p>Quick note for any of you using a charter school for homeschooling — I'd love for you to be able to put your funds toward my <span class="ph">[WHAT YOU TEACH — e.g. online art classes]</span>.</p>
+          <p>For a handful of schools, this actually starts with <em>you</em>, the family. If your school is one of these — <span class="ph">[LIST A HANDFUL OF YOUR SCHOOLS]</span> — here's all you do:</p>
+          <ol>
+            <li>Check your school's vendor directory for <span class="ph">[YOUR BUSINESS NAME]</span>.</li>
+            <li>If you see me listed, you're all set — go ahead and request my classes.</li>
+            <li>If you <em>don't</em> see me listed, just reply to this email and I'll check on it for you.</li>
+          </ol>
+          <p>That's it — if I'm not in your school's directory yet and it's one where a family needs to get things started, I'll take it from there.</p>
+          <p>Thank you! Can't wait to <span class="ph">[create / draw / make art]</span> with your kids.</p>
+          <p><span class="ph">[YOUR NAME]</span><br><span class="ph">[YOUR BUSINESS NAME]</span><br><span class="ph">[YOUR WEBSITE]</span></p>
+        </div>
+        <div class="note-callout">⚠ Listing the specific schools that apply to you is more effective than a general ask — a parent who sees their own school named is far more likely to act. If you're not sure which of your families are at these schools, the "reply and I'll check" version still works great.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Facebook groups -->
+  <div class="qa-card" data-index="4">
+    <div class="card-num">05 — Make the First Move</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Watch the Facebook groups</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>This is the lowest-effort way to find families who are already looking. Homeschool and charter Facebook groups are full of parents asking for class recommendations — so rather than posting into the void every day, just <strong>watch and respond</strong>. When someone asks for a class you teach, that's a warm lead handing itself to you.</p>
+        <p>A light daily habit works better than a big push: skim the groups, answer the people already asking, and post your own ask now and then to stir up new ones.</p>
+        <div class="template">
+          <span class="tmpl-label">Replying to someone already asking</span>
+          <p>Hi <span class="ph">[NAME]</span>! I teach <span class="ph">[WHAT YOU TEACH]</span> and would love to work with your family. Depending on your charter school, you may just need to ask your vendor coordinator to add <span class="ph">[YOUR BUSINESS NAME]</span> — happy to walk you through it. Feel free to message me!</p>
+        </div>
+        <div class="template">
+          <span class="tmpl-label">Your own post / ask</span>
+          <p>Hi everyone! If you're using charter school funds and looking for <span class="ph">[WHAT YOU TEACH — e.g. online art]</span> classes, I'd love to work with you. For some schools you just let your vendor coordinator know you'd like to add <span class="ph">[YOUR BUSINESS NAME]</span>, and they'll reach out to me. Comment or message me and I'll help you figure out the steps for your school!</p>
+        </div>
+        <div class="note-callout">⚠ Check each group's rules before promoting — some have specific days or threads for vendor posts. Responding to existing requests is almost always welcome; unsolicited promo sometimes isn't.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: Which schools -->
+  <div class="qa-card" data-index="5">
+    <div class="card-num">06 — The Schools</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Which schools this covers</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>These are the schools that use the family-request, coordinator-led process. A few belong to the same alliance, but remember — each is still its own separate approval.</p>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">Standalone</div>
+            <div class="field-value">Blue Ridge Academy · Excel Academy Charter · iLEAD California / iLEAD Schools · Springs Charter Schools</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Central Valley Charter Schools</div>
+            <div class="field-value">Monarch River Academy · Yosemite Valley Charter School</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Sequoia Grove Charter Alliance</div>
+            <div class="field-value">Feather River Charter School · Lake View Charter School · Clarksville Charter School</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">South Schools (SoCal Charter Group)</div>
+            <div class="field-value">Cabrillo Point Academy · Mission Vista Academy · Pacific Coast Academy</div>
+          </div>
+        </div>
+        <div class="note-callout">⚠ Not sure whether one of your families is at a school on this list? When in doubt, reach out and we'll confirm how that specific school takes vendors.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="checklist-section">
+    <div class="checklist-title">Keep in Mind</div>
+    <div class="checklist-sub">A few things to hold onto as you work these schools:</div>
+    <div class="checklist-rule"></div>
+    <div class="checklist-items">
+      <div class="checklist-item">
+        <div class="check-num">1</div>
+        <div class="check-text">These start with a <strong>family</strong>, not with you — so your real job is planting the seed and being easy to find</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">2</div>
+        <div class="check-text">Have your <strong>standard packet</strong> ready, so you can move fast the moment a coordinator reaches out</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">3</div>
+        <div class="check-text">Each school is its <strong>own separate approval</strong> — being in at one doesn't carry over to its sister schools</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Homeschool Funding Accelerator · Funding &amp; Application Prep<br>
+    © Megapixels, LLC · For enrolled clients only
+  </div>
+
+</div>
+
+<script>
+  const TOTAL = 6;
+
+  function buildDots() {
+    const bar = document.getElementById('progressBar');
+    for (let i = 0; i < TOTAL; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.dataset.index = i;
+      d.addEventListener('click', () => scrollToCard(i));
+      bar.appendChild(d);
+    }
+  }
+
+  function scrollToCard(i) {
+    const cards = document.querySelectorAll('.qa-card[data-index]');
+    if (cards[i]) cards[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function updateDots() {
+    const cards = document.querySelectorAll('.qa-card[data-index]');
+    const dots  = document.querySelectorAll('.dot');
+    let active  = 0;
+    cards.forEach((card, i) => {
+      const rect = card.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.5) active = i;
+    });
+    dots.forEach((d, i) => {
+      d.classList.toggle('active',  i === active);
+      d.classList.toggle('visited', i < active);
+    });
+  }
+
+  function toggle(el) {
+    el.closest('.qa-card').classList.toggle('open');
+  }
+
+  buildDots();
+  window.addEventListener('scroll', updateDots, { passive: true });
+</script>
+</body>
+</html>

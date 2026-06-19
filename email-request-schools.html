@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email-Request Schools — HFA</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #5f8f8a;
+    --teal-light: #8fbfba;
+    --teal-faint: #e8f0ef;
+    --teal-mid: #c5dbd9;
+    --cream: #f7f5f1;
+    --warm-white: #fdfcfa;
+    --stone: #9c9790;
+    --charcoal: #3a3835;
+    --ink: #2a2826;
+    --divider: #e2ddd7;
+    --warn-bg: #fdf6ec;
+    --warn-border: #c4a882;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  .header {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    padding: 36px 60px 32px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  .header-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    background: var(--teal-faint);
+    border: 1px solid var(--teal-mid);
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 4px;
+    display: inline-block;
+  }
+
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--charcoal);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--stone);
+    font-weight: 300;
+    margin-left: auto;
+    padding-bottom: 2px;
+    white-space: nowrap;
+  }
+
+  .progress-bar {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 14px 60px;
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--divider);
+    flex-wrap: wrap;
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--divider);
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .dot.active  { background: var(--teal); transform: scale(1.3); }
+  .dot.visited { background: var(--teal-light); }
+
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 40px;
+  }
+
+  .qa-card {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s forwards;
+  }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  .qa-card:nth-child(1)  { animation-delay: 0.05s; }
+  .qa-card:nth-child(2)  { animation-delay: 0.10s; }
+  .qa-card:nth-child(3)  { animation-delay: 0.15s; }
+  .qa-card:nth-child(4)  { animation-delay: 0.20s; }
+  .qa-card:nth-child(5)  { animation-delay: 0.25s; }
+  .qa-card:nth-child(6)  { animation-delay: 0.30s; }
+
+  .card-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--stone);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 28px 0;
+    opacity: 0.7;
+  }
+
+  .question-block {
+    padding: 24px 28px 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .section-marker {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--teal);
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 20px;
+  }
+
+  .question-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--charcoal);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .toggle-icon {
+    color: var(--teal-light);
+    font-size: 20px;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+    font-weight: 300;
+    line-height: 1.3;
+  }
+  .qa-card.open .toggle-icon { transform: rotate(45deg); }
+
+  .answer-block {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .qa-card.open .answer-block { max-height: 4000px; }
+
+  .answer-inner {
+    padding: 20px 28px 26px 64px;
+    border-top: 1px solid var(--teal-faint);
+  }
+
+  .answer-inner p {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--charcoal);
+    line-height: 1.75;
+    margin-bottom: 12px;
+  }
+  .answer-inner p:last-child { margin-bottom: 0; }
+
+  .callout {
+    background: var(--teal-faint);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 3px 3px 0;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 13.5px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--charcoal);
+  }
+
+  .note-callout {
+    background: var(--warn-bg);
+    border-left: 3px solid var(--warn-border);
+    border-radius: 0 3px 3px 0;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 13px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.65;
+    color: var(--charcoal);
+  }
+
+  .template {
+    background: var(--cream);
+    border: 1px dashed var(--teal-mid);
+    border-radius: 4px;
+    padding: 20px 22px;
+    margin: 16px 0;
+    font-size: 13.5px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--charcoal);
+  }
+  .template .tmpl-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--teal);
+    display: block;
+    margin-bottom: 12px;
+  }
+  .template .ph {
+    background: var(--warn-bg);
+    border-bottom: 1px solid var(--warn-border);
+    color: #a07840;
+    font-weight: 500;
+    padding: 0 3px;
+    border-radius: 2px;
+  }
+  .template p { margin-bottom: 12px; }
+  .template p:last-child { margin-bottom: 0; }
+  .template ul { margin: 10px 0 12px 20px; }
+  .template li { margin-bottom: 6px; }
+
+  .field-list {
+    margin: 14px 0;
+    border: 1px solid var(--divider);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    border-bottom: 1px solid var(--divider);
+  }
+  .field-row:last-child { border-bottom: none; }
+
+  .field-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--teal);
+    background: var(--teal-faint);
+    padding: 10px 14px;
+    display: flex;
+    align-items: flex-start;
+    letter-spacing: 0.02em;
+  }
+
+  .field-value {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--charcoal);
+    padding: 10px 14px;
+    line-height: 1.6;
+    background: var(--warm-white);
+  }
+
+  .checklist-section {
+    background: var(--warm-white);
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    padding: 32px 36px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s 0.40s forwards;
+  }
+
+  .checklist-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+
+  .checklist-sub {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--stone);
+    margin-bottom: 18px;
+    line-height: 1.6;
+  }
+
+  .checklist-rule {
+    height: 1px;
+    background: var(--teal-mid);
+    margin-bottom: 20px;
+  }
+
+  .checklist-items { display: flex; flex-direction: column; gap: 10px; }
+
+  .checklist-item { display: flex; gap: 14px; align-items: center; }
+
+  .check-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--warm-white);
+    background: var(--teal);
+    width: 26px; height: 26px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .check-text {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--charcoal);
+    line-height: 1.5;
+  }
+
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--stone);
+    margin-top: 48px;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 640px) {
+    .header { padding: 24px 20px 20px; flex-wrap: wrap; }
+    .header-sub { margin-left: 0; }
+    .progress-bar { padding: 12px 20px; }
+    .content { padding: 32px 16px; }
+    .answer-inner { padding: 16px 18px 20px 18px; }
+    .field-row { grid-template-columns: 1fr; }
+    .card-num, .question-block { padding-left: 18px; padding-right: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-tag">Funding &amp; Application Prep</div>
+    <div class="header-title">Email-Request Schools</div>
+  </div>
+  <div class="header-sub">Email &amp; Phone Inquiry</div>
+</div>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- Card 1: Start here -->
+  <div class="qa-card open" data-index="0">
+    <div class="card-num">01 — Start Here</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">These schools don't have a form — you ask first</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>For this group, there's no public application sitting on a website waiting for you. Instead, you reach out first — almost always by email, occasionally by phone — and ask whether they're taking new vendors. They reply, and <em>that's</em> when the real process starts.</p>
+        <p>It feels backwards, but it's actually the easiest kind: one short, friendly email and you're in motion.</p>
+        <div class="note-callout">⚠ Every client offers something different, so treat the template below as a starting point, not a fill-in-the-blank you copy exactly. Use your own judgment for your niche, and anywhere you see something <span style="background:var(--warn-bg);border-bottom:1px solid var(--warn-border);color:#a07840;padding:0 3px;border-radius:2px;">like this</span>, it's a placeholder — replace it with your own details before you hit send. Questions? Reach out anytime.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: The email -->
+  <div class="qa-card" data-index="1">
+    <div class="card-num">02 — The Email</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Your vendor inquiry email</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Keep it short, warm, and specific. You want to make it easy for them to say yes and easy for them to tell you exactly what's next. Asking your three questions up front means you usually get everything you need in one reply.</p>
+        <div class="template">
+          <span class="tmpl-label">Vendor Inquiry Email</span>
+          <p><strong>Subject:</strong> Vendor Inquiry — <span class="ph">[YOUR BUSINESS NAME]</span></p>
+          <p>Hi <span class="ph">[SCHOOL NAME]</span> team,</p>
+          <p>I'm <span class="ph">[YOUR NAME]</span> with <span class="ph">[YOUR BUSINESS NAME]</span>, and I offer <span class="ph">[ONE LINE — WHAT YOU TEACH, e.g. "online art and drawing classes for K–12 homeschool students"]</span>. I'd love to be considered as an approved vendor so your enrolled families can use their funds toward my classes.</p>
+          <p>When you have a moment, could you let me know:</p>
+          <ul>
+            <li>Whether you're currently accepting new vendors</li>
+            <li>What your application or onboarding process looks like</li>
+            <li>Any documents you'll need from me to get started (W-9, certificate of insurance, background check, etc.)</li>
+          </ul>
+          <p>Thank you so much — happy to send over anything you need.</p>
+          <p><span class="ph">[YOUR NAME]</span><br><span class="ph">[YOUR BUSINESS NAME]</span><br><span class="ph">[PHONE] · [EMAIL] · [WEBSITE]</span></p>
+        </div>
+        <div class="note-callout">⚠ If you don't hear back in a week or so, a short, polite follow-up is completely normal — these inboxes are busy and a gentle nudge often does the trick.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: What happens next -->
+  <div class="qa-card" data-index="2">
+    <div class="card-num">03 — What Comes Next</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">What happens after you hit send</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Every school replies a little differently, but it almost always lands in one of three buckets:</p>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">A form</div>
+            <div class="field-value">They send you a vendor application to fill out and return.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">A portal invite</div>
+            <div class="field-value">They add you to an online vendor system where you finish your profile and upload documents.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">A document list</div>
+            <div class="field-value">They reply with exactly what they need (W-9, COI, background check, etc.) and ask you to send it over.</div>
+          </div>
+        </div>
+        <p>Whichever it is, the good news is the same: your <strong>standard packet</strong> already covers most of what they'll ask for. If you've built it (it's the first lesson on this page), you can often respond the same day — which makes a great impression and keeps your momentum.</p>
+        <div class="note-callout">⚠ Got a reply that asks for something unusual or that you're not sure about? Don't guess — reach out and we'll sort it out together before you send anything off.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: Phone -->
+  <div class="qa-card" data-index="3">
+    <div class="card-num">04 — The Phone One</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">One school wants a phone call instead</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>One school in this group, <strong>White Lake Area Community Education (WLACE)</strong>, asks you to call rather than email. Same idea, same three questions — just out loud.</p>
+        <div class="field-list">
+          <div class="field-row">
+            <div class="field-label">Who to call</div>
+            <div class="field-value">Duck Creek Learning Center</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Number</div>
+            <div class="field-value">(231) 766-3001</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">What to ask</div>
+            <div class="field-value">That you'd like to inquire about vendor registration, and the same three questions from the email — are they taking vendors, what's the process, and what documents they need.</div>
+          </div>
+        </div>
+        <div class="note-callout">⚠ Have a pen ready, and if they mention documents or a next step, ask if they can also email it to you so you have it in writing. A quick follow-up email after the call ("thanks for chatting — here's my info") is a nice touch and creates a paper trail.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Which schools -->
+  <div class="qa-card" data-index="4">
+    <div class="card-num">05 — The Schools</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Which schools this covers</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>These are the schools where you start by reaching out, rather than filling out a form. Here's the contact for each — if one ever bounces or changes, let us know and we'll update it.</p>
+        <div class="field-list">
+          <div class="field-row"><div class="field-label">BEST Academy</div><div class="field-value">yperez@bestacademycs.com</div></div>
+          <div class="field-row"><div class="field-label">Granite Mountain Charter School</div><div class="field-value">communitypartners@granitemountainschool.com</div></div>
+          <div class="field-row"><div class="field-label">Literacy First – Freedom Academy</div><div class="field-value">freedomacademy@lfcsinc.org</div></div>
+          <div class="field-row"><div class="field-label">Peak Prep Pleasant Valley</div><div class="field-value">shalen.bishop@peak-prep.org</div></div>
+          <div class="field-row"><div class="field-label">Sage Oak Charter Schools</div><div class="field-value">support@sageoak.education</div></div>
+          <div class="field-row"><div class="field-label">Silvies River Charter School</div><div class="field-value">info@silviesrcs.org</div></div>
+          <div class="field-row"><div class="field-label">Taylion Academy / Homeschool</div><div class="field-value">info@taylion.com</div></div>
+          <div class="field-row"><div class="field-label">Three Rivers Community Schools</div><div class="field-value">kbass@trschools.org</div></div>
+          <div class="field-row"><div class="field-label">WLACE (by phone)</div><div class="field-value">Duck Creek Learning Center — (231) 766-3001</div></div>
+        </div>
+        <div class="note-callout">⚠ As you reach out, jot down each school's actual reply — what they asked for and how their process works — and send it our way. The more we learn about what each school sends back, the more we can build that detail right into these lessons for everyone.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="checklist-section">
+    <div class="checklist-title">Keep in Mind</div>
+    <div class="checklist-sub">A few things to hold onto as you reach out:</div>
+    <div class="checklist-rule"></div>
+    <div class="checklist-items">
+      <div class="checklist-item">
+        <div class="check-num">1</div>
+        <div class="check-text">It's just <strong>one short email</strong> (or one call) to get started — low stakes, easy win</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">2</div>
+        <div class="check-text">Your <strong>standard packet</strong> covers most of whatever they'll ask for, so have it ready to send</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">3</div>
+        <div class="check-text">No reply in a week? A <strong>polite follow-up</strong> is completely normal and often does the trick</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Homeschool Funding Accelerator · Funding &amp; Application Prep<br>
+    © Megapixels, LLC · For enrolled clients only
+  </div>
+
+</div>
+
+<script>
+  const TOTAL = 5;
+
+  function buildDots() {
+    const bar = document.getElementById('progressBar');
+    for (let i = 0; i < TOTAL; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.dataset.index = i;
+      d.addEventListener('click', () => scrollToCard(i));
+      bar.appendChild(d);
+    }
+  }
+
+  function scrollToCard(i) {
+    const cards = document.querySelectorAll('.qa-card[data-index]');
+    if (cards[i]) cards[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function updateDots() {
+    const cards = document.querySelectorAll('.qa-card[data-index]');
+    const dots  = document.querySelectorAll('.dot');
+    let active  = 0;
+    cards.forEach((card, i) => {
+      const rect = card.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.5) active = i;
+    });
+    dots.forEach((d, i) => {
+      d.classList.toggle('active',  i === active);
+      d.classList.toggle('visited', i < active);
+    });
+  }
+
+  function toggle(el) {
+    el.closest('.qa-card').classList.toggle('open');
+  }
+
+  buildDots();
+  window.addEventListener('scroll', updateDots, { passive: true });
+</script>
+</body>
+</html>

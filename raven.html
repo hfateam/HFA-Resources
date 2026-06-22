@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Group 5 — Raven Homeschool — HFA</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #5f8f8a; --teal-light: #8fbfba; --teal-faint: #e8f0ef; --teal-mid: #c5dbd9;
+    --cream: #f7f5f1; --warm-white: #fdfcfa; --stone: #9c9790; --charcoal: #3a3835;
+    --ink: #2a2826; --divider: #e2ddd7; --warn-bg: #fdf6ec; --warn-border: #c4a882;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; padding: 0 0 80px; }
+  .header { background: var(--warm-white); border-bottom: 1px solid var(--divider); padding: 36px 60px 32px; display: flex; align-items: flex-end; gap: 24px; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(8px); }
+  .header-tag { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal); background: var(--teal-faint); border: 1px solid var(--teal-mid); padding: 5px 12px; border-radius: 2px; margin-bottom: 4px; display: inline-block; }
+  .header-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 500; color: var(--charcoal); letter-spacing: -0.01em; line-height: 1; }
+  .header-sub { font-size: 13px; color: var(--stone); font-weight: 300; margin-left: auto; padding-bottom: 2px; white-space: nowrap; }
+  .progress-bar { display: flex; gap: 6px; align-items: center; padding: 14px 60px; background: var(--warm-white); border-bottom: 1px solid var(--divider); flex-wrap: wrap; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--divider); cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
+  .dot.active { background: var(--teal); transform: scale(1.3); }
+  .dot.visited { background: var(--teal-light); }
+  .content { max-width: 860px; margin: 0 auto; padding: 56px 40px; }
+  .qa-card { background: var(--warm-white); border: 1px solid var(--divider); border-radius: 4px; margin-bottom: 20px; overflow: hidden; opacity: 0; transform: translateY(16px); animation: fadeUp 0.5s forwards; }
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+  .qa-card:nth-child(1){animation-delay:.05s} .qa-card:nth-child(2){animation-delay:.10s} .qa-card:nth-child(3){animation-delay:.15s} .qa-card:nth-child(4){animation-delay:.20s}
+  .card-num { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-weight: 500; color: var(--stone); letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 28px 0; opacity: 0.7; }
+  .question-block { padding: 24px 28px 20px; display: flex; gap: 16px; align-items: flex-start; cursor: pointer; user-select: none; }
+  .section-marker { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 600; color: var(--teal); flex-shrink: 0; margin-top: 2px; width: 20px; }
+  .question-text { font-size: 15px; font-weight: 500; color: var(--charcoal); line-height: 1.5; flex: 1; }
+  .toggle-icon { color: var(--teal-light); font-size: 20px; flex-shrink: 0; transition: transform 0.3s; font-weight: 300; line-height: 1.3; }
+  .qa-card.open .toggle-icon { transform: rotate(45deg); }
+  .answer-block { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .qa-card.open .answer-block { max-height: 3000px; }
+  .answer-inner { padding: 20px 28px 26px 64px; border-top: 1px solid var(--teal-faint); }
+  .answer-inner p { font-size: 14px; font-weight: 300; color: var(--charcoal); line-height: 1.75; margin-bottom: 12px; }
+  .answer-inner p:last-child { margin-bottom: 0; }
+  .callout { background: var(--teal-faint); border-left: 3px solid var(--teal); border-radius: 0 3px 3px 0; padding: 14px 16px; margin: 14px 0; font-size: 13.5px; font-weight: 400; line-height: 1.65; color: var(--charcoal); }
+  .note-callout { background: var(--warn-bg); border-left: 3px solid var(--warn-border); border-radius: 0 3px 3px 0; padding: 14px 16px; margin: 14px 0; font-size: 13px; font-weight: 300; font-style: italic; line-height: 1.65; color: var(--charcoal); }
+  .field-list { margin: 12px 0 4px; border: 1px solid var(--divider); border-radius: 3px; overflow: hidden; }
+  .field-row { display: grid; grid-template-columns: 175px 1fr; border-bottom: 1px solid var(--divider); }
+  .field-row:last-child { border-bottom: none; }
+  .field-label { font-size: 12px; font-weight: 500; color: var(--teal); background: var(--teal-faint); padding: 10px 14px; display: flex; align-items: flex-start; letter-spacing: 0.02em; }
+  .field-value { font-size: 13px; font-weight: 300; color: var(--charcoal); padding: 10px 14px; line-height: 1.6; background: var(--warm-white); }
+  .label-chip { display: inline-block; font-size: 11px; font-weight: 500; letter-spacing: 0.04em; color: var(--teal); background: var(--teal-faint); border: 1px solid var(--teal-mid); border-radius: 2px; padding: 2px 9px; margin: 18px 0 8px; }
+  .label-chip:first-child { margin-top: 0; }
+  .resource-link { display: inline-flex; align-items: center; gap: 8px; margin: 12px 0 4px; font-size: 12px; font-weight: 500; color: var(--teal); text-decoration: none; border-bottom: 1px solid var(--teal-mid); padding-bottom: 1px; letter-spacing: 0.03em; }
+  .resource-link:hover { color: var(--teal-light); }
+  .footer-note { text-align: center; font-size: 12px; color: var(--stone); margin-top: 48px; font-weight: 300; letter-spacing: 0.04em; line-height: 1.8; }
+  @media (max-width: 640px) { .header { padding: 24px 20px 20px; flex-wrap: wrap; } .header-sub { margin-left: 0; } .progress-bar { padding: 12px 20px; } .content { padding: 32px 16px; } .answer-inner { padding: 16px 18px 20px 18px; } .field-row { grid-template-columns: 1fr; } .card-num, .question-block { padding-left: 18px; padding-right: 18px; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-tag">Group 5 · Solo School</div>
+    <div class="header-title">Raven Homeschool</div>
+  </div>
+  <div class="header-sub">Alaska</div>
+</div>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="content">
+
+  <!-- Card 1 -->
+  <div class="qa-card open" data-index="0">
+    <div class="card-num">01 — Start Here</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">The one school that isn't in California</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Raven Homeschool runs through the Yukon-Koyukuk School District in Alaska, so its rules look pretty different from the California charters. The big thing to understand is how you get paid — they offer two payment tracks.</p>
+        <div class="note-callout">⚠ Use your own info throughout. Because Alaska's requirements differ from California's, confirm anything you're unsure about before assuming it works the same way.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: at a glance -->
+  <div class="qa-card" data-index="1">
+    <div class="card-num">02 — At a Glance</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">The quick facts</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <div class="field-list">
+          <div class="field-row"><div class="field-label">Funding</div><div class="field-value">$2,700 per year (full-time) · $500 PreK sibling allotment</div></div>
+          <div class="field-row"><div class="field-label">Out-of-state?</div><div class="field-value">Yes</div></div>
+          <div class="field-row"><div class="field-label">State</div><div class="field-value">Alaska (Yukon-Koyukuk School District)</div></div>
+          <div class="field-row"><div class="field-label">Contact</div><div class="field-value">registrar@yksd.com · sbuen@yksd.com</div></div>
+        </div>
+        <a class="resource-link" href="https://core-docs.s3.us-east-1.amazonaws.com/documents/asset/uploaded_file/4812/RHS/4389545/Vendor_Packet.pdf" target="_blank">↗ Open the Vendor Packet (PDF)</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: what's different -->
+  <div class="qa-card" data-index="2">
+    <div class="card-num">03 — What's Different</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">Two payment tracks, plus a few specifics</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <span class="label-chip">Pick your payment track</span>
+        <div class="field-list">
+          <div class="field-row"><div class="field-label">Purchase Orders</div><div class="field-value">The school issues a PO — you provide a W-9 (from your packet)</div></div>
+          <div class="field-row"><div class="field-label">Family Payment</div><div class="field-value">The family pays directly — no W-9 needed</div></div>
+        </div>
+        <span class="label-chip">Have ready</span>
+        <div class="callout">
+          — A syllabus or course overview<br>
+          — A fee schedule (your pricing laid out)
+        </div>
+        <div class="note-callout">⚠ Alaska handles background checks and licensing differently from California's DOJ Live Scan — so confirm Raven's current requirement before you assume anything, and reach out if you're unsure what applies to you.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: keep in mind -->
+  <div class="qa-card" data-index="3">
+    <div class="card-num">04 — Keep in Mind</div>
+    <div class="question-block" onclick="toggle(this)">
+      <span class="section-marker">→</span>
+      <span class="question-text">The takeaways</span>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="answer-block">
+      <div class="answer-inner">
+        <p>Two things to remember: choose between the <strong>Purchase Order</strong> and <strong>Family Payment</strong> tracks, and treat Alaska's requirements as their own thing, separate from everything California. Have your syllabus and fee schedule ready and you're in good shape.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Homeschool Funding Accelerator · Funding &amp; Application Prep<br>
+    © Megapixels, LLC · For enrolled clients only
+  </div>
+
+</div>
+
+<script>
+  const TOTAL = 4;
+  function buildDots(){ const bar=document.getElementById('progressBar'); for(let i=0;i<TOTAL;i++){ const d=document.createElement('div'); d.className='dot'+(i===0?' active':''); d.dataset.index=i; d.addEventListener('click',()=>scrollToCard(i)); bar.appendChild(d);} }
+  function scrollToCard(i){ const c=document.querySelectorAll('.qa-card[data-index]'); if(c[i]) c[i].scrollIntoView({behavior:'smooth',block:'start'}); }
+  function updateDots(){ const cards=document.querySelectorAll('.qa-card[data-index]'); const dots=document.querySelectorAll('.dot'); let active=0; cards.forEach((card,i)=>{ const r=card.getBoundingClientRect(); if(r.top<window.innerHeight*0.5) active=i; }); dots.forEach((d,i)=>{ d.classList.toggle('active',i===active); d.classList.toggle('visited',i<active); }); }
+  function toggle(el){ el.closest('.qa-card').classList.toggle('open'); }
+  buildDots(); window.addEventListener('scroll', updateDots, { passive: true });
+</script>
+</body>
+</html>

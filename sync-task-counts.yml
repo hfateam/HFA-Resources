@@ -1,0 +1,19 @@
+name: Sync task counts from monday
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'   # every 10 minutes
+  workflow_dispatch:          # also lets you run it on demand from the Actions tab
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run sync
+        env:
+          MONDAY_TOKEN: ${{ secrets.MONDAY_TOKEN }}
+        run: node scripts/sync-task-counts.mjs

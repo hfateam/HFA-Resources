@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where to Apply First — COR Tool — HFA</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #5f8f8a; --teal-light: #8fbfba; --teal-faint: #e8f0ef; --teal-mid: #c5dbd9;
+    --cream: #f7f5f1; --warm-white: #fdfcfa; --stone: #9c9790; --charcoal: #3a3835;
+    --ink: #2a2826; --divider: #e2ddd7; --warn-bg: #fdf6ec; --warn-border: #c4a882; --warn-text: #a07840;
+    --go-bg: #e7f0e9; --go-border: #a9c9b4; --go-text: #4a7a5c;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; padding: 0 0 80px; }
+  .header { background: var(--warm-white); border-bottom: 1px solid var(--divider); padding: 36px 60px 32px; display: flex; align-items: flex-end; gap: 24px; }
+  .header-tag { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal); background: var(--teal-faint); border: 1px solid var(--teal-mid); padding: 5px 12px; border-radius: 2px; margin-bottom: 4px; display: inline-block; }
+  .header-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 500; color: var(--charcoal); letter-spacing: -0.01em; line-height: 1; }
+  .header-sub { font-size: 13px; color: var(--stone); font-weight: 300; margin-left: auto; padding-bottom: 2px; white-space: nowrap; }
+  .content { max-width: 1080px; margin: 0 auto; padding: 40px 40px; }
+
+  .intro { background: var(--warm-white); border: 1px solid var(--divider); border-radius: 4px; padding: 26px 30px; margin-bottom: 24px; }
+  .intro h2 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; color: var(--charcoal); margin-bottom: 10px; }
+  .intro p { font-size: 14px; font-weight: 300; color: var(--charcoal); line-height: 1.7; margin-bottom: 10px; }
+  .intro p:last-child { margin-bottom: 0; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 14px; }
+  .legend span { font-size: 12.5px; font-weight: 300; color: var(--charcoal); display: inline-flex; align-items: center; gap: 7px; }
+
+  .pill { font-size: 10.5px; font-weight: 500; letter-spacing: 0.04em; padding: 3px 9px; border-radius: 20px; white-space: nowrap; display: inline-block; }
+  .pill-now { background: var(--go-bg); color: var(--go-text); border: 1px solid var(--go-border); }
+  .pill-after { background: var(--warn-bg); color: var(--warn-text); border: 1px solid var(--warn-border); }
+  .pill-closed { background: #efece9; color: var(--stone); border: 1px solid var(--divider); }
+
+  .controls { background: var(--warm-white); border: 1px solid var(--divider); border-radius: 4px; padding: 20px 24px; margin-bottom: 24px; }
+  .ctrl-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .ctrl-row:last-child { margin-bottom: 0; }
+  .ctrl-label { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--stone); width: 78px; flex-shrink: 0; }
+  .btn { font-family: 'DM Sans', sans-serif; font-size: 12.5px; font-weight: 400; color: var(--charcoal); background: var(--cream); border: 1px solid var(--divider); border-radius: 3px; padding: 6px 13px; cursor: pointer; transition: all 0.15s; }
+  .btn:hover { border-color: var(--teal-mid); }
+  .btn.active { background: var(--teal); color: var(--warm-white); border-color: var(--teal); }
+  .btn.toggle.active { background: var(--go-bg); color: var(--go-text); border-color: var(--go-border); }
+  .search { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300; color: var(--charcoal); background: var(--cream); border: 1px solid var(--divider); border-radius: 3px; padding: 7px 13px; width: 220px; }
+  .search:focus { outline: none; border-color: var(--teal-mid); }
+  .count { font-size: 12px; font-weight: 300; color: var(--stone); margin-left: auto; }
+
+  .table-wrap { background: var(--warm-white); border: 1px solid var(--divider); border-radius: 4px; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 820px; }
+  thead th { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); background: var(--teal-faint); text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--teal-mid); white-space: nowrap; }
+  tbody td { font-size: 13px; font-weight: 300; color: var(--charcoal); padding: 12px 14px; border-bottom: 1px solid var(--divider); vertical-align: top; line-height: 1.45; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: var(--teal-faint); }
+  tr.row-closed td { opacity: 0.62; }
+  .sch { font-weight: 500; color: var(--ink); }
+  .sch small { display: block; font-weight: 300; color: var(--stone); font-size: 11px; margin-top: 2px; letter-spacing: 0.02em; }
+  .info { color: var(--warn-text); cursor: help; font-weight: 500; font-size: 11px; border: 1px solid var(--warn-border); border-radius: 50%; width: 15px; height: 15px; display: inline-flex; align-items: center; justify-content: center; margin-left: 5px; background: var(--warn-bg); }
+  .yn-no { color: var(--stone); }
+  .empty { padding: 40px; text-align: center; font-size: 14px; font-weight: 300; color: var(--stone); }
+
+  .footer-note { text-align: center; font-size: 12px; color: var(--stone); margin-top: 40px; font-weight: 300; letter-spacing: 0.04em; line-height: 1.8; }
+
+  @media (max-width: 640px) {
+    .header { padding: 24px 20px 20px; flex-wrap: wrap; }
+    .header-sub { margin-left: 0; }
+    .content { padding: 28px 14px; }
+    .intro, .controls { padding: 18px 18px; }
+    .ctrl-label { width: 100%; }
+    .count { margin-left: 0; width: 100%; margin-top: 4px; }
+    .search { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-tag">Funding &amp; Application Prep</div>
+    <div class="header-title">Where to Apply First</div>
+  </div>
+  <div class="header-sub">COR Decision Tool</div>
+</div>
+
+<div class="content">
+
+  <div class="intro">
+    <h2>Start with what doesn't wait on your COR</h2>
+    <p>Your <strong>COR</strong> (Custodian of Records background clearance) is usually the slowest part of getting approved. So the smartest way to begin is to knock out everything that <em>doesn't</em> depend on it first, and circle back to the rest once your clearance is in. This tool sorts every school by exactly that.</p>
+    <div class="legend">
+      <span><span class="pill pill-now">Start now</span> You can apply before COR is finalized &mdash; or there's no background check at all (the ESAs).</span>
+      <span><span class="pill pill-after">After COR</span> Get your background check sorted first, then apply.</span>
+      <span><span class="pill pill-closed">Closed</span> Not taking vendors right now.</span>
+    </div>
+    <p style="margin-top:14px;"><em>Two reminders:</em> family-request schools still need a family to get things started, even when they're marked "Start now." And this is a starting point &mdash; use your own judgment for your niche, and reach out with questions.</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl-row">
+      <span class="ctrl-label">Priority</span>
+      <button class="btn active" data-group="tier" data-val="all">All</button>
+      <button class="btn" data-group="tier" data-val="now">Start now</button>
+      <button class="btn" data-group="tier" data-val="after">After COR</button>
+      <button class="btn" data-group="tier" data-val="closed">Closed</button>
+    </div>
+    <div class="ctrl-row">
+      <span class="ctrl-label">How to apply</span>
+      <button class="btn active" data-group="access" data-val="all">All</button>
+      <button class="btn" data-group="access" data-val="app">Application</button>
+      <button class="btn" data-group="access" data-val="email">Email / Phone</button>
+      <button class="btn" data-group="access" data-val="family">Family request</button>
+      <button class="btn" data-group="access" data-val="referral">Referral</button>
+      <button class="btn" data-group="access" data-val="esa">ESA portal</button>
+    </div>
+    <div class="ctrl-row">
+      <span class="ctrl-label">Filters</span>
+      <button class="btn toggle" data-toggle="oos">Out-of-state OK</button>
+      <button class="btn toggle" data-toggle="nobg">No background check</button>
+      <input type="text" class="search" id="search" placeholder="Search a school...">
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Priority</th>
+          <th>School</th>
+          <th>How to apply</th>
+          <th>Background check?</th>
+          <th>Apply before COR?</th>
+          <th>Out-of-state?</th>
+          <th>Funding</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="footer-note">
+    Homeschool Funding Accelerator &middot; Funding &amp; Application Prep<br>
+    &copy; Megapixels, LLC &middot; For enrolled clients only
+  </div>
+
+</div>
+
+<script>
+  const SCHOOLS = [
+    // Group 1
+    {n:"Visions In Education", l:"Group 1", a:"Application", bg:"Yes", cor:"Yes", oos:"Yes", f:"$1.5k\u20133k/yr", s:"Open", t:"now"},
+    {n:"Harvest Ridge", l:"Group 1", a:"Application", bg:"Yes", cor:"No", oos:"Yes", f:"$2.6k/yr", s:"Open", t:"after"},
+    {n:"Cottonwood School", l:"Group 1", a:"Application", bg:"Yes", cor:"Yes", oos:"Yes", f:"$2.4k\u20133.2k/yr", s:"Open", t:"now"},
+    // Group 2 PCI
+    {n:"Heritage Peak", l:"Group 2 (PCI)", a:"Application", bg:"Yes", cor:"No", oos:"Yes", f:"$2.7k/yr", s:"Open", t:"after"},
+    {n:"Rio Valley", l:"Group 2 (PCI)", a:"Application", bg:"Yes", cor:"No", oos:"Yes", f:"$2.7k/yr", s:"Open", t:"after"},
+    {n:"Sutter Peak", l:"Group 2 (PCI)", a:"Application", bg:"Yes", cor:"No", oos:"Yes", f:"$2.7k/yr", s:"Open", t:"after"},
+    {n:"Valley View", l:"Group 2 (PCI)", a:"Application", bg:"Yes", cor:"No", oos:"Yes", f:"$2.7k/yr", s:"Open", t:"after"},
+    // Group 3
+    {n:"Epic California Academy", l:"Group 3", a:"Application", bg:"Yes", cor:"No", oos:"Cond.", f:"$3k\u20133.3k/yr", s:"Open", t:"after", note:"Out-of-state only with a CA business license + a CA rep for Live Scan."},
+    {n:"Arete Charter Academy", l:"Group 3", a:"Application", bg:"Yes", cor:"No", oos:"No", f:"$4.5k/yr", s:"Open", t:"after"},
+    // Group 4
+    {n:"Gorman Learning Center", l:"Group 4", a:"Application (PDF)", bg:"Yes", cor:"Yes", oos:"Cond.", f:"\u2014", s:"Open", t:"now", note:"Out-of-state OK if you can complete a CA Live Scan."},
+    // Group 5
+    {n:"Raven Homeschool", l:"Group 5", a:"Application", bg:"Yes", cor:"Yes", oos:"Yes", f:"$0.5k\u20132.7k/yr", s:"Open (AK)", t:"now", note:"Alaska rules differ from CA \u2014 confirm the current background-check requirement."},
+    // Group 6
+    {n:"Element Education", l:"Group 6", a:"Application", bg:"Yes", cor:"No", oos:"Yes", f:"\u2014", s:"Open", t:"after"},
+    {n:"Elite Academic Academy", l:"Group 6", a:"Application", bg:"Yes", cor:"No", oos:"\u2014", f:"$3.3k\u20133.65k/yr", s:"Open", t:"after"},
+    // Compass
+    {n:"Compass Charter Schools", l:"Compass", a:"Referral", bg:"Yes / No*", cor:"No", oos:"Yes*", f:"\u2014", s:"Referral", t:"now", note:"Out-of-state = pre-recorded classes only, and skips the background check. In-state (live) needs the check first."},
+    // Group 8
+    {n:"Heartland Charter School", l:"Group 8", a:"Application", bg:"Yes", cor:"No", oos:"Yes", f:"$2.6k\u20133.6k/yr", s:"Opens 7/15", t:"after"},
+    {n:"Heartwood Charter School", l:"Group 8", a:"Application", bg:"Yes", cor:"Yes", oos:"Yes", f:"$2k\u20132.4k/yr", s:"Opens 7/1", t:"now", note:"U.S. states OK; no out-of-country."},
+    // Suncoast
+    {n:"Suncoast Preparatory Academy", l:"Suncoast", a:"Application", bg:"Yes", cor:"Yes", oos:"Yes", f:"$3.8k\u20134k/yr", s:"Open", t:"now"},
+    // IEM
+    {n:"Ocean Grove (IEM)", l:"IEM", a:"Application", bg:"Yes", cor:"Yes", oos:"Yes", f:"$0.55k\u20132.15k/sem", s:"Open", t:"now", note:"Shared IEM application; U.S. instructors only."},
+    {n:"Sky Mountain (IEM)", l:"IEM", a:"Application", bg:"Yes", cor:"Yes", oos:"Yes", f:"$0.55k\u20132.15k/sem", s:"Open", t:"now", note:"Shared IEM application; U.S. instructors only."},
+    {n:"South Sutter (IEM)", l:"IEM", a:"Application", bg:"Yes", cor:"Yes", oos:"Yes", f:"$0.4k\u20132k/sem", s:"Open", t:"now", note:"Shared IEM application; U.S. instructors only."},
+    // Email guide
+    {n:"BEST Academy", l:"Email guide", a:"Email", bg:"Yes", cor:"Yes", oos:"Yes", f:"$4k/yr", s:"Open", t:"now"},
+    {n:"Granite Mountain", l:"Email guide", a:"Email", bg:"Yes", cor:"No", oos:"\u2014", f:"~$2.6\u20132.8k", s:"Open", t:"after"},
+    {n:"Literacy First \u2013 Freedom", l:"Email guide", a:"Email", bg:"Yes", cor:"No", oos:"\u2014", f:"$2.5k/yr", s:"Open", t:"after"},
+    {n:"Peak Prep Pleasant Valley", l:"Email guide", a:"Email", bg:"Yes", cor:"No", oos:"\u2014", f:"$3.5k/yr", s:"Open", t:"after"},
+    {n:"Sage Oak Charter", l:"Email guide", a:"Email", bg:"Yes", cor:"No", oos:"Yes", f:"$1.45\u20131.55k/sem", s:"Open", t:"after"},
+    {n:"Silvies River", l:"Email guide", a:"Email", bg:"Yes", cor:"No", oos:"Yes", f:"$1.5k/yr", s:"Open (OR)", t:"after"},
+    {n:"Taylion Academy", l:"Email guide", a:"Email", bg:"Yes", cor:"No", oos:"Yes", f:"$3.9\u20134.1k/yr", s:"Open", t:"after"},
+    {n:"Three Rivers", l:"Email guide", a:"Email", bg:"Yes", cor:"No", oos:"\u2014", f:"\u2014", s:"Open (MI)", t:"after"},
+    {n:"WLACE", l:"Email guide", a:"Phone", bg:"Yes", cor:"No", oos:"\u2014", f:"\u2014", s:"Open (MI)", t:"after"},
+    // Family guide
+    {n:"Blue Ridge Academy", l:"Family guide", a:"Family", bg:"Yes", cor:"Yes", oos:"Yes", f:"$3.6\u20134k/yr", s:"By request", t:"now"},
+    {n:"Monarch River (Central Valley)", l:"Family guide", a:"Family", bg:"Yes", cor:"Yes", oos:"Yes", f:"\u2014", s:"By request", t:"now"},
+    {n:"Yosemite Valley (Central Valley)", l:"Family guide", a:"Family", bg:"Yes", cor:"Yes", oos:"Yes", f:"\u2014", s:"By request", t:"now"},
+    {n:"Excel Academy Charter", l:"Family guide", a:"Family", bg:"Yes", cor:"No", oos:"Yes", f:"\u2014", s:"By request", t:"after"},
+    {n:"iLEAD California", l:"Family guide", a:"Family", bg:"Yes", cor:"No", oos:"Yes", f:"$1.3\u20133.5k/yr", s:"By request", t:"after"},
+    {n:"Feather River (Sequoia Grove)", l:"Family guide", a:"Family", bg:"Yes", cor:"Yes", oos:"Yes", f:"$2.2\u20133.2k/yr", s:"By request", t:"now"},
+    {n:"Lake View (Sequoia Grove)", l:"Family guide", a:"Family", bg:"Yes", cor:"Yes", oos:"Yes", f:"$2.2\u20133.2k/yr", s:"By request", t:"now"},
+    {n:"Clarksville (Sequoia Grove)", l:"Family guide", a:"Family", bg:"Yes", cor:"Yes", oos:"Yes", f:"$2.2\u20133.2k/yr", s:"By request", t:"now"},
+    {n:"Cabrillo Point (South Schools)", l:"Family guide", a:"Family", bg:"Yes", cor:"No", oos:"Yes", f:"$3.8\u20134k/yr", s:"By request", t:"after"},
+    {n:"Mission Vista (South Schools)", l:"Family guide", a:"Family", bg:"Yes", cor:"No", oos:"Yes", f:"$500/mo", s:"By request", t:"after"},
+    {n:"Pacific Coast (South Schools)", l:"Family guide", a:"Family", bg:"Yes", cor:"No", oos:"Yes", f:"$500/mo", s:"By request", t:"after"},
+    {n:"Springs Charter Schools", l:"Family guide", a:"Family", bg:"Yes", cor:"No", oos:"Yes", f:"$1.25k/yr", s:"By request", t:"after"},
+    // Closed
+    {n:"Horizon Charter Schools", l:"Group 8", a:"Application", bg:"Yes", cor:"No", oos:"Yes", f:"$3k/yr", s:"Closed", t:"closed"},
+    {n:"Niles Virtual School", l:"Group 8", a:"Application", bg:"Yes", cor:"No", oos:"No", f:"$350/sem", s:"Closed (MI)", t:"closed"},
+    {n:"SCALE Leadership Academy", l:"Group 8", a:"Application", bg:"Yes", cor:"No", oos:"No", f:"~$1k/sem", s:"Closed", t:"closed"},
+    // ESAs (no background check \u2014 self-certify)
+    {n:"UT \u2014 Children First (CFEF)", l:"ESA", a:"ESA portal", bg:"No", cor:"\u2014", oos:"Yes", f:"$9.3k\u201311.7k/yr", s:"Open", t:"now"},
+    {n:"AZ ESA (ClassWallet)", l:"ESA", a:"ESA portal", bg:"No", cor:"\u2014", oos:"Yes", f:"$7k\u20138k/yr", s:"Open", t:"now"},
+    {n:"NY \u2014 CSF (ClassWallet)", l:"Group 7 / ESA", a:"ESA portal", bg:"No", cor:"\u2014", oos:"Yes", f:"$2.76k/yr", s:"Open", t:"now"},
+    {n:"MO \u2014 MOScholars (ClassWallet)", l:"ESA", a:"ESA portal", bg:"No", cor:"\u2014", oos:"Yes", f:"$6k\u20137k/yr", s:"Open", t:"now"},
+    {n:"UT \u2014 Fits All (Odyssey)", l:"ESA", a:"ESA portal", bg:"No", cor:"\u2014", oos:"Yes", f:"$4k\u20136k/yr", s:"Open", t:"now"},
+    {n:"LA \u2014 GATOR (Odyssey)", l:"ESA", a:"ESA portal", bg:"No", cor:"\u2014", oos:"Yes", f:"$5.2k\u201315.3k/yr", s:"Open", t:"now"},
+    {n:"WY ESA (Odyssey)", l:"ESA", a:"ESA portal", bg:"No", cor:"\u2014", oos:"Yes", f:"$7k/yr", s:"Injunction", t:"now", note:"Currently not funded (in injunction)."},
+    {n:"FL \u2014 Step Up (EMA)", l:"ESA", a:"ESA portal", bg:"No", cor:"\u2014", oos:"Yes", f:"$8k\u201310k/yr", s:"Open", t:"now"},
+    {n:"NH \u2014 CSF", l:"ESA", a:"ESA portal", bg:"No", cor:"\u2014", oos:"Yes", f:"$4.9k/yr", s:"Open", t:"now"},
+    {n:"AL \u2014 CHOOSE (ClassWallet)", l:"ESA", a:"ESA portal", bg:"No", cor:"\u2014", oos:"Yes", f:"$5.4k/yr", s:"Open", t:"now"},
+    {n:"WV \u2014 HOPE", l:"ESA", a:"ESA portal", bg:"No", cor:"\u2014", oos:"Yes", f:"$5.27k/yr", s:"Open", t:"now"},
+    {n:"AR \u2014 EFA (ClassWallet)", l:"ESA", a:"ESA portal", bg:"No", cor:"\u2014", oos:"Yes", f:"$6.86k/yr", s:"Open", t:"now"}
+  ];
+
+  const state = { tier:'all', access:'all', oos:false, nobg:false, q:'' };
+  const tierOrder = { now:0, after:1, closed:2 };
+  const tierLabel = { now:'Start now', after:'After COR', closed:'Closed' };
+
+  function acOf(s){
+    const a = s.a.toLowerCase();
+    if (a.indexOf('esa') > -1) return 'esa';
+    if (a.indexOf('email') > -1 || a.indexOf('phone') > -1) return 'email';
+    if (a === 'family') return 'family';
+    if (a === 'referral') return 'referral';
+    return 'app';
+  }
+  function oosOk(v){ return v.charAt(0) === 'Y' || v === 'Cond.'; }
+
+  function matches(s){
+    if (state.tier !== 'all' && s.t !== state.tier) return false;
+    if (state.access !== 'all' && acOf(s) !== state.access) return false;
+    if (state.oos && !oosOk(s.oos)) return false;
+    if (state.nobg && s.bg !== 'No') return false;
+    if (state.q){ const q = state.q.toLowerCase(); if (s.n.toLowerCase().indexOf(q) < 0 && s.l.toLowerCase().indexOf(q) < 0) return false; }
+    return true;
+  }
+  function ynClass(v){ return (v === 'No') ? ' class="yn-no"' : ''; }
+
+  function render(){
+    const rows = SCHOOLS.filter(matches).sort(function(a,b){
+      return (tierOrder[a.t] - tierOrder[b.t]) || a.n.localeCompare(b.n);
+    });
+    const tbody = document.getElementById('tbody');
+    if (!rows.length){ tbody.innerHTML = '<tr><td colspan="8" class="empty">No schools match those filters \u2014 try loosening one.</td></tr>'; }
+    else {
+      tbody.innerHTML = rows.map(function(s){
+        const info = s.note ? ' <span class="info" title="'+ s.note.replace(/"/g,'&quot;') +'">i</span>' : '';
+        return '<tr class="row-'+s.t+'">'
+          + '<td><span class="pill pill-'+s.t+'">'+tierLabel[s.t]+'</span></td>'
+          + '<td><span class="sch">'+s.n+info+'</span><small>'+s.l+'</small></td>'
+          + '<td>'+s.a+'</td>'
+          + '<td'+ynClass(s.bg)+'>'+s.bg+'</td>'
+          + '<td'+ynClass(s.cor)+'>'+s.cor+'</td>'
+          + '<td'+ynClass(s.oos)+'>'+s.oos+'</td>'
+          + '<td>'+s.f+'</td>'
+          + '<td>'+s.s+'</td>'
+          + '</tr>';
+      }).join('');
+    }
+    document.getElementById('count').textContent = 'Showing ' + rows.length + ' of ' + SCHOOLS.length;
+  }
+
+  document.querySelectorAll('.btn[data-group]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const g = btn.dataset.group;
+      state[g] = btn.dataset.val;
+      document.querySelectorAll('.btn[data-group="'+g+'"]').forEach(function(b){ b.classList.toggle('active', b === btn); });
+      render();
+    });
+  });
+  document.querySelectorAll('.btn[data-toggle]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const k = btn.dataset.toggle;
+      state[k] = !state[k];
+      btn.classList.toggle('active', state[k]);
+      render();
+    });
+  });
+  document.getElementById('search').addEventListener('input', function(e){ state.q = e.target.value; render(); });
+
+  render();
+</script>
+</body>
+</html>
